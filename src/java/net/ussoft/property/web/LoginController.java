@@ -57,7 +57,8 @@ public class LoginController extends BaseConstroller {
 		modelMap.put("sysname", configMap.get("SYSNAME"));
 		
 		//系统注册验证
-		Boolean regist = loginService.regist();
+//		Boolean regist = loginService.regist();
+		Boolean regist = true;//loginService.regist();
 		if (regist) {
 			return "login";
 		}
