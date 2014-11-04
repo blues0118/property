@@ -17,6 +17,7 @@ public class Chargenote {
 	private String unitid;
 	private String invoicenumber;
 	private String jbr;
+	private String unittermid;
 	
 	
 	@Id
@@ -74,6 +75,12 @@ public class Chargenote {
 	}
 	public void setJbr(String jbr) {
 		this.jbr = jbr;
+	}
+	public String getUnittermid() {
+		return unittermid;
+	}
+	public void setUnittermid(String unittermid) {
+		this.unittermid = unittermid;
 	}
 	
 	

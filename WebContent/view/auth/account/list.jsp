@@ -150,10 +150,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){
-		var url = "add.do?time="+Date.parse(new Date());
-		var whObj = { width: 540, height: 400 };
-		var result = openShowModalDialog(url,window,whObj);
-		refresh();
+		//调用account.util.js里的添加帐户方法。
+		parent.account.util.add();
 	}
 	
 	function del() {
@@ -183,36 +181,13 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function edit(id){
-		
-		if (id == "") {
-			alert("请先选择要修改的数据。");
-			return;
-		}
-		
-		if (id == "1") {
-			alert("超级帐户不能修改。");
-			return;
-		}
-		
-		
-		var url = "edit.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 540, height: 400 };
-		var result = openShowModalDialog(url,window,whObj);
-		
-		refresh();
+		//调用account.util.js里的添加帐户方法。
+		parent.account.util.edit(id);
 	}
 	
 	function update_password(id) {
-		if (id == "") {
-			alert("请先选择要修改密码的帐户。");
-			return;
-		}
-		
-		var url = "updatepass.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 540, height: 400 };
-		var result = openShowModalDialog(url,window,whObj);
-		
-		//refresh();
+		//调用account.util.js里的修改帐户密码方法。
+		parent.account.util.update_password(id);
 	}
 	
 	function refresh() {
@@ -251,17 +226,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function setrole(id) {
-		
-		if (id == "1") {
-			alert("超级帐户不能修改角色。");
-			return;
-		}
-		
-		var url = "setrole.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 740, height: 500 };
-		var result = openShowModalDialog(url,window,whObj);
-		
-		refresh();
+		//调用account.util.js里的修改帐户密码方法。
+		parent.account.util.setrole(id);
 	}
 	
 	function setauth(id) {

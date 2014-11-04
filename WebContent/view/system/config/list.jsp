@@ -61,7 +61,7 @@ body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
 	});
 	
 	function loadData() {
-		var title = "角色管理";
+		var title = "系统设置管理";
 		var pageer = "#pager";
 		var colNames;
 		var colModel;
@@ -97,16 +97,24 @@ body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
 		$.loadGridData(_option);
 	}
 	
-	function edit(id){  
-		//var result = window.showModalDialog("edit.do?id="+id,"查看窗口","toolbars=0;location=no;status=no;resizable=no;dialogWidth=700px;dialogHeight=400px;scrollbars=0");
-		var url = "edit.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 600, height: 300 };
-		var result = openShowModalDialog(url,null,whObj);
-		
-		refresh();
-		//window.location.reload(true); // 刷新窗体
-		
+	function edit(id) {
+		//调用config.util.js里的系统配置修改方法。
+		parent.config.util.edit(id);
 	}
+	
+	/* function edit1(id) {
+		var url = "edit.do?id="+id + "&time="+Date.parse(new Date());
+		
+		$.layer({
+	        type: 2,
+	        title: '详细信息',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['50px', ''],
+	        iframe: {src: url}
+	    });
+	} */
 	
 	function refresh() {
 		reloadGrid();

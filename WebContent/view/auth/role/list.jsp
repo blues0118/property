@@ -101,11 +101,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){  
-		var url = "add.do?time="+Date.parse(new Date());
-		var whObj = { width: 340, height: 300 };
-		var result = openShowModalDialog(url,window,whObj);
-		
-		refresh();
+		//调用role.util.js里的添加角色方法。
+		parent.role.util.add();
 	}
 	
 	function refresh() {
@@ -151,35 +148,18 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function edit(id){
-		
-		if (id == "") {
-			alert("请先选择要修改的数据。");
-			return;
-		}
-		
-		if (id == "1") {
-			alert("超级帐户不能修改。");
-			return;
-		}
-		
-		var url = "edit.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 340, height: 300 };
-		var result = openShowModalDialog(url,window,whObj);
-		
-		refresh();
-		//window.location.reload(true); // 刷新窗体
+		//调用role.util.js里的修改角色方法。
+		parent.role.util.edit(id);
 	}
 	
 	function auth(id) {
-		var url = "auth.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 440, height: 500 };
-		var result = openShowModalDialog(url,window,whObj);
+		//调用role.util.js里的设置角色访问功能权限方法。
+		parent.role.util.auth(id);
 	}
 	
 	function searchAccount(id) {
-		var url = "searchAccount.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 740, height: 500 };
-		var result = openShowModalDialog(url,window,whObj);
+		//调用role.util.js里的查看角色下包含的全部帐户方法。
+		parent.role.util.searchAccount(id);
 	}
 
 //-->

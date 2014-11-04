@@ -9,9 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import net.ussoft.property.base.BaseConstroller;
-import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Sys_config;
-import net.ussoft.property.model.Sys_role;
 import net.ussoft.property.service.ICodeService;
 import net.ussoft.property.service.IConfigService;
 

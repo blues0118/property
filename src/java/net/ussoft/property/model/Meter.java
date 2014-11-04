@@ -17,6 +17,8 @@ public class Meter {
 	private String meterman;
 	private String createtime;
 	private String metermemo;
+	private Integer meterstatus;
+	private String termid;
 	
 	
 	@Id
@@ -69,7 +71,17 @@ public class Meter {
 	public void setMetermemo(String metermemo) {
 		this.metermemo = metermemo;
 	}
-	
-	
+	public Integer getMeterstatus() {
+		return meterstatus;
+	}
+	public void setMeterstatus(Integer meterstatus) {
+		this.meterstatus = meterstatus;
+	}
+	public String getTermid() {
+		return termid;
+	}
+	public void setTermid(String termid) {
+		this.termid = termid;
+	}
 	
 }

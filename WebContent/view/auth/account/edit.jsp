@@ -12,8 +12,9 @@
 
 <script>
 	function closepage() {
-		window.returnValue="ok";
-		window.close();
+		//获取当前窗口索引
+		var index = parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
 	}
 	
 	function update() {

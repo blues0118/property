@@ -18,6 +18,10 @@ public class Chargeitem {
 	private String projectid;
 	private String unitid;
 	private Integer watchnumber;
+	private String begindate;
+	private String reminddate;
+	private String nextdate;
+	
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -80,6 +84,24 @@ public class Chargeitem {
 	}
 	public void setWatchnumber(Integer watchnumber) {
 		this.watchnumber = watchnumber;
+	}
+	public String getBegindate() {
+		return begindate;
+	}
+	public void setBegindate(String begindate) {
+		this.begindate = begindate;
+	}
+	public String getReminddate() {
+		return reminddate;
+	}
+	public void setReminddate(String reminddate) {
+		this.reminddate = reminddate;
+	}
+	public String getNextdate() {
+		return nextdate;
+	}
+	public void setNextdate(String nextdate) {
+		this.nextdate = nextdate;
 	}
 	
 	

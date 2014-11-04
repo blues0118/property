@@ -14,6 +14,7 @@ public class Sys_code {
 	private String fieldkey;
 	private String fieldvalue;
 	private Integer sort;
+	private Integer isedit;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -52,6 +53,12 @@ public class Sys_code {
 	}
 	public void setFieldcncode(String fieldcncode) {
 		this.fieldcncode = fieldcncode;
+	}
+	public Integer getIsedit() {
+		return isedit;
+	}
+	public void setIsedit(Integer isedit) {
+		this.isedit = isedit;
 	}
 	
 }

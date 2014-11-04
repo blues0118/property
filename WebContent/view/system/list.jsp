@@ -7,6 +7,17 @@
 
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/redmond/jquery-ui-1.8.2.custom.css"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
+
+<!-- 弹出框插件 -->
+<script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
+
+<!-- 系统配置，功能弹出框 -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/system/config/config_util.js"></script>
+<!-- 帐户，功能弹出框 -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/auth/account/account_util.js"></script>
+<!-- 角色，功能弹出框 -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/auth/role/role_util.js"></script>
+
 <script type="text/javascript">
 
 	$(function(){
