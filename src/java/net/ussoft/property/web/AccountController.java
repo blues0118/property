@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.ussoft.property.base.BaseConstroller;
 import net.ussoft.property.model.PageBean;
+import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Sys_role;
 import net.ussoft.property.service.IAccountService;
 import net.ussoft.property.service.ICodeService;
 import net.ussoft.property.service.IEncryService;
+import net.ussoft.property.service.IProjectService;
 import net.ussoft.property.service.IRoleService;
 import net.ussoft.property.util.MD5;
 
@@ -40,7 +42,8 @@ public class AccountController extends BaseConstroller {
 	private IRoleService roleService;
 	@Resource
 	private ICodeService codeService;
-	
+	@Resource
+	private IProjectService projectService;
 	
 	/**
 	 * 打开账户管理
@@ -378,5 +381,47 @@ public class AccountController extends BaseConstroller {
 		out.print(result);
 	}
 	
-	
+	/**
+	 * 设置账户物业项目操作权限
+	 * */
+	@RequestMapping(value="/setAuthority",method=RequestMethod.GET)
+	public ModelAndView setAuthority(String id,ModelMap modelMap) {
+		//所有项目
+		List<Project> list = projectService.list();
+		String listString = JSON.toJSONString(list);
+		//已设置操作权的项目
+		Sys_account account = accountService.getById(id);
+		String proList = account.getProjectid();
+		if("".equals(proList) || proList == null)
+			proList="[]";
+		modelMap.put("account_id", id);
+		modelMap.put("proList", proList);
+		modelMap.put("projectList", listString);
+		
+		return new ModelAndView("/view/auth/account/setAuthority", modelMap);
+	}
+	/**
+	 * 执行账户物业项目操作权限
+	 * @param id	  账户ID
+	 * @param proListString 项目节点JSON
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/tosetAuthority",method=RequestMethod.POST)
+	public void toSetAuthority(String id,String proListString,HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		
+		Sys_account account = accountService.getById(id);
+		account.setProjectid(proListString);
+		int num = accountService.update(account);
+		if (num > 0 ) {
+			result = "success";
+		}
+		out.print(result);
+	}
 }
