@@ -77,7 +77,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
         },
         funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<div style="float:left;cursor:pointer;"><a title="设置物业项目访问权限" href="javascript:;" onclick="setAuthority(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-gear"></span></a></div>';
+		    var result = '<div style="float:left;cursor:pointer;"><a title="设置物业项目访问权限" href="javascript:;" onclick="show(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-gear"></span></a></div>';
 		    result += '<div style="float:left;cursor:pointer;"><a title="修改帐户信息" href="javascript:;" onclick="edit(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-pencil"></span></a></div>';
 		    result += '<div style="float:left;cursor:pointer;"><a title="修改帐户密码" href="javascript:;" onclick="update_password(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-locked"></span></a></div>';
 		    result += '<div style="float:left;cursor:pointer;"><a title="设置帐户角色" href="javascript:;" onclick="setrole(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-alert"></span></a></div>';
@@ -178,11 +178,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		        }
 		    });
 		}
-	}
-	
-	function setAuthority(id) {
-		//调用account.util.js里的设置操作权限方法。
-		parent.account.util.setAuthority(id);
 	}
 	
 	function edit(id){
