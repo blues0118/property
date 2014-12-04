@@ -51,7 +51,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	
 	function onClick(event, treeId,nodes) {
 		//alert("test2。");
-		alert("id="+nodes.id + "projectname="+nodes.projectname + "projecttype="+nodes.projecttype);
+		//alert("id="+nodes.id + "projectname="+nodes.projectname + "projecttype="+nodes.projecttype);
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		// L：项目下节点的情况（P：项目  F：项目夹）
 		if (nodes.projecttype == 'L') {
