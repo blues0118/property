@@ -5,20 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import net.ussoft.property.dao.AccountDao;
 import net.ussoft.property.dao.ProjectDao;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
-import net.ussoft.property.model.Sys_account;
-import net.ussoft.property.model.Sys_function;
-import net.ussoft.property.model.Sys_role_fun;
 import net.ussoft.property.service.IProjectService;
-import net.ussoft.property.util.CommonUtils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.alibaba.fastjson.JSON;
 
 @Service
 public class ProjectService implements IProjectService {
@@ -26,8 +19,6 @@ public class ProjectService implements IProjectService {
 	@Resource
 	private ProjectDao projectDao;
 
-	@Resource
-	private AccountDao accountDao;
 
 	@Override
 	public List<Project> list() {
@@ -95,36 +86,6 @@ public class ProjectService implements IProjectService {
 		project = projectDao.save(project);
 		
 		return project;
-	}
-
-	@Override
-	public List<Project> list(String accountId) {
-		if("".equals(accountId) || null == accountId){
-			return null;
-		}
-		//获取账户访问的物业项目
-		Sys_account account = accountDao.get(accountId);
-		List<String> projectids = (List<String>)JSON.parse(account.getProjectid());
-		List<Object> values=new ArrayList<Object>();
-		StringBuilder sb=new StringBuilder();
-		if(projectids != null){
-			for(int i=0;i<projectids.size();i++){
-				values.add(projectids.get(i));
-				sb.append("?,");
-			}
-		}
-		if(values.size()>0){
-			CommonUtils.deleteLastStr(sb, ",");
-		}else{
-			values.add("1");
-			sb.append("?");
-		}
-			
-		String sql = "select * from project where id in ("+sb.toString()+") order by sort asc";
-		
-		List<Project> proList = projectDao.search(sql, values);
-		
-		return proList;
 	}
 
 }

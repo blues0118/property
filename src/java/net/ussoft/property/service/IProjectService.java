@@ -65,10 +65,4 @@ public interface IProjectService {
 	 */
 	public int delete(String id);
 	
-	/**
-	 * 获取用户访问的物业项目
-	 * @param account_id
-	 * @return
-	 */
-	public List<Project> list(String account_id);
 }
