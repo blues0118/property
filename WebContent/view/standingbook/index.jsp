@@ -19,9 +19,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/zTree/js/jquery.ztree.all-3.5.min.js"></script>
 
-<!-- 台账，功能弹出框 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/view/standingbook/standingbook_util.js"></script>
-
 <script type="text/javascript">
 
 	var setting = {
@@ -50,27 +47,22 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	};
 	
 	function onClick(event, treeId,nodes) {
-		//alert("test2。");
-		//alert("id="+nodes.id + "projectname="+nodes.projectname + "projecttype="+nodes.projecttype);
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		// L：项目下节点的情况（P：项目  F：项目夹）
 		if (nodes.projecttype == 'L') {
 			$("#fra").attr("src","${pageContext.request.contextPath}/standingbook/relist.do?projeuctid=" + nodes.id);
 			return ;
 		}else{
-			alert("test3。");
 			treeObj.expandNode(nodes);
 		}
 	}
 	
 	function callback() {
-		//alert("test1。");
 	}
 	
 	var nodes = ${projectList};
 	
 	for (var i=0;i<nodes.length;i++) {
-		//alert("test4。");
 		if (nodes[i].parentid == '0') {
 			nodes[i].isParent = true;
 			nodes[i].open = true;
@@ -98,14 +90,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	});
 	
 	function onClickItem(page,item) {
-		alert("test5。");
 		$("#fra").attr("src",page);
 		
 		$("#item_ul a").removeClass().addClass("txt2");
 		$("#"+item).addClass("on");
 	}
-	
-//-->
 </script>
 
 <!--内容部分开始-->
@@ -119,7 +108,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		</div>
 	</div>
 	<div id="bodyer_right">
-	    <Iframe id="fra" name="standbook" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
+	    <iframe id="fra" name="standingbook" width="100%" height="100%" scrolling="no" frameborder="0"></iframe>
 	</div>
 	<div style="clear: both"></div>
 </div>

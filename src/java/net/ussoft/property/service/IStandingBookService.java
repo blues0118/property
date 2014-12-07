@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Standingbookterm;
+import net.ussoft.property.model.Sys_account;
 
 public interface IStandingBookService {
 	/**
@@ -13,9 +14,16 @@ public interface IStandingBookService {
 	public List<Standingbookterm> list();
 	
 	/**
-	 * 分页读取账户信息
+	 * 总账期分页读取账户信息
 	 * @param pageBean
 	 * @return
 	 */
 	public PageBean<Standingbookterm> list(Standingbookterm t,PageBean<Standingbookterm> pageBean);
+	
+	/**
+	 * 插入总账期
+	 * @param standingbookterm
+	 * @return
+	 */
+	public Standingbookterm insert(Standingbookterm standingbookterm);
 }

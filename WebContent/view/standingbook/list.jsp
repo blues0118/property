@@ -21,6 +21,9 @@
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/jquery.contextmenu.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/ui.multiselect.js" type="text/javascript"></script>
 
+<!-- 弹出框插件 -->
+<script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
+
 <style>
 <!--
 body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
@@ -29,9 +32,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 </style>
 
 <script>
-
-	var roles = "";
-
 	function loadComplete() {
 		
 	}
@@ -46,27 +46,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 	}
 	
-	//获取角色
-	function readRole() {
-		 $.ajax({
-		        async : false,
-		        url : "${pageContext.request.contextPath}/role/getRoles.do",
-		        type : 'post',
-		        dataType : 'text',
-		        success : function(data) {
-		        	sessionOut(data);
-		            roles = JSON.parse(data);
-		        }
-		 });
-	}
-	
-	
-	$(function(){
-		readRole();
-	});
-	
 	function callback() {
-		//alert("list2");
 		loadData();
 	}
 	
@@ -110,8 +90,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		//var url = "${pageContext.request.contextPath}/account/list.do";
 		var url = "${pageContext.request.contextPath}/standingbook/list.do";
 		
-		colNames = ['账期名称','备注', '创建时间', '创建人','账期状态'];
+		colNames = ['操作','账期名称','备注', '创建时间', '创建人','账期状态'];
 		colModel = [ 
+                   {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"},
 		           {name:'termcode',index:'termcode', width:100,align:"center"},
 		           {name:'termmemo',index:'termmemo', width:100,align:"center"},
 		           {name:'createtime',index:'createtime', width:100,align:"center"},
@@ -151,8 +132,46 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){
+		alert("add111");
+		var url = "../standingbook/add.do";
+		alert("add122");
+		$.layer({
+	        type: 2,
+	        title: '添加台账',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['150px', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	//调用iframe子页面的刷新方法
+	        	standingbook.window.refresh();
+	        }
+	    });
+	}
+	
+	function add22(){
 		//调用account.util.js里的添加帐户方法。
-		parent.account.util.add();
+		alert("add111");
+		//var url = "${pageContext.request.contextPath}/standingbook/add.do?";
+		alert("add112");
+		$.layer({
+	        type: 2,
+	        title: '添加台账',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['150px', ''],
+	        iframe: {src: 'www.baidu.com'},
+	        success: function(){
+	            layer.msg('点击层外任意处，可关闭该iframe层', 2, 9);
+	        },
+	        end: function(){
+	        	//调用iframe子页面的刷新方法
+	        	iframe.refresh();
+	        }
+	    });
+		alert("add113");
 	}
 	
 	function del() {
@@ -244,10 +263,10 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
-			<div class="dqwz_l">当前位置：权限管理－帐户管理</div>
+			<div class="dqwz_l">当前位置：台账管理－总台账账期</div>
 			<div  class="caozuoan">
-				[ <a href="#" onclick="add()">添加帐户</a> ]
-				[ <a href="#" onclick="del()">删除帐户</a> ]
+				[ <a href="#" onclick="add()">添加总账期</a> ]
+				[ <a href="#" onclick="del()">删除总账期</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
 	         </div>
 	         <div style="clear:both"></div>
