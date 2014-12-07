@@ -1,77 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE HTML>
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/public.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/util.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/jquery-1.8.2.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/public.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/util.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
 
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table_main.css" type="text/css">
+<link type="text/css" rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/system.css">
 
 
-<style>
-<!--
-body {
-	position: relative;
-	font:12px/19px Arial, Helvetica, sans-serif; color:#666;
-}
-
-.bs-glyphicons {
-	margin: 0 -10px 20px;
-	overflow: hidden
-}
-
-.bs-glyphicons-list {
-	padding-left: 0;
-	list-style: none
-}
-
-.bs-glyphicons li {
-	float: left;
-	width: 90px;
-	height: 90px;
-	padding: 10px;
-	line-height: 1.4;
-	text-align: center;
-	background-color: #f9f9f9;
-	border: 1px solid #fff
-}
-
-.bs-glyphicons .glyphicon {
-	margin-top: 5px;
-	margin-bottom: 10px;
-	font-size: 24px
-}
-
-.bs-glyphicons .glyphicon-class {
-	display: block;
-	text-align: center;
-	word-wrap: break-word
-}
-
-.bs-glyphicons li:hover {
-	color: #fff;
-	background-color: #563d7c
-}
-
-
-.bs-customizer .toggle {
-	float: right;
-	margin-top: 25px
-}
-
-.bs-customizer label {
-	margin-top: 10px;
-	font-weight: 500;
-	color: #555
-}
--->
-</style>
 
 <script type="text/javascript">
-	
 	var rowNum = '';
 	
 	var unitmap = ${UnitMap};
@@ -86,72 +32,183 @@ body {
 	
 	function init(){
 		for(var i=0;i<20;i++){
-			$('#unitData').append(buildRow(i+1));
+			$('#con_right').append(buildRow(i+1));
 		}
-		$('#unitData li').live('click',click);
 	}
 	
-	function click(){
-		$('li[rownum='+rowNum+']').css("background-color","#f9f9f9");
-		if($(this).attr('isdata') != '1'){
-			rowNum = $(this).attr('rownum');
-			$(this).css("background-color","#563d7c");
-		}else{
-			rowNum = '';
-		}
-	}
 		
 	function buildRow(rNum){
 		
 		var row = '';
 		var tmp_rowNum = '';
+		var flag = false;
+		var firstFlag = true;
 		for(var i=0;i<20;i++){
 			tmp_rowNum = rNum + '-' + (i+1);
-			
+			//add by wangzibo 每一行的第一个元素为一个复选框
 			if(unitmap[tmp_rowNum]){
-				row += '<li isdata="1" rownum="'+tmp_rowNum+'" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
-				row += '<span>' + unitmap[tmp_rowNum]['unitcode'] + '</span><br/>';
-				row += '<span>' + unitmap[tmp_rowNum]['using_area'] + '㎡</span>';
-			}else{
-				row += '<li rownum="'+tmp_rowNum+'">';
+				if(firstFlag){
+					flag = true;
+					firstFlag = false;
+        			row += '<div>';
+					row += '<ul>';
+					row += '<li  isdata="1" class="num">'+rNum+'<input type="checkbox" id = "'+tmp_rowNum+'" value="" onchange="chgCheckboxStatus(\''+tmp_rowNum+'\')" class="btn0"></li>';
+					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
+					row += 		'<div>';
+					row += 			'<p><span class="mianji">NT12-11    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
+					row += 			'<p>'+unitmap[tmp_rowNum]['unitcode']+'</p>';
+					row += 		'</div>';
+					row += 		'<div class="btns">';
+					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
+					row += 			'<input type="button" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
+					row += 			'<input type="button" class="dayin">';
+					row += 			'<input type="button" class="time">';
+					row += 		'</div>';
+					row += 		'<div class="tixing">';
+					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
+					row += 		'</div>';
+					row += '</li>';
+				}else{
+					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
+					row += 		'<div>';
+					row += 			'<p><span class="mianji">NT12-11    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
+					row += 			'<p>'+unitmap[tmp_rowNum]['unitcode']+'</p>';
+					row += 		'</div>';
+					row += 		'<div class="btns">';
+					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
+					row += 			'<input type="button" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
+					row += 			'<input type="button" class="dayin">';
+					row += 			'<input type="button" class="time">';
+					row += 		'</div>';
+					row += 		'<div class="tixing">';
+					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
+					row += 		'</div>';
+					row += '</li>';
+				}
+				//add by wangzibo 若有数据则显示，若没有则显示一个空的标签
+				
 			}
-			row += '</li>';
+		}
+		if(flag){
+			row += '<div style=" clear:both"></div>';
+			row += '</ul>';
+			row += '</div>';
 		}
 		return row;
 	}
-	function add(){
-		if(!rowNum){
-			alert('请选择要添加单元的位置！');
-			return;
+	function chgCheckboxStatus(id){
+		if($("#"+id).attr('checked')=="checked"){
+			$("#"+id).parent().parent().children().children(".btns").children("input[type=checkbox]").attr("checked","true");
+		}else{
+			$("#"+id).parent().parent().children().children(".btns").children("input[type=checkbox]").removeAttr("checked");
 		}
-		var url = "add.do?rowNum="+rowNum+"&projeuctid=${projeuctid}&time="+Date.parse(new Date());
-		var whObj = { width: 764, height: 400 };
-		openShowModalDialog(url,window,whObj);
-		window.location.reload();
+	}
+	function add(){
+		var projectid = "${projeuctid}";
+		var url = "../property/add.do?projeuctid="+projectid+"&time="+Date.parse(new Date());
+		//调用parent.util.js里的添加帐户方法。
+		parent.property.util.add(url);
 	}
 	
-
-//-->
+	function addBatchLease(){
+		var ids = getCheckboxIds();
+		if (ids == "" ||ids == undefined) {
+			alert("请选择需要添加业主的单元，请重新尝试，或与管理员联系。");
+			return;
+		}
+		console.log("ids========"+ids);
+		var projectid = "${projeuctid}";
+		var url = "../lease/add.do?unitid="+ids+"&time="+Date.parse(new Date());
+		//调用parent.util.js里的添加帐户方法。
+		parent.property.util.addLease(url);
+	}
+	
+	function getCheckboxIds() {
+		var ids;
+		var num = 0;
+		$("#con_right input[type='checkbox']").each(function(){
+        if($(this).is(":checked")){
+              if($(this).attr("value")!=''){
+              	  if(num==0){
+              	  	  ids = $(this).attr("value");
+              	  }else{
+              	  	  ids +=","+$(this).attr("value");
+              	  }
+              	  num++;
+              }
+        }
+      })
+      return ids;
+	}
+	function del() {
+		var ids = getCheckboxIds();
+		if (ids == "") {
+			alert("没有获得要删除的单元，请重新尝试，或与管理员联系。");
+			return;
+		}
+		if (confirm("确定要删除选择的单元吗？")) {
+		    $.ajax({
+		        async : true,
+		        url : "${pageContext.request.contextPath}/property/delete.do",
+		        type : 'post',
+		        data: {ids:ids.toString()},
+		        dataType : 'text',
+		        success : function(data) {
+		        	sessionOut(data);
+		            if (data == "success") {
+		            	alert("删除完毕。");
+		            	window.location.reload();
+		            } else {
+		            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
+		            }
+		        }
+		    });
+		}
+		
+	}
+	function edit(id){
+		//调用property.util.js里的修改角色方法。
+		parent.property.util.edit(id);
+	}
+	function refresh() {
+		console.log("listlistlistlistlistlistlistlistlistlistlistlistlistlistlist");
+		window.location.reload();
+	}
 </script>
 
 <body>
-<!--内容部分开始-->
+	<!--内容部分开始-->
 
+	<div id="top2">
+		<div class="top2_left">
+			您的当前位置：首页／物业管理／小区管理
+		</div>
+		<div class="top2_right">
+			<div class="buttons">
+				<a href="javascript:addBatchLease();" class="jia">&nbsp;</a><!-- 批量增加业主信息 -->
+				<a href="javascript:add();" class="jia" alt="批量添加业主信息">&nbsp;</a>
+				<a href="javascript:del();" class="jian" alt="新增单元">&nbsp;</a>
+				<a href="#" class="money">&nbsp;</a>
+				<a href="#" class="dayin1">&nbsp;</a>
+				<div style="clear: both"></div>
+			</div>
+			<div id="seach" class="seach">
+				<input type="text" class="txtbox">
+				<input type="button" class="btn1" value="搜索">
+			</div>
+
+		</div>
+		<div style="clear: both"></div>
+
+
+	</div>
+	<div id="con">
+			<div id="con_right">
 	
-		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:999; ">
-			
-			<div  class="caozuoan">
-				[ <a id="addUnit" href="javascript:add();" title="添加单元信息" >增加</a> ]
-				[ <a id="addProject" href="#" title="打印" onclick="return false;">打印</a> ]
-	         </div>
-	         <div style="clear:both"></div>
-		</div>
-		
-		<div class="bs-glyphicons">
-			<ul class="bs-glyphicons-list" id="unitData">
-				
-			</ul>
-		</div>
-		
-<!--内容部分结束-->
+			</div>
+	</div>
+
+
+
+	<!--内容部分结束-->
 </body>

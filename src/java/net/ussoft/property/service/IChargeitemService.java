@@ -46,5 +46,10 @@ public interface IChargeitemService {
 	 * @return
 	 */
 	public int delete(String id);
+	/**
+	 * 根据条件，获取全部信息
+	 * @return
+	 */
+	public List<Chargeitem> list(Chargeitem chargeitem);
 
 }

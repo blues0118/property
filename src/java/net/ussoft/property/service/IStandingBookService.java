@@ -3,6 +3,7 @@ package net.ussoft.property.service;
 import java.util.List;
 
 import net.ussoft.property.model.PageBean;
+import net.ussoft.property.model.Standingbook;
 import net.ussoft.property.model.Standingbookterm;
 import net.ussoft.property.model.Sys_account;
 
@@ -26,4 +27,9 @@ public interface IStandingBookService {
 	 * @return
 	 */
 	public Standingbookterm insert(Standingbookterm standingbookterm);
+	/**
+	 * 获取全部信息
+	 * @return
+	 */
+	public List<Standingbook> search(Standingbook t);
 }

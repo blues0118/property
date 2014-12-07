@@ -62,5 +62,8 @@ public class ChargeitemService implements IChargeitemService {
 		
 		return chargeitemDao.del(id);
 	}
-	
+	@Override
+	public List<Chargeitem> list(Chargeitem chargeitem) {
+		return chargeitemDao.search(chargeitem);
+	}
 }

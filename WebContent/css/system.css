@@ -1,0 +1,66 @@
+T@charset "UTF-8";
+/* CSS Document */
+
+
+#top{ width:100%; height:50px; background:url(/property/images/tbj_02.jpg) no-repeat  center;    filter:alpha(opacity=90); /*IE滤镜，透明度50%*/
+-moz-opacity:0.9; /*Firefox私有，透明度50%*/
+opacity:0.9;/*其他，透明度50%*/}
+.logo{ float:left; margin-left:10px;  }
+.house{float:left; margin-top:10px;}
+.name{float:left; height:50px; line-height:50px; margin:0 0 0 10px;}
+#nav{ float:left; margin-left:30px;}
+#nav ul{ margin:15px 0 0 0; padding:0;}
+#nav ul li{ width:100px; height:25px;   float:left; list-style:none; margin-left:2px;  opacity:0.7; font-size:12px; line-height:25px; }
+#nav ul li a{ display:block; width:100px; height:25px; color:#333; border-radius:3px;  }
+#nav ul li a:hover{ background:#FFF; filter:alpha(opacity=80); -moz-opacity:0.8; opacity:0.8;}
+
+#nav ul li img{ margin-top:3px; float:left; margin-right:5px;}
+.t_right{ float:right; height:50px; line-height:50px; margin-right:10px; }
+.t_right span{font-size:12px;}
+.t_right a{ color:#333; margin-left:5px; font-size:12px;}
+.t_right a:hover{color:#FFF;}
+#top2{width:100%; height:30px;  background:url(/property/images/t2bj_03.jpg) repeat-x; border-bottom:1px #999 solid;   filter:alpha(opacity=70); /*IE滤镜，透明度50%*/
+-moz-opacity:0.7; /*Firefox私有，透明度50%*/
+opacity:0.7;/*其他，透明度50%*/}
+
+.top2_left{ font-size:12px; color:#333; height:30px; line-height:30px; float:left; margin-left:10px;}
+.top2_right{ float:right; height:30px; }
+.buttons{ float:left; margin-top:5px;}
+.buttons a{ margin-right:5px; float:left; display:block; }
+.jia{width:16px; height:16px; background:url(/property/images/jia1.png); margin-top:3px; }
+.jian{width:16px; height:16px; background:url(/property/images/jian.png) ;margin-top:3px; margin-left:4px;}
+.money{ width:18px; height:20px; background:url(/property/images/m2.png) ; }
+.money:hover{background:url(/property/images/m1.png); float:left;}
+.dayin1{ width:20px; height:20px; background:url(/property/images/d1.png); display:block; float:left; margin-left:5px}
+.seach{float:left; width:206px; height:20px; margin:3px 0 0 10px}
+.txtbox{ width:140px; background:#FFF; height:20px; border:0;}
+.btn1{ width:60px; background:#333; color:#FFF; text-align:center; height:23px; line-height:20px; border:0; font-size:12px;}
+#con{width:100%; margin-top:2px; border-top:1px solid #CCC; }
+#con_left{ width:15%;min-height:600px; background:#FFF; float:left; overflow:auto; border-right: 1px solid #CCC;  filter:alpha(opacity=50); /*IE滤镜，透明度50%*/
+-moz-opacity:0.5; /*Firefox私有，透明度50%*/
+opacity:0.5;/*其他，透明度50%*/}
+#con_right{ width:1000px; height:600px; background:#FFF; overflow:scroll; float:left; }
+#con_left h2{ width:100%; height:25px; background:#d3d8e9; font-size:14px; text-align:center; line-height:25px; padding:0; margin:0;}
+#con_right table{width:3000px; table-layout:fixed; }
+#con_right table tr{ height:80px; }
+#con_right table tr td{ padding:5px; overflow:hidden; width:120px; height:80px;}
+
+#con_right ul{ width:3000px; padding:3px; margin:0; display:block; }
+#con_right ul li{ float:left;}
+#con_right ul .num{height:80px; text-align:center; line-height:80px; color:#666; font-size:14px; padding:0 10px;}
+#con_right ul .info{ float:left; width:140px; height:80px; margin-left:5px; list-style:none; border:1px solid #E4E4E4; position:relative;}
+.c1{ background:#d3d8e9; }
+.c2{background:#F2E3E6;}
+#con_right ul li p{ font-size:12px; padding:7px 5px 2px 5px;  margin:0;}
+.mianji{ margin-left:15px;}
+.btns{ width:130px; height:25px; margin:8px auto 2px auto; background:#FFF; alpha(opacity=50); /*IE滤镜，透明度50%*/
+-moz-opacity:0.5; /*Firefox私有，透明度50%*/
+opacity:0.5;/*其他，透明度50%*/}
+.btns input{ float:left; margin-top:4px;}
+.btn2{ width:15px; height:15px; border:#CCC 1px solid; margin-right:25px;}
+.btn0{width:15px; height:15px; border:#CCC 1px solid; padding:0; margin-left;2px; }
+.xinxi{ width:28px; height:20px; background:url(/property/images/b_07.png); border:0; cursor:pointer;}
+.dayin{width:28px; height:20px; background:url(/property/images/b_07.png)85px; border:0; cursor:pointer;}
+.time{width:28px; height:20px; background:url(/property/images/b_07.png)29px; border:0; cursor:pointer;}
+.time2{width:28px; height:20px; background:url(/property/images/b_07.png)55px; border:0; cursor:pointer;}
+.tixing{ position:absolute; z-index:1000; top:0; left:113px;}

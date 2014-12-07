@@ -8,8 +8,6 @@
 <!-- 弹出框插件 -->
 <script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
 
-<!-- 单元，功能弹出框 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_util.js"></script>
 <script type="text/javascript">
 
 	var setting = {
@@ -41,7 +39,7 @@
 	
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		if (nodes.projecttype == 'L') {
-			$("#fra").attr("src","${pageContext.request.contextPath}/property/list.do?projeuctid=" + nodes.id);
+			$("#fra").attr("src","${pageContext.request.contextPath}/meter/list.do?projeuctid=" + nodes.id);
 			return ;
 		}else{
 			treeObj.expandNode(nodes);
