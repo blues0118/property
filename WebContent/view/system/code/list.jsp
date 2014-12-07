@@ -58,24 +58,36 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    result += '<div style="float:left;cursor:pointer;"><a title="修改收费项" href="javascript:;" onclick="edit(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-pencil"></span></a></div>';
 		    //result += '<div style="float:left;cursor:pointer;"><a title="查看拥有该角色的帐户" href="javascript:;" onclick="searchAccount(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-person"></span></a></div>';
 		    return result;
+        },
+        funIsEdit:function(cellvalue, options, rowdata){
+            var result = "";
+			if(rowdata.isedit == 0){
+				result = "否";
+			}else{
+				result = "是";
+			}
+			return result;
         }
     });
 	
 	function loadData() {
-		var title = "收费项管理";
+		var title = "系统代码管理";
 		var pageer = "#pager";
 		var colNames;
 		var colModel;
 		var datatype = "json";
 		var page = 50;
 		var size;
-		var url = "${pageContext.request.contextPath}/charge/list.do";
+		var url = "${pageContext.request.contextPath}/code/list.do";
 		
-		colNames = ['操作','费用项目名称','描述'];
+		colNames = ['操作','字段名称','字段中文名称','代码key','代码value','状态'];
 		colModel = [ 
 		           {name:'fun',index:'fun', width:60,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}, 
-		           {name:'itemcode',index:'itemcode', width:100,align:"center"}, 
-		           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+		           {name:'fieldcode',index:'fieldcode', width:100,align:"center"}, 
+		           {name:'fieldcncode',index:'fieldcncode', width:100,align:"center"},
+		           {name:'fieldkey',index:'fieldkey', width:100,align:"center"},
+		           {name:'fieldvalue',index:'fieldvalue', width:100,align:"center"},
+		           {name:'isedit',index:'isedit', width:100,align:"center",fixed:true,resizable:false,frozen:true,formatter:"funIsEdit"}
 		];
 		//size = $(".scrollTable").height() - 45;
 		size = $(window).height()-120;
@@ -101,8 +113,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){  
-		//调用charge.util.js里的添加角色方法。
-		parent.charge.util.add();
+		//调用code.util.js里的添加角色方法。
+		parent.code.util.add();
 	}
 	
 	function refresh() {
@@ -123,14 +135,14 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		var ids = getGridSelectids();
 		if (ids == "") {
-			alert("请选择要删除的收费项。");
+			alert("请选择要删除的系统代码。");
 			return;
 		}
 		
-		if (confirm("确定要删除选择的收费项吗？")) {
+		if (confirm("确定要删除选择的项吗？")) {
 		    $.ajax({
 		        async : true,
-		        url : "${pageContext.request.contextPath}/charge/delete.do",
+		        url : "${pageContext.request.contextPath}/code/delete.do",
 		        type : 'post',
 		        data: {ids:ids.toString()},
 		        dataType : 'text',
@@ -148,8 +160,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function edit(id){
-		//调用charge.util.js里的修改收费项方法。
-		parent.charge.util.edit(id);
+		//调用code.util.js里的修改收费项方法。
+		parent.code.util.edit(id);
 	}
 	
 //-->
@@ -159,7 +171,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:999; ">
-			<div class="dqwz_l">当前位置：系统维护-收费管理</div>
+			<div class="dqwz_l">当前位置：系统维护-系统代码管理</div>
 			<div  class="caozuoan">
 				[ <a href="#" onclick="add()">添加</a> ]
 				[ <a href="#" onclick="del()">删除</a> ]

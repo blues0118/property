@@ -2,6 +2,7 @@ package net.ussoft.property.service;
 
 import java.util.List;
 
+import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Sys_code;
 
 public interface ICodeService {
@@ -18,6 +19,14 @@ public interface ICodeService {
 	 * @return
 	 */
 	public List<Sys_code> list();
+	
+	/**
+	 * 分页读取账户信息
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Sys_code> list(Sys_code t,PageBean<Sys_code> pageBean);
+	
 	/**
 	 * 插入
 	 * @param org

@@ -17,6 +17,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/view/auth/account/account_util.js"></script>
 <!-- 角色，功能弹出框 -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/view/auth/role/role_util.js"></script>
+<!-- 收费项目，功能弹出框 -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/system/charge/charge_util.js"></script>
+<!-- 代码管理，功能弹出框 -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/system/code/code_util.js"></script>
+
 
 <script type="text/javascript">
 
@@ -63,10 +68,10 @@
 					<li><a id="project_a" href="javascript:;" onclick="onClickItem('${pageContext.request.contextPath}/project/index.do','project_a')" class="txt2"><img
 							src="${pageContext.request.contextPath}/images/i_14.png"
 							width="18" height="13" class="tubiao1" /><span>物业项目</span></a></li>
-					<li><a href="" class="txt2"><img
+					<li><a id="charge_a" href="javascript:;" onclick="onClickItem('${pageContext.request.contextPath}/charge/index.do','charge_a')" class="txt2"><img
 							src="${pageContext.request.contextPath}/images/i_14.png"
 							width="18" height="13" class="tubiao1" /><span>收费管理</span></a></li>
-					<li><a href="" class="txt2"><img
+					<li><a href="javascript:;" onclick="onClickItem('${pageContext.request.contextPath}/code/index.do','code_a')" class="txt2"><img
 							src="${pageContext.request.contextPath}/images/i_14.png"
 							width="18" height="13" class="tubiao1" /><span>代码管理</span></a></li>
 				</ul>

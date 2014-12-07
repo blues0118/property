@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import net.ussoft.property.dao.CodeDao;
+import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Sys_code;
 import net.ussoft.property.service.ICodeService;
 
@@ -28,6 +29,12 @@ public class CodeService implements ICodeService {
 		return codeDao.getAll();
 	}
 
+	@Override
+	public PageBean<Sys_code> list(Sys_code t,PageBean<Sys_code> pageBean) {
+		pageBean = codeDao.search(t, pageBean);
+		return pageBean;
+	}
+	
 	@Transactional("txManager")
 	@Override
 	public int update(Sys_code code) {
