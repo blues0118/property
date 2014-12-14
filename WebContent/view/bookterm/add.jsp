@@ -20,41 +20,29 @@
 	}
 	
 	function save() {
-		
-		var termcode = $("#termcode").val();
-		var termmemo = $("#termmemo").val();
-		var createtime = $("#createtime").val();
-		var createman = $("#createman").val();
-		var tremstatus = $("#tremstatus").val();
-		
 		var standingbook = {};
-		standingbook.termcode = termcode;
-		standingbook.termmemo = termmemo;
-		standingbook.createtime = createtime;
-		standingbook.createman = createman;
-		standingbook.tremstatus = tremstatus;
-		alert("save11");
+		// 总账期名称
+		standingbook.termcode = $("#termcode").val();
+		// 备注
+		standingbook.termmemo = $("#termmemo").val();
+		// 项目id
+		standingbook.projectid = document.all("projectid").value;
 		
 		var data = JSON.stringify(standingbook);
-		alert("save11");
+		// 添加画面
 	    $.ajax({
 	        async : true,
-	        url : '${pageContext.request.contextPath}/standingbook/save.do',
+	        url : '${pageContext.request.contextPath}/bookterm/save.do',
 	        type : 'post',
 	        data:standingbook,
 	        dataType : 'text',
 	        success : function(data) {
-	        	alert("更新完毕。。。。");
-	        	sessionOut(standingbook);
+	        	sessionOut(data);
 	            if (data == "success") {
 	            	alert("更新完毕。");
 	            } else {
 	            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
 	            }
-	        },
-	        error:function()  
-	        {  
-	            alert("更新失败！");  
 	        }
 	    });
 	}
@@ -76,18 +64,6 @@
 				<td><input type="text" id="termmemo" name="termmemo" ></td>
 			</tr>
 			<tr>
-				<td>创建时间:</td>
-				<td><input type="text" id="createtime" name="createtime" ></td>
-			</tr>
-			<tr>
-				<td>创建人:</td>
-				<td><input type="text" id="createman" name="createman"></td>
-			</tr>
-			<tr>
-				<td>总账期状态:</td>
-				<td><input type="text" id="tremstatus" name="tremstatus" value="未结束"></td>
-			</tr>
-			<tr>
 				<td colspan="2" align="center">
 					<button type="button" onclick="save()">保存</button>
 					<button type="button" onclick="closepage()">关闭</button>
@@ -95,5 +71,8 @@
 			</tr>
 		</tbody>
 	</table>
+	<div>
+		<input type="hidden" name="projectid"value="${projectid}"/>
+	</div>
 </body>
 </html>

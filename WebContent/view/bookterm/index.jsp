@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/view/common/header.jsp"%>
 <%@ include file="/view/common/top_menu.jsp"%>
 
@@ -7,7 +6,8 @@
 
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/redmond/jquery-ui-1.8.2.custom.css"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
-
+<!-- 弹出框插件 -->
+<script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
 <style>
 <!--
 body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
@@ -50,7 +50,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		// L：项目下节点的情况（P：项目  F：项目夹）
 		if (nodes.projecttype == 'L') {
-			$("#fra").attr("src","${pageContext.request.contextPath}/standingbook/relist.do?projeuctid=" + nodes.id);
+			$("#fra").attr("src","${pageContext.request.contextPath}/bookterm/relist.do?projectid=" + nodes.id);
 			return ;
 		}else{
 			treeObj.expandNode(nodes);
@@ -58,6 +58,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function callback() {
+		$("#fra").attr("src","${pageContext.request.contextPath}/bookterm/relist.do?projectid=projectid");
 	}
 	
 	var nodes = ${projectList};
@@ -66,7 +67,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		if (nodes[i].parentid == '0') {
 			nodes[i].isParent = true;
 			nodes[i].open = true;
-			//nodes[i].icon = "${pageContext.request.contextPath}/images/20140926124231782_easyicon_net_16.png";
+
 		}
 		else if (nodes[i].projecttype == "P") {
 			nodes[i].isParent = true;
@@ -84,7 +85,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 	}
 	
-
 	$(function(){
 		$.fn.zTree.init($("#treeDemo"), setting, nodes);
 	});

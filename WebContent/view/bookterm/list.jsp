@@ -21,8 +21,6 @@
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/jquery.contextmenu.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/ui.multiselect.js" type="text/javascript"></script>
 
-<!-- 弹出框插件 -->
-<script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
 
 <style>
 <!--
@@ -51,53 +49,39 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	jQuery.extend($.fn.fmatter, {
-		accountstateFormatter: function (cellvalue, options, rowdata) {
-			if (cellvalue != "0")
-		    	return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',0)"><font color=blue>启用</font></a>';
+        tremstatusFormatter: function (cellvalue, options, rowdata) {
+			if (cellvalue != 1)
+		    	return '未结束';
 		    else 
-		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
+		        return '已结束';
         },
         funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<div style="float:left;cursor:pointer;"><a title="设置物业项目访问权限" href="javascript:;" onclick="show(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-gear"></span></a></div>';
-		    result += '<div style="float:left;cursor:pointer;"><a title="修改帐户信息" href="javascript:;" onclick="edit(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-pencil"></span></a></div>';
-		    result += '<div style="float:left;cursor:pointer;"><a title="修改帐户密码" href="javascript:;" onclick="update_password(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-locked"></span></a></div>';
-		    result += '<div style="float:left;cursor:pointer;"><a title="设置帐户角色" href="javascript:;" onclick="setrole(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-alert"></span></a></div>';
+		    //var result = '<div style="float:center;cursor:pointer;"><a title="修改总台账账期信息" href="javascript:;" onclick="edit(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-pencil"></span></a></div>';
+		    var result = '<button title="详细" type="button" onclick="loadDetailData(\''+rowdata.id+'\')">详细</button>';
+		    result += '<button title="修改" type="button" onclick="edit(\''+rowdata.id+'\')">修改</button>';
+		    result += '<button title="删除" type="button" onclick="del()">删除</button>';
 		    return result;
-	    },
-	    roleFormatter:function (cellvalue, options, rowdata) {
-	    	if (typeof(cellvalue) != "undefined" && cellvalue != "") {
-	    		for (var i=0;i<roles.length;i++) {
-	    			if (roles[i].id == cellvalue) {
-	    				return roles[i].rolecode;
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	else {
-	    		return "";
-	    	}
 	    }
     });
 	
 	function loadData() {
-		var title = "台账管理";
+		var title = "总台账账期管理";
 		var pageer = "#pager";
 		var colNames;
 		var colModel;
 		var datatype = "json";
 		var page = 50;
 		var size;
-		//var url = "${pageContext.request.contextPath}/account/list.do";
-		var url = "${pageContext.request.contextPath}/standingbook/list.do";
+		var url = "${pageContext.request.contextPath}/bookterm/list.do?projectid="+document.all("projectid").value;
 		
-		colNames = ['操作','账期名称','备注', '创建时间', '创建人','账期状态'];
-		colModel = [ 
-                   {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"},
-		           {name:'termcode',index:'termcode', width:100,align:"center"},
-		           {name:'termmemo',index:'termmemo', width:100,align:"center"},
-		           {name:'createtime',index:'createtime', width:100,align:"center"},
-		           {name:'createman',index:'createman', width:100,align:"center"}, 
-		           {name:'tremstatus',index:'tremstatus', width:100,align:"center"}
+		colNames = ['总账期名称','备注', '创建时间', '创建人','总账期状态','操作'];
+		colModel = [
+                   {name:'termcode',index:'termcode', align:"center"},
+		           {name:'termmemo',index:'termmemo', align:"center"},
+		           {name:'createtime',index:'createtime', align:"center"},
+		           {name:'createman',index:'createman', align:"center"}, 
+		           {name:'tremstatus',index:'tremstatus', align:"center",formatter:"tremstatusFormatter"}, 
+                   {name:'fun',index:'fun', fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}
 		];
 		
 		var searchTxt = $("#searchTxt").val();
@@ -106,6 +90,45 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		var _option = {
 				gridObject:"dataGrid",
+				url:url,
+				datatype:"json",
+				colNames:colNames,
+				colModel:colModel,
+				postData:postData,
+				pageer:pageer,
+				page:page,
+				title:title,
+				size:size
+		};
+		
+		//创建grid
+		$.loadGridData(_option);
+	}
+	
+	function loadDetailData(termid) {
+		var title = "单元台账账期";
+		var pageer = "#pager";
+		var colNames;
+		var colModel;
+		var datatype = "json";
+		var page = 50;
+		var size;
+		var url = "${pageContext.request.contextPath}/bookterm/detaillist.do";
+		
+		colNames = ['账期名称','备注', '单元账期状态','操作1'];
+		colModel = [
+                   {name:'unittermcode',index:'unittermcode', width:100,align:"center"},
+		           {name:'unittermmemo',index:'unittermmemo', width:100,align:"center"},
+		           {name:'unittermstatus',index:'unittermstatus', width:100,align:"center",formatter:"tremstatusFormatter"}, 
+                   {name:'fun1',index:'fun1', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"fun1Formatter"}
+		];
+		
+		var searchTxt = termid;
+		size = $(window).height()-120;
+		var postData={searchTxt:searchTxt};
+		
+		var _option = {
+				gridObject:"detailDataGrid",
 				url:url,
 				datatype:"json",
 				colNames:colNames,
@@ -132,46 +155,24 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){
-		alert("add111");
-		var url = "../standingbook/add.do";
-		alert("add122");
-		$.layer({
+		if (document.all("projectid").value == "projectid") {
+			alert("请先选择要右侧的单元节点。");
+			return;
+		}
+		var url = "${pageContext.request.contextPath}/bookterm/add.do?projectid="+document.all("projectid").value;
+		parent.$.layer({
 	        type: 2,
-	        title: '添加台账',
+	        title: '添加总台账',
 	        maxmin: false,
 	        shadeClose: true, //开启点击遮罩关闭层
 	        area : ['600px' , '300px'],
-	        offset : ['150px', ''],
+	        offset : ['', ''],
 	        iframe: {src: url},
 	        end: function(){
-	        	//调用iframe子页面的刷新方法
-	        	standingbook.window.refresh();
+	        	// 数据重新读取方法
+	        	refresh();
 	        }
 	    });
-	}
-	
-	function add22(){
-		//调用account.util.js里的添加帐户方法。
-		alert("add111");
-		//var url = "${pageContext.request.contextPath}/standingbook/add.do?";
-		alert("add112");
-		$.layer({
-	        type: 2,
-	        title: '添加台账',
-	        maxmin: false,
-	        shadeClose: true, //开启点击遮罩关闭层
-	        area : ['600px' , '300px'],
-	        offset : ['150px', ''],
-	        iframe: {src: 'www.baidu.com'},
-	        success: function(){
-	            layer.msg('点击层外任意处，可关闭该iframe层', 2, 9);
-	        },
-	        end: function(){
-	        	//调用iframe子页面的刷新方法
-	        	iframe.refresh();
-	        }
-	    });
-		alert("add113");
 	}
 	
 	function del() {
@@ -185,7 +186,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		if (confirm("确定要删除选择的帐户吗？删除该帐户，将同时删除该帐户的一切附属信息。请谨慎操作。")) {
 		    $.ajax({
 		        async : true,
-		        url : "${pageContext.request.contextPath}/account/delete.do",
+		        url : "${pageContext.request.contextPath}/bookterm/delete.do",
 		        type : 'post',
 		        data: {ids:ids.toString()},
 		        dataType : 'text',
@@ -201,8 +202,26 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function edit(id){
-		//调用account.util.js里的添加帐户方法。
-		parent.account.util.edit(id);
+		if (id == "") {
+			alert("请先选择要修改的数据。");
+			return;
+		}
+		
+		var url = "${pageContext.request.contextPath}/bookterm/edit.do?id="+id + "&time="+Date.parse(new Date());
+		
+		parent.$.layer({
+	        type: 2,
+	        title: '修改总账期信息',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	// 数据重新读取方法
+	        	refresh();
+	        }
+	    });
 	}
 	
 	function update_password(id) {
@@ -266,12 +285,19 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 			<div class="dqwz_l">当前位置：台账管理－总台账账期</div>
 			<div  class="caozuoan">
 				[ <a href="#" onclick="add()">添加总账期</a> ]
-				[ <a href="#" onclick="del()">删除总账期</a> ]
-				[ <a href="#" onclick="refresh()">刷新列表</a> ]
+				<input type="text" id="searchTxt" name="searchTxt" />
+				<button type="button" onclick="loadData()">查询</button>
 	         </div>
 	         <div style="clear:both"></div>
 	    </div>
 		<div class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 			<table id="dataGrid"></table>
 			<div id="pager"></div>
+		</div>
+		<div class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
+			<table id="detailDataGrid"></table>
+			<div id="pager"></div>
+		</div>
+		<div>
+			<input type="hidden" name="projectid" value="${projectid}"/>
 		</div>
