@@ -30,7 +30,7 @@ import com.alibaba.fastjson.JSON;
 
 @Controller
 @RequestMapping(value="bookterm")
-public class BookController extends BaseConstroller {
+public class BookTermController extends BaseConstroller {
 	
 	@Resource
 	private IProjectService projectService;
