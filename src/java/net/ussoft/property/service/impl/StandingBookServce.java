@@ -7,8 +7,8 @@ import javax.annotation.Resource;
 
 
 
-import net.ussoft.property.dao.StandingbookDao;
-import net.ussoft.property.dao.StandingbooktermDao;
+import net.ussoft.property.dao.BookDao;
+import net.ussoft.property.dao.BooktermDao;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Standingbook;
 import net.ussoft.property.model.Standingbookterm;
@@ -22,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class StandingBookServce implements IStandingBookService {
 	@Resource
-	private StandingbookDao standingbookDao;
+	private BookDao standingbookDao;
 	
 	@Resource
-	private StandingbooktermDao standingBookTermDao;
+	private BooktermDao standingBookTermDao;
 	
 	@Override
 	public List<Standingbook> search(Standingbook t) {

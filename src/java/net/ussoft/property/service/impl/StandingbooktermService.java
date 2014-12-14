@@ -6,8 +6,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import net.ussoft.property.dao.StandingbookDao;
-import net.ussoft.property.dao.StandingbooktermDao;
+import net.ussoft.property.dao.BookDao;
+import net.ussoft.property.dao.BooktermDao;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Standingbookterm;
 import net.ussoft.property.service.IStandingbooktermService;
@@ -15,7 +15,7 @@ import net.ussoft.property.service.IStandingbooktermService;
 @Service
 public class StandingbooktermService implements IStandingbooktermService {
 	@Resource
-	private StandingbooktermDao standingbooktermDao;
+	private BooktermDao standingbooktermDao;
 	@Override
 	public List<Standingbookterm> search(Standingbookterm t) {
 		return standingbooktermDao.search(t);
