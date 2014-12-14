@@ -14,7 +14,6 @@ import net.ussoft.property.model.Meter;
 import net.ussoft.property.model.Meteritem;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
-import net.ussoft.property.model.Standingbookterm;
 import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Unit;
 import net.ussoft.property.service.IMeterService;
@@ -37,7 +36,7 @@ public class MeterController extends BaseConstroller  {
 	@Resource
 	private IProjectService projectService;
 	@Resource
-	private IStandingbooktermService standingbooktermService;
+	private IMeterService meterService;
 	
 	/**
 	 * 物业管理->抄表管理
@@ -77,7 +76,7 @@ public class MeterController extends BaseConstroller  {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
-		PageBean<Standingbookterm> pageBean = new PageBean<Standingbookterm>();
+		PageBean<Meter> pageBean = new PageBean<Meter>();
 		
 		//每页行数
 		Integer pageSize = 10;
@@ -88,11 +87,11 @@ public class MeterController extends BaseConstroller  {
 		
 		pageBean.setOrderBy("termcode");
 		
-		Standingbookterm t = new Standingbookterm();
+		Meter t = new Meter();
 		t.setProjectid(unit.getProjeuctid());
 		
 		//获取数据
-		pageBean = standingbooktermService.list(t, pageBean);
+		pageBean = meterService.list(t, pageBean);
 		
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalpages", pageBean.getPageCount());
@@ -106,19 +105,20 @@ public class MeterController extends BaseConstroller  {
 	
 	
 	/**
-	 * 账期招标记录列表。
-	 * @param sbookId
+	 * 抄表账期抄表记录列表。
+	 * @param meterid
+	 * @param unit
 	 * @return
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/meteritem")
-	public void meteritem(String sbookId,HttpServletResponse response) throws Exception {
+	public void meteritem(Unit unit,String meterid,int page, HttpServletResponse response) throws Exception {
 		
 		response.setContentType("text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
-		PageBean<Standingbookterm> pageBean = new PageBean<Standingbookterm>();
+		PageBean<Meteritem> pageBean = new PageBean<Meteritem>();
 		
 		//每页行数
 		Integer pageSize = 10;
@@ -129,11 +129,12 @@ public class MeterController extends BaseConstroller  {
 		
 		pageBean.setOrderBy("termcode");
 		
-		Standingbookterm t = new Standingbookterm();
+		Meteritem t = new Meteritem();
 		t.setProjectid(unit.getProjeuctid());
+		t.setId(meterid);
 		
 		//获取数据
-		pageBean = standingbooktermService.list(t, pageBean);
+//		pageBean = meterService.list(t, pageBean);
 		
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalpages", pageBean.getPageCount());
