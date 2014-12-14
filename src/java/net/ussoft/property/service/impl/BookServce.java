@@ -4,23 +4,19 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-
-
-
 import net.ussoft.property.dao.BookDao;
 import net.ussoft.property.dao.BooktermDao;
+import net.ussoft.property.model.Book;
+import net.ussoft.property.model.Bookterm;
 import net.ussoft.property.model.PageBean;
-import net.ussoft.property.model.Standingbook;
-import net.ussoft.property.model.Standingbookterm;
-import net.ussoft.property.model.Sys_account;
-import net.ussoft.property.service.IStandingBookService;
+import net.ussoft.property.service.IBookService;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class StandingBookServce implements IStandingBookService {
+public class BookServce implements IBookService {
 	@Resource
 	private BookDao standingbookDao;
 	
@@ -28,23 +24,23 @@ public class StandingBookServce implements IStandingBookService {
 	private BooktermDao standingBookTermDao;
 	
 	@Override
-	public List<Standingbook> search(Standingbook t) {
+	public List<Book> search(Book t) {
 		return standingbookDao.search(t);
 	}
 	@Override
-	public List<Standingbookterm> list() {
+	public List<Bookterm> list() {
 		return standingBookTermDao.getAll();
 	}
 	
 	@Override
-	public PageBean<Standingbookterm> list(Standingbookterm t,PageBean<Standingbookterm> pageBean) {
+	public PageBean<Bookterm> list(Bookterm t,PageBean<Bookterm> pageBean) {
 		pageBean = standingBookTermDao.search(t, pageBean);
 		return pageBean;
 	}
 	
 	@Transactional("txManager")
 	@Override
-	public Standingbookterm insert(Standingbookterm standingbookterm) {
+	public Bookterm insert(Bookterm standingbookterm) {
 		standingBookTermDao.save(standingbookterm);
 		return standingbookterm;
 	}

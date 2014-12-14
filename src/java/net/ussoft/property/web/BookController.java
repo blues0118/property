@@ -10,6 +10,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.ussoft.property.base.BaseConstroller;
+import net.ussoft.property.model.Bookterm;
+import net.ussoft.property.model.PageBean;
+import net.ussoft.property.model.Project;
+import net.ussoft.property.service.IBookService;
+import net.ussoft.property.service.IProjectService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,24 +25,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 
-import net.ussoft.property.base.BaseConstroller;
-import net.ussoft.property.model.PageBean;
-import net.ussoft.property.model.Project;
-import net.ussoft.property.model.Standingbookterm;
-import net.ussoft.property.model.Sys_account;
-import net.ussoft.property.service.IProjectService;
-import net.ussoft.property.service.IStandingBookService;
-import net.ussoft.property.util.MD5;
-
 @Controller
 @RequestMapping(value="standingbook")
-public class StandingBookController extends BaseConstroller {
+public class BookController extends BaseConstroller {
 	
 	@Resource
 	private IProjectService projectService;
 	
 	@Resource
-	private IStandingBookService standingBookService;
+	private IBookService standingBookService;
 	
 	/**
 	 * 台账管理初期
@@ -68,7 +66,7 @@ public class StandingBookController extends BaseConstroller {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
-		PageBean<Standingbookterm> pageBean = new PageBean<Standingbookterm>();
+		PageBean<Bookterm> pageBean = new PageBean<Bookterm>();
 
 		//每页行数
 		Integer pageSize = 50;
@@ -79,7 +77,7 @@ public class StandingBookController extends BaseConstroller {
 		
 		pageBean.setOrderBy("termcode");
 		
-		Standingbookterm t = new Standingbookterm();
+		Bookterm t = new Bookterm();
 		//t.setProjectid(modelMap.get("projeuctid").toString());
 		t.setProjectid("sdffadfa");
 		if (null != searchTxt && !"".equals(searchTxt)) {
@@ -133,7 +131,7 @@ public class StandingBookController extends BaseConstroller {
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/save",method=RequestMethod.POST)
-	public void save(Standingbookterm standingbookterm,HttpServletRequest request,HttpServletResponse response) throws IOException {
+	public void save(Bookterm standingbookterm,HttpServletRequest request,HttpServletResponse response) throws IOException {
 		
 		response.setContentType("text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");

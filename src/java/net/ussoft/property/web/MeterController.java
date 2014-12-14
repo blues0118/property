@@ -18,7 +18,7 @@ import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Unit;
 import net.ussoft.property.service.IMeterService;
 import net.ussoft.property.service.IProjectService;
-import net.ussoft.property.service.IStandingbooktermService;
+import net.ussoft.property.service.IBooktermService;
 import net.ussoft.property.service.IUnittermService;
 
 import org.springframework.stereotype.Controller;

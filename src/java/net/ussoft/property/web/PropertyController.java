@@ -30,7 +30,7 @@ import net.ussoft.property.service.ILeaseAgreementService;
 import net.ussoft.property.service.ILeaseService;
 import net.ussoft.property.service.IMeterItemService;
 import net.ussoft.property.service.IProjectService;
-import net.ussoft.property.service.IStandingBookService;
+import net.ussoft.property.service.IBookService;
 import net.ussoft.property.service.IUnitService;
 import net.ussoft.property.service.IUnittermService;
 import net.ussoft.property.util.MD5;
@@ -74,7 +74,7 @@ public class PropertyController extends BaseConstroller {
 	private IChargeitemService chargeitemService;
 	
 	@Resource
-	private IStandingBookService standingbookService;
+	private IBookService standingbookService;
 	
 	@Resource
 	private IUnittermService unittermService;
