@@ -17,6 +17,7 @@ public class Meteritem {
 	private String watchcode;
 	private String meterman;
 	private String createtime;
+	private String meterid;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -74,7 +75,11 @@ public class Meteritem {
 	public void setCreatetime(String createtime) {
 		this.createtime = createtime;
 	}
-	
-	
+	public String getMeterid() {
+		return meterid;
+	}
+	public void setMeterid(String meterid) {
+		this.meterid = meterid;
+	}
 	
 }

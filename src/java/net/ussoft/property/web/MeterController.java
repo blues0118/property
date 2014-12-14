@@ -15,6 +15,7 @@ import net.ussoft.property.model.Meteritem;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Standingbookterm;
+import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Unit;
 import net.ussoft.property.service.IMeterService;
 import net.ussoft.property.service.IProjectService;
@@ -32,10 +33,7 @@ import com.alibaba.fastjson.JSON;
 @Controller
 @RequestMapping(value="meter")
 public class MeterController extends BaseConstroller  {
-	@Resource
-	private IMeterService meterService;
-	@Resource
-	private IUnittermService unittermService;
+	
 	@Resource
 	private IProjectService projectService;
 	@Resource
@@ -49,7 +47,7 @@ public class MeterController extends BaseConstroller  {
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView index(ModelMap modelMap) {
 		modelMap = super.getModelMap("METER","");
-				
+		Sys_account account = super.getSessionAccount();
 		List<Project> list = projectService.list();
 		String listString = JSON.toJSONString(list);
 		modelMap.put("projectList", listString);
@@ -107,7 +105,45 @@ public class MeterController extends BaseConstroller  {
 	}
 	
 	
-	
+	/**
+	 * 账期招标记录列表。
+	 * @param sbookId
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/meteritem")
+	public void meteritem(String sbookId,HttpServletResponse response) throws Exception {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		PageBean<Standingbookterm> pageBean = new PageBean<Standingbookterm>();
+		
+		//每页行数
+		Integer pageSize = 10;
+		
+		pageBean.setIsPage(true);
+		pageBean.setPageSize(pageSize);
+		pageBean.setPageNo(page);
+		
+		pageBean.setOrderBy("termcode");
+		
+		Standingbookterm t = new Standingbookterm();
+		t.setProjectid(unit.getProjeuctid());
+		
+		//获取数据
+		pageBean = standingbooktermService.list(t, pageBean);
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalpages", pageBean.getPageCount());
+		resultMap.put("currpage", pageBean.getPageNo());
+		resultMap.put("totalrecords", pageBean.getRowCount());
+		resultMap.put("rows", pageBean.getList());
+		
+		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
 	
 	
 }

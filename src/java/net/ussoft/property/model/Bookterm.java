@@ -5,8 +5,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name="standingbookterm")
-public class Standingbookterm {
+@Table(name="bookterm")
+public class Bookterm {
 
 	private String id;
 	private String termcode;

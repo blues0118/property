@@ -1,0 +1,5 @@
+-- 单元表 —— 新增是否删除字段 0未删除，1已删除
+ALTER TABLE unit ADD isdelete INT DEFAULT '0';
+
+-- 抄表记录，新增抄表账期ID
+ALTER TABLE meteritem ADD meterid VARCHAR(40);

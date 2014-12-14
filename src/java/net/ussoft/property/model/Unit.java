@@ -20,6 +20,7 @@ public class Unit {
 	private Integer unitsort;
 	private Integer unitrowsort;
 	private String unitcolor;
+	private int isdelete;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -94,6 +95,12 @@ public class Unit {
 	}
 	public void setUnitcolor(String unitcolor) {
 		this.unitcolor = unitcolor;
+	}
+	public int getIsdelete() {
+		return isdelete;
+	}
+	public void setIsdelete(int isdelete) {
+		this.isdelete = isdelete;
 	}
 	
 	

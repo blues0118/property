@@ -111,3 +111,25 @@ account.util.setrole = function(id) {
 	
 	
 }
+//设置账户操作权限，弹出框
+account.util.setAuthority = function(id) {
+    if (id == "") {
+        alert("请先选择要设置的帐户。");
+        return;
+    }
+    
+    var url = "../account/setAuthority.do?id="+id + "&time="+Date.parse(new Date());
+    
+    $.layer({
+        type: 2,
+        title: '设置物业项目访问权限',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['600px' , '300px'],
+        offset : ['150px', ''],
+        iframe: {src: url}
+        
+    });
+    
+    
+}

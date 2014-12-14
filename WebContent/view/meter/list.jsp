@@ -7,6 +7,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/zTree/js/jquery.ztree.all-3.5.min.js"></script>
 <!-- 弹出框插件 -->
 <script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
+<!-- 抄表管理 -->
+<script src="${pageContext.request.contextPath}/view/meter/meteritem_util.js"></script>
 
 <script type="text/javascript">
 

@@ -68,7 +68,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    return result;
 	    },
         funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button type="button" onclick="saveChargeitem(\''+rowdata.id+'\')">详细</button>';
+		    var result = '<button type="button" onclick="setMeteritem(\''+rowdata.id+'\')">详细</button>';
 		    result += '<button type="button" onclick="saveChargeitem(saveChargeitem(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
 		    return result;
@@ -127,8 +127,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function add(){
-		//调用account.util.js里的添加帐户方法。
-		parent.account.util.add();
+		//调用meteritem.util.js里的添加帐户方法。
+		parent.meteritem.util.add();
 	}
 	
 	function del() {
@@ -158,14 +158,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	
-	function edit(id){
-		//调用account.util.js里的添加帐户方法。
-		parent.account.util.edit(id);
-	}
-	
-	function update_password(id) {
-		//调用account.util.js里的修改帐户密码方法。
-		parent.account.util.update_password(id);
+	function setMeteritem(id){
+		//调用meteritem.util.js里的单元抄表记录方法。
+		parent.meteritem.util.setMeteritem(id);
 	}
 	
 	function refresh() {

@@ -5,8 +5,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name="standingbook")
-public class Standingbook {
+@Table(name="book")
+public class Book {
 
 	private String id;
 	private String projectid;
