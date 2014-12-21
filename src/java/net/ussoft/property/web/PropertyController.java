@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import net.ussoft.property.base.BaseConstroller;
 import net.ussoft.property.dao.ChargeitemDao;
 import net.ussoft.property.dao.MeteritemDao;
+import net.ussoft.property.model.Book;
 import net.ussoft.property.model.Chargeitem;
 import net.ussoft.property.model.Lease;
 import net.ussoft.property.model.Lease_agreement;
 import net.ussoft.property.model.Meteritem;
 import net.ussoft.property.model.Project;
-import net.ussoft.property.model.Standingbook;
 import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Sys_role;
 import net.ussoft.property.model.Unit;
@@ -226,12 +226,12 @@ public class PropertyController extends BaseConstroller {
 		
 		List<Unitterm> unittermList = unittermService.search(unit.getId());//单元账期,按照unittermcode由大到小排序
 		
-		Standingbook standingbook  = new Standingbook();
+		Book standingbook  = new Book();
 		standingbook.setUnitid(unit.getId());
 		if(unittermList!=null &&unittermList.size()>0){
 			standingbook.setUnittermid(unittermList.get(0).getId());
 		}
-		List<Standingbook> standingbookList = standingbookService.search(standingbook);//单元台帐,默认显示的是最近一期的台帐
+		List<Book> standingbookList = standingbookService.search(standingbook);//单元台帐,默认显示的是最近一期的台帐
 		
 		
 		//查询结束
