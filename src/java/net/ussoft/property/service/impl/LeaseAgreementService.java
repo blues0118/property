@@ -1,5 +1,6 @@
 package net.ussoft.property.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,7 +18,7 @@ public class LeaseAgreementService implements ILeaseAgreementService {
 	
 	@Resource
 	private LeaseAgreementDao leaseAgreementDao;
-	
+
 	@Override
 	public int delete(String id) {
 		
@@ -50,8 +51,7 @@ public class LeaseAgreementService implements ILeaseAgreementService {
 	@Override
 	public PageBean<Lease_agreement> list(Lease_agreement t,
 			PageBean<Lease_agreement> pageBean) {
-		// TODO Auto-generated method stub
-		return null;
+		return leaseAgreementDao.search(t, pageBean);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class LeaseAgreementService implements ILeaseAgreementService {
 
 	@Override
 	public int update(Lease_agreement leaseAgreement) {
-		// TODO Auto-generated method stub
+		leaseAgreementDao.update(leaseAgreement);
 		return 0;
 	}
 
@@ -75,5 +75,7 @@ public class LeaseAgreementService implements ILeaseAgreementService {
 	public List<Lease_agreement> search(Lease_agreement t) {
 		return leaseAgreementDao.search(t);
 	}
+
+	
 
 }

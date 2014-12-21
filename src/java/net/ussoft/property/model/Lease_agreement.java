@@ -15,6 +15,12 @@ public class Lease_agreement {
 	private String unitid;
 	private String leaseid;
 	private String leasefile;
+	private String leasename;
+	private String leasetype;
+	private String leasenumber;
+	private String phonenumber;
+	private String mobilephone;
+	private String leasefilename;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -59,6 +65,42 @@ public class Lease_agreement {
 	}
 	public void setLeasefile(String leasefile) {
 		this.leasefile = leasefile;
+	}
+	public String getLeasename() {
+		return leasename;
+	}
+	public void setLeasename(String leasename) {
+		this.leasename = leasename;
+	}
+	public String getLeasetype() {
+		return leasetype;
+	}
+	public void setLeasetype(String leasetype) {
+		this.leasetype = leasetype;
+	}
+	public String getLeasenumber() {
+		return leasenumber;
+	}
+	public void setLeasenumber(String leasenumber) {
+		this.leasenumber = leasenumber;
+	}
+	public String getPhonenumber() {
+		return phonenumber;
+	}
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
+	}
+	public String getMobilephone() {
+		return mobilephone;
+	}
+	public void setMobilephone(String mobilephone) {
+		this.mobilephone = mobilephone;
+	}
+	public String getLeasefilename() {
+		return leasefilename;
+	}
+	public void setLeasefilename(String leasefilename) {
+		this.leasefilename = leasefilename;
 	}
 	
 	

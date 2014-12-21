@@ -34,7 +34,6 @@ import net.ussoft.property.service.IBookService;
 import net.ussoft.property.service.IUnitService;
 import net.ussoft.property.service.IUnittermService;
 import net.ussoft.property.util.MD5;
-import net.ussoft.property.vo.UnitAll;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -216,22 +215,22 @@ public class PropertyController extends BaseConstroller {
 		List<Lease_agreement> agreementList = leaseAgreementService.list(leaseAgreement);//租赁合同
 		
 		
-		Meteritem meteritem = new Meteritem();
-		meteritem.setUnitid(unit.getId());
-		List<Meteritem> meteritemList = meterItemService.list(meteritem);//抄表记录
+//		Meteritem meteritem = new Meteritem();
+//		meteritem.setUnitid(unit.getId());
+//		List<Meteritem> meteritemList = meterItemService.list(meteritem);//抄表记录
 		
-		Chargeitem chargeitem = new Chargeitem();
-		chargeitem.setUnitid(unit.getId());
-		List<Chargeitem> chargeItemList = chargeitemService.list(chargeitem); //收费项目
+//		Chargeitem chargeitem = new Chargeitem();
+//		chargeitem.setUnitid(unit.getId());
+//		List<Chargeitem> chargeItemList = chargeitemService.list(chargeitem); //收费项目
 		
-		List<Unitterm> unittermList = unittermService.search(unit.getId());//单元账期,按照unittermcode由大到小排序
-		
-		Book standingbook  = new Book();
-		standingbook.setUnitid(unit.getId());
-		if(unittermList!=null &&unittermList.size()>0){
-			standingbook.setUnittermid(unittermList.get(0).getId());
-		}
-		List<Book> standingbookList = standingbookService.search(standingbook);//单元台帐,默认显示的是最近一期的台帐
+//		List<Unitterm> unittermList = unittermService.search(unit.getId());//单元账期,按照unittermcode由大到小排序
+//		
+//		Standingbook standingbook  = new Standingbook();
+//		standingbook.setUnitid(unit.getId());
+//		if(unittermList!=null &&unittermList.size()>0){
+//			standingbook.setUnittermid(unittermList.get(0).getId());
+//		}
+//		List<Standingbook> standingbookList = standingbookService.search(standingbook);//单元台帐,默认显示的是最近一期的台帐
 		
 		
 		//查询结束
@@ -240,10 +239,10 @@ public class PropertyController extends BaseConstroller {
 		modelMap.put("unit", unit);//单元信息
 		modelMap.put("lease", lease);//租户资料
 		modelMap.put("agreementList", agreementList);//租赁合同
-		modelMap.put("meteritemList", meteritemList);//抄表记录
-		modelMap.put("chargeItemList", chargeItemList);//收费项目
-		modelMap.put("standingbookList", standingbookList);//单元台帐
-		modelMap.put("unittermList", unittermList);//单元账期
+//		modelMap.put("meteritemList", meteritemList);//抄表记录
+//		modelMap.put("chargeItemList", chargeItemList);//收费项目
+//		modelMap.put("standingbookList", standingbookList);//单元台帐
+//		modelMap.put("unittermList", unittermList);//单元账期
 		
 		
 //		UnitAll unitAll = unitService.searchAll(id);

@@ -3,7 +3,6 @@ package net.ussoft.property.service;
 import java.util.List;
 
 import net.ussoft.property.model.Unit;
-import net.ussoft.property.vo.UnitAll;
 
 /**
  * 单元管理service
@@ -17,11 +16,7 @@ public interface IUnitService {
 	 * @return
 	 */
 	public List<Unit> search(Unit t);
-	/**
-	 * 获取单元以及相关的全部信息
-	 * @return
-	 */
-	public UnitAll searchAll(String id);
+	
 	/**
 	 * 插入单元信息
 	 * @param unit

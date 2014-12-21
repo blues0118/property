@@ -31,7 +31,6 @@ public interface ILeaseAgreementService {
 	 * @return
 	 */
 	public PageBean<Lease_agreement> list(Lease_agreement t,PageBean<Lease_agreement> pageBean);
-	
 	/**
 	 * 根据条件，获取全部信息
 	 * @return

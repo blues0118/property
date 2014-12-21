@@ -15,7 +15,6 @@ import net.ussoft.property.model.Meteritem;
 import net.ussoft.property.model.Sys_role;
 import net.ussoft.property.model.Unit;
 import net.ussoft.property.service.IUnitService;
-import net.ussoft.property.vo.UnitAll;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,27 +62,7 @@ public class UnitService implements IUnitService {
 	public Unit getById(String id) {
 		return unitDao.get(id);
 	}
-
-	@Override
-	public UnitAll searchAll(String id) {
-		UnitAll unitAll = new UnitAll();
-		Unit unit = unitDao.get(id);
-		
-		unitAll.setUnit(unit);//单元信息
-		unitAll.setLease(leaseDao.get(unit.getLeaseid()));//租户资料
-		String sql = " select id,leasecode,beingdate,enddate,unitid,leaseid,leasefile from lease_agreement where unitid=? ";
-		List<Object> sqlValues = new ArrayList<Object>();
-		sqlValues.add(unit.getId());
-		unitAll.setAgreementList(leaseAgreementDao.search(sql , sqlValues));//租赁合同
-		Meteritem meteritem = new Meteritem();
-		meteritem.setUnitid(unit.getId());
-		unitAll.setMeteritemList(meterItemDao.search(meteritem));//抄表记录
-		Chargeitem chargeitem = new Chargeitem();
-		chargeitem.setUnitid(unit.getId());
-		unitAll.setChargeItemList(chargeitemDao.search(chargeitem));//收费项目
-		
-		return unitAll;
-	}
+	
 	@Transactional("txManager")
 	@Override
 	public int update(Unit unit) {
