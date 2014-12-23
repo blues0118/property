@@ -50,7 +50,7 @@ function closepage() {
 		//获取当前窗口索引
 		var index = parent.layer.getFrameIndex(window.name);
 		parent.layer.close(index);
-	}
+}
 
 </script>
 <title>添加单元信息</title>

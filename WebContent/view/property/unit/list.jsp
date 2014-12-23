@@ -106,8 +106,19 @@
 	function add(){
 		var projectid = "${projeuctid}";
 		var url = "../property/add.do?projeuctid="+projectid+"&time="+Date.parse(new Date());
-		//调用parent.util.js里的添加帐户方法。
-		parent.property.util.add(url);
+		parent.$.layer({
+	        type: 2,
+	        title: '添加单元',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['800px' , '460px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end:function() {
+	        	//关闭弹出框1时，刷新frame内容
+	        	$('#f').val("第一个弹出框，刷新后");
+	        }
+	    });
 	}
 	
 	function addBatchLease(){
@@ -120,7 +131,19 @@
 		var projectid = "${projeuctid}";
 		var url = "../lease/add.do?unitid="+ids+"&time="+Date.parse(new Date());
 		//调用parent.util.js里的添加帐户方法。
-		parent.property.util.addLease(url);
+		parent.$.layer({
+	        type: 2,
+	        title: '添加租赁合同',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['850px' , '400px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end:function() {
+	        	//关闭弹出框1时，刷新frame内容
+	        	$('#f').val("第一个弹出框，刷新后");
+	        }
+	    });
 	}
 	
 	function getCheckboxIds() {
@@ -166,10 +189,34 @@
 		}
 		
 	}
-	function edit(id){
-		//调用property.util.js里的修改角色方法。
-		parent.property.util.edit(id);
+function edit(id){
+		if (id == "") {
+		alert("请先选择要修改的数据。");
+		return;
 	}
+	
+	if (id == "1") {
+		alert("超级帐户不能修改。");
+		return;
+	}
+	
+	
+	var url = "../property/edit.do?id="+id + "&time="+Date.parse(new Date());
+	
+	parent.$.layer({
+        type: 2,
+        title: '查看或修改帐户信息',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['1300px' , '500px'],
+        offset : ['', ''],
+        iframe: {src: url},
+        end: function(){
+        	//调用iframe子页面的刷新方法
+        	tt.window.refresh();
+        }
+    });
+}
 	function refresh() {
 		console.log("listlistlistlistlistlistlistlistlistlistlistlistlistlistlist");
 		window.location.reload();

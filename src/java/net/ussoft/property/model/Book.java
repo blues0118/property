@@ -24,6 +24,7 @@ public class Book {
 	private String termid;
 	private String unittermid;
 	private String bookmemo;
+	private String chargeprice;
 	
 	
 	@Id
@@ -124,7 +125,12 @@ public class Book {
 	public void setBookmemo(String bookmemo) {
 		this.bookmemo = bookmemo;
 	}
-	
+	public String getChargeprice() {
+		return chargeprice;
+	}
+	public void setChargeprice(String chargeprice) {
+		this.chargeprice = chargeprice;
+	}
 	
 	
 }

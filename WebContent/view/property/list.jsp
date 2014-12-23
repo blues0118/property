@@ -7,9 +7,6 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/zTree/js/jquery.ztree.all-3.5.min.js"></script>
 <!-- 弹出框插件 -->
 <script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
-
-<!-- 单元，功能弹出框 -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_util.js"></script>
 <script type="text/javascript">
 
 	var setting = {

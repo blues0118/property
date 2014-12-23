@@ -4,24 +4,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/json2.js"></script>
-<!-- //打印的js、css引入 start -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
-<!-- //打印的js、css引入 end -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/public.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/util.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.cxcolor/js/jquery.cxcolor.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/layer/layer.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table_main.css" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/json2.js"></script>
+
+<link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/redmond/jquery-ui-1.8.2.custom.css"/>
+<script src="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/css/ui.jqgrid.css"/>
 <script src="${pageContext.request.contextPath}/js/jqgrid/js/i18n/grid.locale-cn.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
-<base target="_self">
+<script src="${pageContext.request.contextPath}/js/jqgrid/js/jquery.common.archiveGrid.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/js/jqgrid/plugins/jquery.tablednd.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/js/jqgrid/plugins/jquery.contextmenu.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/js/jqgrid/plugins/ui.multiselect.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/jquery.cxcolor/css/jquery.cxcolor.css" type="text/css">
+
+<!-- 打印的js、css引入  -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
+<!-- 单元的操作js -->
+<script src="${pageContext.request.contextPath}/view/property/unit/property_edit.js" type="text/javascript"></script>
+<!-- 颜色拾取的js、css引入 end -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.cxcolor/js/jquery.cxcolor.min.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/jquery.cxcolor/css/jquery.cxcolor.css" type="text/css">
+<!-- 布局插件 -->
+<link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jquery.layout/layout-default-latest.css"/>
+<script src="${pageContext.request.contextPath}/js/jquery.layout/jquery.layout-latest.js" type="text/javascript"></script>
+<base target="_self">
 <style>
 <!--
  *{ margin:0; padding:0;}
@@ -58,18 +73,405 @@
 </style>
 
 <script>
-
-//-------------增加租赁合同弹出页--------start
-//创建property.util命名空间
-if(typeof leaseAgreement == "undefined"){
- var leaseAgreement = {};
-}
-
-leaseAgreement.util = {};
-//添加，弹出框
-leaseAgreement.util.addAgreement = function(url) {
+jQuery.extend($.fn.fmatter, {
+    funFormatter: function (cellvalue, options, rowdata) {
+	    var result = '<button type="button" onclick="upload(\''+rowdata.id+'\')">上传</button>';
+	    result += '<button type="button" onclick="delAgreement()">删除</button>';
+	    return result;
+    },
+    itemcontentFormatter: function (cellvalue, options, rowdata) {
+    	console.log("cellvalue=="+cellvalue);
+    	var cellvalueJson = $.parseJSON(cellvalue);
+    	if(options.colModel.index =='itemtype'){
+    		if(cellvalueJson[0].itemtype =='1'){
+    			return "收入";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "支出";
+    		}
+    	}else if(options.colModel.index =='itemcatagory'){
+    		if(cellvalueJson[0].itemtype =='1'){
+    			return "正常";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "押金";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "预收款";
+    		}
+    	}else if(options.colModel.index =='itemmode'){
+    		if(cellvalueJson[0].itemtype =='1'){
+    			return "使用面积";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "个数";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "建筑面积";
+    		}
+    	}else if(options.colModel.index =='itemunit'){
+    		if(cellvalueJson[0].itemtype =='1'){
+    			return "按次收费";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "按天收费";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "按月收费";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "按年收费";
+    		}
+    	}else if(options.colModel.index =='chargecatagory'){
+    		if(cellvalueJson[0].itemtype =='1'){
+    			return "周期性";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "一次性";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "临时性";
+    		}else if(cellvalueJson[0].itemtype =='2'){
+    			return "季节性";
+    		}
+    	}else if(options.colModel.index =='chargeprice'){
+    		return cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+    	}else if(options.colModel.index =='chargeperiod'){
+    		return cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+    	}else if(options.colModel.index =='watch_price'){
+    		return cellvalueJson[0].watch_price;
+    	}
+	    return "";
+    },
+    chargeitemFunFormatter: function (cellvalue, options, rowdata) {
+	    var result = '<button type="button" onclick="updateChargeitem(\''+rowdata.id+'\')">修改</button>';
+	    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
+	    return result;
+    },
+    meterchargeitemFunFormatter: function (cellvalue, options, rowdata) {
+	    var result = '<button type="button" onclick="updateChargeitem(\''+rowdata.id+'\')">修改</button>';
+	    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
+	    return result;
+    },
+    standingbookFunFormatter: function (cellvalue, options, rowdata) {
+	    var result = '<button type="button" onclick="saveChargeitem(\''+rowdata.id+'\')">修改</button>';
+	    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
+	    return result;
+    }
+});
+function loadAgreementData() {
+	var title = "租赁合同管理";
+	var pageer = "#agreementPager";
+	var colNames;
+	var colModel;
+	var datatype = "json";
+	var page = 50;
+	var size;
+	var url = "${pageContext.request.contextPath}/agreement/list.do";
 	
-	$.layer({
+	colNames = ['id','合同编号','开始日期', '结束日期', '住户姓名','证件类型','证件号码','电话号码','手机号码','操作'];
+	colModel = [ 
+			   {name:'id',index:'id',hidden:true, width:130,align:"center"},
+	           {name:'leasecode',index:'leasecode', width:130,align:"center"},
+	           {name:'beingdate',index:'beingdate', width:130,align:"center"},
+	           {name:'enddate',index:'enddate', width:130,align:"center"},
+	           {name:'leasename',index:'leasename', width:130,align:"center"},
+	           {name:'leasetype',index:'leasetype', width:130,align:"center"},
+	           {name:'leasenumber',index:'leasenumber', width:130,align:"center"},
+	           {name:'phonenumber',index:'phonenumber', width:130,align:"center"},
+	           {name:'mobilephone',index:'mobilephone', width:130,align:"center"}, 
+	           {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}
+	];
+	
+	var searchTxt = $("#unitid").val();
+	size = $(window).height()-120;
+	var postData={searchTxt:searchTxt};
+	
+	var _option = {
+			gridObject:"agreementDataGrid",
+			url:url,
+			datatype:"json",
+			colNames:colNames,
+			colModel:colModel,
+			postData:postData,
+			pageer:pageer,
+			page:page,
+			title:title,
+			size:size
+	};
+	
+	//创建grid
+	$.loadGridData(_option);
+	jQuery("#"+_option.gridObject).jqGrid(
+				'navGrid',_option.pageer,
+				{
+					edit:false,
+					add:false,
+					del:false,
+					search:false,
+					refreshstate:'current'
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-plus",
+					   onClickButton: function(){   
+						   addAgreement();
+					   },
+					   title:"添加",
+					   position:"last"
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-trash",
+					   onClickButton: function(){   
+						  delAgreement();
+					   },
+					   title:"删除",
+					   position:"last"
+				});
+		
+		//租赁合同右键
+		agreementMenu();
+		$("#agreementDataGrid").setGridWidth($("#agreement_div").width() -10);
+		$('#agreement_div').css('overflow', 'hidden');
+}
+function loadMeterItemData() {
+	var title = "抄表记录管理";
+	var pageer = "#meterItemPager";
+	var colNames;
+	var colModel;
+	var datatype = "json";
+	var page = 50;
+	var size;
+	var url = "${pageContext.request.contextPath}/meterItem/list.do";
+	
+	colNames = ['id','抄表日期','项目名称', '上期度数', '本次度数','抄表人'];
+	colModel = [ 
+			   {name:'id',index:'id',hidden:true, width:270,align:"center"},
+	           {name:'createtime',index:'createtime', width:270,align:"center"},
+	           {name:'watchcode',index:'watchcode', width:270,align:"center"},
+	           {name:'lastnumber',index:'lastnumber', width:270,align:"center"},
+	           {name:'newnumber',index:'newnumber', width:270,align:"center"},
+	           {name:'meterman',index:'meterman', width:270,align:"center"}
+	];
+	
+	var searchTxt = $("#unitid").val();
+	size = $(window).height()-120;
+	var postData={searchTxt:searchTxt};
+	
+	var _option = {
+			gridObject:"meterItemDataGrid",
+			url:url,
+			datatype:"json",
+			colNames:colNames,
+			colModel:colModel,
+			postData:postData,
+			pageer:pageer,
+			page:page,
+			title:title,
+			size:size
+	};
+	//创建grid
+	$.loadGridData(_option);
+	$("#meterItemDataGrid").setGridWidth($("#meterItem_div").width() -10);
+	$('#meterItem_div').css('overflow', 'hidden');
+	
+}
+function loadChargeItemData() {
+	var title = "收费项目管理";
+	var pageer = "#chargeItemPager";
+	var colNames;
+	var colModel;
+	var datatype = "json";
+	var page = 50;
+	var size;
+	var url = "${pageContext.request.contextPath}/charge/list.do";
+	
+	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','排序','备注','操作'];
+	colModel = [ 
+			   {name:'id',index:'id',hidden:true, width:110,align:"center"},
+	           {name:'itemcode',index:'itemcode', width:110,align:"center"},
+	           {name:'itemcontent',index:'itemtype', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemcatagory', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemmode', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemunit', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'chargecatagory', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'chargeprice', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemsort',index:'itemsort', width:110,align:"center"},
+	           {name:'chargeremark',index:'chargeremark', width:110,align:"center"},
+	           {name:'meterman',index:'meterman', width:120,align:"center",formatter:"chargeitemFunFormatter"}
+	];
+	
+	var unitid = $("#unitid").val();
+	size = $(window).height()-120;
+	var postData={unitid:unitid,iswatch:0};
+	
+	var _option = {
+			gridObject:"chargeItemDataGrid",
+			url:url,
+			datatype:"json",
+			colNames:colNames,
+			colModel:colModel,
+			postData:postData,
+			pageer:pageer,
+			page:page,
+			title:title,
+			size:size
+	};
+	//创建grid
+	$.loadGridData(_option);
+	jQuery("#"+_option.gridObject).jqGrid(
+				'navGrid',_option.pageer,
+				{
+					edit:false,
+					add:false,
+					del:false,
+					search:false,
+					refreshstate:'current'
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-plus",
+					   onClickButton: function(){   
+						   addChargeitem();
+					   },
+					   title:"添加",
+					   position:"last"
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-trash",
+					   onClickButton: function(){   
+						  delChargeitem();
+					   },
+					   title:"删除",
+					   position:"last"
+				});
+		
+	//租赁合同右键
+	chargeitemMenu();
+	$("#chargeItemDataGrid").setGridWidth($("#chargeItem_div").width() -10);
+	$('#chargeItem_div').css('overflow', 'hidden');
+	
+}
+function loadMeterchargeItemData() {
+	var title = "收费项目管理";
+	var pageer = "#meterchargeItemPager";
+	var colNames;
+	var colModel;
+	var datatype = "json";
+	var page = 50;
+	var size;
+	var url = "${pageContext.request.contextPath}/charge/list.do";
+	
+	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注','操作'];
+	colModel = [ 
+			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
+	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
+	           {name:'itemcontent',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcontent',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemsort',index:'itemsort', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
+	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"},
+	           {name:'meterman',index:'meterman',align:"center",formatter:"meterchargeitemFunFormatter"}
+	];
+	
+	var unitid = $("#unitid").val();
+	size = $(window).height()-120;
+	var postData={unitid:unitid,iswatch:1};
+	
+	var _option = {
+			gridObject:"meterchargeItemDataGrid",
+			url:url,
+			datatype:"json",
+			colNames:colNames,
+			colModel:colModel,
+			postData:postData,
+			pageer:pageer,
+			page:page,
+			title:title,
+			size:size
+	};
+	//创建grid
+	$.loadGridData(_option);
+	jQuery("#"+_option.gridObject).jqGrid(
+				'navGrid',_option.pageer,
+				{
+					edit:false,
+					add:false,
+					del:false,
+					search:false,
+					refreshstate:'current'
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-plus",
+					   onClickButton: function(){   
+						   addChargeitem();
+					   },
+					   title:"添加",
+					   position:"last"
+				}).navButtonAdd(_option.pageer,{  
+					   caption:"",   
+					   buttonicon:"ui-icon-trash",
+					   onClickButton: function(){   
+						  delChargeitem();
+					   },
+					   title:"删除",
+					   position:"last"
+				});
+		
+	//租赁合同右键
+	meterchargeitemMenu();
+	$("#meterchargeItemDataGrid").setGridWidth($("#meterchargeItem_div").width() -10);
+	$('#meterchargeItem_div').css('overflow', 'hidden');
+	
+}
+function loadStandingbookData() {
+	var title = "单元收费台帐";
+	var pageer = "#standingbookPager";
+	var colNames;
+	var colModel;
+	var datatype = "json";
+	var page = 50;
+	var size;
+	var url = "${pageContext.request.contextPath}/standingbook/listStandingbook.do";
+	
+	colNames = ['id','项目名称','计费时间', '收费时间', '上期度数','本次度数','单价（元）','金额（元）','状态','备注','操作'];
+	colModel = [ 
+			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
+	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
+	           {name:'chargetime',index:'chargetime', width:100,align:"center"},
+	           {name:'chargeovertime',index:'chargeovertime', width:100,align:"center"},
+	           {name:'lastnumber',index:'lastnumber', width:100,align:"center"},
+	           {name:'newnumber',index:'newnumber', width:100,align:"center"},
+	           {name:'chargeprice',index:'chargeprice', width:100,align:"center"},
+	           {name:'chargesum',index:'chargesum', width:100,align:"center"},
+	           {name:'chargestatus',index:'chargestatus', width:100,align:"center"},
+	           {name:'bookmemo',index:'bookmemo', width:100,align:"center"},
+	           {name:'fun',index:'fun', width:100,align:"center",formatter:"standingbookFunFormatter"}
+	];
+	
+	var searchTxt = $("#unitid").val();
+	size = $(window).height()-120;
+	var postData={searchTxt:searchTxt};
+	
+	var _option = {
+			gridObject:"standingbookDataGrid",
+			url:url,
+			datatype:"json",
+			colNames:colNames,
+			colModel:colModel,
+			postData:postData,
+			pageer:pageer,
+			page:page,
+			title:title,
+			size:size
+	};
+	//创建grid
+	$.loadGridData(_option);
+	$("#standingbookDataGrid").setGridWidth($("#standingbook_div").width() -10);
+	$('#standingbook_div').css('overflow', 'hidden');
+	
+}
+//增加合同记录
+function addAgreement(){
+	var unitid = $("#unitid").val();
+	var leaseid = $("#leaseid").val();
+	var url = "${pageContext.request.contextPath}/agreement/add.do?unitid="+unitid+"&leaseid="+leaseid+"&time="+Date.parse(new Date());
+	var loadi = parent.layer.load(0);
+	parent.$.layer({
         type: 2,
         title: '添加租赁合同',
         maxmin: false,
@@ -78,144 +480,87 @@ leaseAgreement.util.addAgreement = function(url) {
         offset : ['150px', ''],
         iframe: {src: url},
         end: function(){
-        	//调用iframe子页面的刷新方法
-        	//tt.window.refresh();
-        	window.location.reload();
+        	parent.layer.close(loadi);
+        	reloadGrid();
         }
     });
 }
-//--------------增加租赁合同弹出页---------- end
-
-//var unitmap = ${UnitAll};
-$(function(){
-	initStyle();//初始化样式
-    //initData();//初始化 单元信息、住户资料、租赁合同
-    
-});
-function initStyle(){
-	var $div_li =$("div[id='tabAll'] > .tab_menu > ul > li");
-	var $div_li_chargeItem =$("div[id='chargeItem'] > .tab_menu > ul > li");
-    $div_li.click(function(){
-		$(this).addClass("selected") //当前<li>元素高亮
-			   .siblings().removeClass("selected");  //去掉其它同辈<li>元素的高亮
-        var index =  $div_li.index(this);  // 获取当前点击的<li>元素 在 全部li元素中的索引。
-        console.log("div_li"+index);
-		$("div[id='tabAll'] > .tab_box > div") //选取子节点。不选取子节点的话，会引起错误。如果里面还有div
-				.eq(index).show()   //显示 <li>元素对应的<div>元素
-				.siblings().hide(); //隐藏其它几个同辈的<div>元素
-	}).hover(function(){
-		$(this).addClass("hover");
-	},function(){
-		$(this).removeClass("hover");
-	});
-	//收费项目
-	$div_li_chargeItem.click(function(){
-		$(this).addClass("selected") //当前<li>元素高亮
-			   .siblings().removeClass("selected");  //去掉其它同辈<li>元素的高亮
-        var index =  $div_li_chargeItem.index(this);  // 获取当前点击的<li>元素 在 全部li元素中的索引。
-        console.log("div_li_chargeItem"+index);
-		$("div[id='chargeItem'] > .tab_box > div") //选取子节点。不选取子节点的话，会引起错误。如果里面还有div
-				.eq(index).show()   //显示 <li>元素对应的<div>元素
-				.siblings().hide(); //隐藏其它几个同辈的<div>元素
-	}).hover(function(){
-		$(this).addClass("hover");
-	},function(){
-		$(this).removeClass("hover");
-	});
-    $('#unitcolor').cxColor();
-}
-//加载 单元信息、住户资料、租赁合同。抄表记录
-
-function del(ids) {
-
-
-		if (confirm("确定要删除选择的合同吗？")) {
-		    $.ajax({
-		        async : true,
-		        url : "${pageContext.request.contextPath}/agreement/delete.do",
-		        type : 'post',
-		        data: {ids:ids.toString()},
-		        dataType : 'text',
-		        success : function(data) {
-		        	sessionOut(data);
-		            if (data == "success") {
-		            	alert("删除完毕。");
-		            	window.location.reload();
-		            } else {
-		            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系！");
-		            }
-		        }
-		    });
-		}
-		
-}
-function delChargeitem(ids) {
-
-
-		if (confirm("确定要删除选择的收费项目吗？")) {
-		    $.ajax({
-		        async : true,
-		        url : "${pageContext.request.contextPath}/chargeitem/delete.do",
-		        type : 'post',
-		        data: {ids:ids.toString()},
-		        dataType : 'text',
-		        success : function(data) {
-		        	sessionOut(data);
-		            if (data == "success") {
-		            	alert("删除完毕。");
-		            	window.location.reload();
-		            } else {
-		            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
-		            }
-		        }
-		    });
-		}
-		
-}
-function save() {
-    $.ajax({
-        async : true,
-        url : "${pageContext.request.contextPath}/property/save.do",
-        type : 'post',
-        data:$('#inputForm').serialize(),
-        dataType : 'text',
-        success : function(data) {
-        	sessionOut(data);
-            if (data == "success") {
-            	alert("更新完毕。");
-            } else {
-            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
-            }
+//修改收费项目
+function updateChargeitem(id){
+	var url = "${pageContext.request.contextPath}/charge/editforunit.do?id="+id+"&time="+Date.parse(new Date());
+	var loadi = parent.layer.load(0);
+	parent.$.layer({
+        type: 2,
+        title: '修改收费项目',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['850px' , '400px'],
+        offset : ['150px', ''],
+        iframe: {src: url},
+        end: function(){
+        	parent.layer.close(loadi);
+        	reloadGrid();
         }
     });
 }
-function closepage() {
-	window.returnValue="ok";
-	window.close();
-}
-function addAgreement(){
+//增加收费项目记录
+function addChargeitem(){
 	var unitid = $("#unitid").val();
 	var leaseid = $("#leaseid").val();
-	var url = "../agreement/add.do?unitid="+unitid+"&leaseid="+leaseid+"&time="+Date.parse(new Date());
-	//调用parent.util.js里的添加方法。
-	leaseAgreement.util.addAgreement(url);
-}
-function refresh() {
-	console.log("======================================================");
-}
-function printTZD() {
-	var unitId = $("#unitid").val();
-    $.ajax({
-        async : true,
-        url : "${pageContext.request.contextPath}/meterItem/listMeteritem.do",
-        type : 'post',
-        data:{unitId:unitId.toString()},
-        dataType : 'text',
-        success : function(data) {
-        	sessionOut(data);
-        	create_print_data(data);
+	var url = "${pageContext.request.contextPath}/charge/addforunit.do?unitid="+unitid+"&iswatch=0&time="+Date.parse(new Date());
+	var loadi = parent.layer.load(0);
+	parent.$.layer({
+        type: 2,
+        title: '添加收费项目',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['850px' , '400px'],
+        offset : ['150px', ''],
+        iframe: {src: url},
+        end: function(){
+        	parent.layer.close(loadi);
+        	reloadGrid();
         }
     });
+	
+}
+//删除合同记录
+function delAgreement(){
+	var gridObject;
+	//设置滚动条
+	setCroll('#agreementDataGrid .ui-jqgrid-bdiv','jqgrid-div');
+	gridObject = "agreementDataGrid";
+	
+	var str = "";
+	
+	var rownumbers = "";
+	rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
+	str = getSelectid(gridObject,rownumbers);
+	
+	if (str == "") {
+		alert("请先选择要删除的数据。");
+		return;
+	}
+	console.log($("#contextPath"));
+	if (confirm("确定要删除选中的合同吗？请谨慎操作。")) {
+		var loadi = parent.layer.load(0);
+		setTimeout(function () {
+			$.ajax({
+		        async : false,
+		        url : '${pageContext.request.contextPath}/agreement/delete.do',
+		        type : 'post',
+		        data: {
+					ids:str.toString()
+				},
+		        dataType : 'text',
+		        success : function(data) {
+		        	parent.layer.close(loadi);
+					alert(data);
+		        }
+		    });
+			reloadGrid();
+		},200);  
+	};
 }
 </script>
 <title>添加单元信息</title>
@@ -228,10 +573,10 @@ function printTZD() {
 				<li class="selected">单元信息</li>
 				<li>住户资料</li>
 				<li>租赁合同</li>
-				<li>收费账期</li>
 				<li>抄表记录</li>
 				<li>收费项目</li>
 				<li>单元台帐</li>
+				<li>收款单</li>
 				<li>报表打印</li>
 			</ul>
 		</div>
@@ -239,9 +584,9 @@ function printTZD() {
 			 <div align="center" width="100%">
 			 		<input type="hidden" name="projeuctid" value="${projeuctid}">
 			 		<input type="hidden" name="unitid" id="unitid" value="${unit.id}">
-			 		<input type="hidden" name="leaseid" id="leaseid" value="${lease.leasename }">
+			 		<input type="hidden" name="leaseid" id="leaseid" value="${lease.id }">
 			 		<input type="hidden" name="rowNum" value="${rowNum}">
-					<table cellspacing="10" cellpadding="0" align="center" >
+					<table cellspacing="10" cellpadding="0" align="center" width="100%">
 						<tbody>
 							<tr>
 								<td>单元编号</td>
@@ -296,7 +641,7 @@ function printTZD() {
 					</table>
 			 </div>
 			 <div align="center" class="hide">
-			 	<table cellspacing="10" cellpadding="0" align="center" >
+			 	<table cellspacing="10" cellpadding="0" align="center" width="100%">
 						<tbody>
 							<tr>
 								<td width="100px">住户姓名</td>
@@ -327,8 +672,7 @@ function printTZD() {
 								<td ><input type="text" id="mobilephone" name="mobilephone" value="${lease.mobilephone }" size="10"></td>
 							</tr>
 							<tr>
-								<td colspan="3"></td>
-								<td align="center">
+								<td align="center" colspan="4">
 									<button type="button" onclick="save()">保存</button>
 									<button type="button" onclick="closepage()">关闭</button>
 								</td>
@@ -336,66 +680,13 @@ function printTZD() {
 						</tbody>
 					</table>
 			 </div>
-			 <div align="center" class="hide">
-			 	<table cellspacing="10" cellpadding="0" align="center" >
-			 			<thead>
-			 				<tr>
-								<td width="100px">序号</td>
-								<td width="100px">合同编号</td>
-								<td width="100px">开始日期</td>
-								<td width="100px">结束日期</td>
-								<td width="100px">住户姓名</td>
-								<td width="100px">证件类型</td>
-								<td width="100px">证件号码</td>
-								<td width="100px">电话号码</td>
-								<td width="100px">手机号码</td>
-								<td width="100px">操作</td>
-							</tr>
-			 			</thead>
-						<tbody id="agreements">
-							<c:forEach var="agreement" items="${agreementList}" varStatus="s">
-								<tr>
-									<td width="100px"><c:out value="${s.index}" /></td>
-									<td width="100px"><c:out value="${agreement.leasecode}" /></td>
-									<td width="100px"><c:out value="${agreement.beingdate}" /></td>
-									<td width="100px"><c:out value="${agreement.enddate}" /></td>
-									<td width="100px"><c:out value="${lease.leasename}" /></td>
-									<td width="100px"><c:out value="${lease.leasetype}" /></td>
-									<td width="100px"><c:out value="${lease.leasenumber}" /></td>
-									<td width="100px"><c:out value="${lease.phonenumber}" /></td>
-									<td width="100px"><c:out value="${lease.mobilephone}" /></td>
-									<td width="100px">
-										<button type="button" onclick="save('${agreement.id}')">上传</button>
-										<button type="button" onclick="del('${agreement.id}')">删除</button>
-									</td>
-								</tr>
-							</c:forEach>
-							
-							<tr>
-								<td colspan="10" align="right">
-									<button type="button" onclick="addAgreement()">新增</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+			 <div align="center" class="hide" id="agreement_div">
+			 	<table id="agreementDataGrid"></table>
+				<div id="agreementPager"></div>
 			 </div>
-			 <div class="hide">收费账期</div>
-			 <div class="hide" align="center">
-				<table cellspacing="10" cellpadding="0" align="center" >
-			 			<thead>
-			 				<tr>
-								<td width="100px">序号</td>
-								<td width="100px">抄表日期</td>
-								<td width="100px">项目名称</td>
-								<td width="100px">上期度数</td>
-								<td width="100px">本次度数</td>
-								<td width="100px">抄表人</td>
-							</tr>
-			 			</thead>
-						<tbody id="meteritems">
-							
-						</tbody>
-					</table>
+			 <div class="hide" align="center" id="meterItem_div">
+			 	<table id="meterItemDataGrid"></table>
+				<div id="meterItemPager"></div>
 			 </div>
 			 <div class="hide" id="chargeItem">
 			 	<div class="tab_menu">
@@ -405,158 +696,38 @@ function printTZD() {
 					</ul>
 				</div>
 				<div class="tab_box">
-					<div>
-						<table cellspacing="10" cellpadding="0" align="center" >
-					 			<thead>
-					 				<tr>
-										<td width="100px">序号</td>
-										<td width="100px">名称</td>
-										<td width="100px">费用类型</td>
-										<td width="100px">计算方式</td>
-										<td width="100px">计算单位</td>
-										<td width="100px">收费方式</td>
-										<td width="100px">收费单价</td>
-										<td width="100px">收费周期</td>
-										<td width="100px">排序</td>
-										<td width="100px">备注</td>
-										<td width="100px">操作</td>
-									</tr>
-					 			</thead>
-								<tbody id="chargeItems">
-									<c:forEach var="chargeitem" items="${chargeItemList}" varStatus="s">
-										<c:if test="${chargeitem.iswatch == '0'}">
-											<tr>
-												<td width="100px"><c:out value="${s.index}" /></td>
-												<td width="100px"><c:out value="${chargeitem.itemcode}" /></td>
-												<td width="100px"><c:out value="费用类型待定" /></td>
-												<td width="100px"><c:out value="计算方式待定" /></td>
-												<td width="100px"><c:out value="计算单位待定" /></td>
-												<td width="100px"><c:out value="收费方式待定" /></td>
-												<td width="100px"><c:out value="收费单价待定" /></td>
-												<td width="100px"><c:out value="收费周期待定" /></td>
-												<td width="100px"><c:out value="${chargeitem.itemsort}" /></td>
-												<td width="100px"><c:out value="${chargeitem.chargeremark}" /></td>
-												<td width="100px">
-													<button type="button" onclick="saveChargeitem('${chargeitem.id}')">修改</button>
-													<button type="button" onclick="delChargeitem('${chargeitem.id}')">删除</button>
-												</td>
-											</tr>
-										</c:if>
-									</c:forEach>
-									<tr>
-										<td colspan="11" align="right">
-											<button type="button" onclick="addChargeItem()">增加</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+					<div class = "hide" id = "chargeItem_div">
+						<table id="chargeItemDataGrid"></table>
+						<div id="chargeItemPager"></div>
 					</div>
-					<div class="hide">
-						<table cellspacing="10" cellpadding="0" align="center" >
-					 			<thead>
-					 				<tr>
-										<td width="100px">序号</td>
-										<td width="100px">名称</td>
-										<td width="100px">费用类型</td>
-										<td width="100px">费用方式</td>
-										<td width="100px">计算单位</td>
-										<td width="100px">收费方式</td>
-										<td width="100px">计算单价</td>
-										<td width="100px">收费周期</td>
-										<td width="100px">按表计费</td>
-										<td width="100px">计费类型</td>
-										<td width="100px">排序</td>
-										<td width="100px">最后度数</td>
-										<td width="100px">备注</td>
-										<td width="100px">操作</td>
-									</tr>
-					 			</thead>
-								<tbody id="chargeItems1">
-									<c:forEach var="chargeitem" items="${chargeItemList}" varStatus="s">
-										<c:if test="${chargeitem.iswatch == '1'}">
-											<tr>
-												<td width="100px"><c:out value="${s.index}" /></td>
-												<td width="100px"><c:out value="${chargeitem.itemcode}" /></td>
-												<td width="100px"><c:out value="费用类型待定" /></td>
-												<td width="100px"><c:out value="计算方式待定" /></td>
-												<td width="100px"><c:out value="计算单位待定" /></td>
-												<td width="100px"><c:out value="收费方式待定" /></td>
-												<td width="100px"><c:out value="收费单价待定" /></td>
-												<td width="100px"><c:out value="收费周期待定" /></td>
-												<td width="100px"><c:out value="${chargeitem.iswatch}" /></td>
-												<td width="100px"><c:out value="${chargeitem.watchtype}" /></td>
-												<td width="100px"><c:out value="${chargeitem.itemsort}" /></td>
-												<td width="100px"><c:out value="${chargeitem.watchnumber}" /></td>
-												<td width="100px"><c:out value="${chargeitem.chargeremark}" /></td>
-												<td width="100px">
-													<button type="button" onclick="saveChargeitem('${chargeitem.id}')">修改</button>
-													<button type="button" onclick="delChargeitem('${chargeitem.id}')">删除</button>
-												</td>
-											</tr>
-										</c:if>
-									</c:forEach>
-									<tr>
-										<td colspan="14" align="right">
-											<button type="button" onclick="addChargeItem()">增加</button>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+					<div class="hide" id = "meterchargeItem_div">
+						<table id="meterchargeItemDataGrid"></table>
+						<div id="meterchargeItemPager"></div>
 					</div>
 				 </div>
 			 </div>
 			 <div class="hide">
-			 	<table cellspacing="10" cellpadding="0" align="center" >
-			 		<thead>
-					 	<tr>
-							<th width="100px" colspan="12">单元收费台帐</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td rowspan="20" width="180px">
-								<c:forEach var="unitterm" items="${unittermList}" varStatus="s">
-									<a href="#"><c:out value="${unitterm.unittermcode}" /></a>
-								</c:forEach>
-							</td>
-							<td width="150px">序号</td>
-							<td width="100px">项目名称</td>
-							<td width="150px">计费时间</td>
-							<td width="150px">收费时间</td>
-							<td width="150px">上期度数</td>
-							<td width="150px">本次度数</td>
-							<td width="150px">单价（元）</td>
-							<td width="150px">金额（元）</td>
-							<td width="150px">状态</td>
-							<td width="150px">备注</td>
-							<td width="150px">操作</td>
-						</tr>
-						<tr>
-							<c:forEach var="standingbook" items="${standingbookList}" varStatus="s">
-								<tr>
-									<td width="100px"><c:out value="${s.index}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargetime}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargetime}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargeovertime}" /></td>
-									<td width="100px"><c:out value="${standingbook.lastnumber}" /></td>
-									<td width="100px"><c:out value="${standingbook.newnumber}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargesum}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargesum}" /></td>
-									<td width="100px"><c:out value="${standingbook.chargestatus}" /></td>
-									<td width="100px"><c:out value="${standingbook.bookmemo}" /></td>
-									<td width="100px">
-										<button type="button" onclick="saveChargeitem('${chargeitem.id}')">修改</button>
-										<button type="button" onclick="delChargeitem('${chargeitem.id}')">删除</button>
-									</td>
-								</tr>
-							</c:forEach>
-						</tr>
-						
-					</tbody>
-				</table>
+			 	<div style = " height: 500px;width: 80px;float: left;">
+			 		<table>
+			 			<tr>
+			 				<th>单元收费台帐</th>
+			 			</tr>
+			 			<c:forEach var="unitterm" items="${unittermList}" varStatus="s">
+			 				<tr>
+			 					<td><a href="#"><c:out value="${unitterm.unittermcode}" /></a></td>
+			 				</tr>
+						</c:forEach>
+			 			
+			 		</table>
+			 	</div>
+			 	<div id = "standingbook_div">
+				 	<table id="standingbookDataGrid"></table>
+					<div id="standingbookPager"></div>
+				</div>
 			 </div>
+			  <div class="hide">收费账期</div>
 			 <div class="hide">
-			 	<table cellspacing="10" cellpadding="0" align="center" >
+			 	<table cellspacing="10" cellpadding="0" align="center" width="100%">
 			 		<thead>
 					 	<tr>
 							<th width="100px" colspan="12">报表打印</th>
@@ -607,6 +778,24 @@ function printTZD() {
 		</div>
 	</div>
 	<div id="print_div" style="height:0px;width:0px;overflow:hidden"></div>
+	<div class="contextMenu" id="myMenu_agreement" style="display: none;">
+	    <ul class="ui-corner-all">
+	   	<span class="ui-widget-header ui-corner-top menu_title ">合同操作快捷方式</span>
+	      <li id="add">添加</li>
+	      <li id="del">删除</li>
+	      <!-- <span class="menu_span"></span>
+	      <li id="doc">挂接电子文件</li> -->
+	    </ul>
+	</div>
+	<div class="contextMenu" id="myMenu_chargeitem" style="display: none;">
+	    <ul class="ui-corner-all">
+	   	<span class="ui-widget-header ui-corner-top menu_title ">收费项目操作快捷方式</span>
+	      <li id="add">添加</li>
+	      <li id="del">删除</li>
+	      <!-- <span class="menu_span"></span>
+	      <li id="doc">挂接电子文件</li> -->
+	    </ul>
+	</div>
 </form>
 </body>
 </html>

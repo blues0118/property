@@ -771,8 +771,7 @@ public abstract class BaseDaoMysqlImpl<T,ID> extends JdbcDaoSupport implements B
 	
 	private  void deleteLastStr(StringBuilder sb,String str){
 		int index = sb.lastIndexOf(str);
-		//modify by wangzibo 2014-12-06 如果将所有and都删除掉的话，表standingbook和standingbookterm里的and字符串都会被删除，从而报错，所以进行特殊处理。
-		if(index!=-1 && " ".equals(sb.substring(index-1, index))){
+		if(index!=-1){
 			sb.delete(index, index+str.length());
 		}
 	}

@@ -49,10 +49,12 @@ public class MeterItemController {
 		pageBean.setPageSize(pageSize);
 		pageBean.setPageNo(page);
 		
-		pageBean.setOrderBy("accountcode");
+		pageBean.setOrderBy("createtime");
 		
 		Meteritem t = new Meteritem();
-		
+		if(searchTxt !=null &&!"".equals(searchTxt)){
+			t.setUnitid(searchTxt);
+		}
 		
 		//获取数据
 		pageBean = meterItemService.list(t, pageBean);
