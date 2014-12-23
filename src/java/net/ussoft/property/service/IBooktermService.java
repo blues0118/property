@@ -2,9 +2,11 @@ package net.ussoft.property.service;
 
 import java.util.List;
 
+import net.ussoft.property.model.Book;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Bookterm;
 import net.ussoft.property.model.Sys_account;
+import net.ussoft.property.model.Unitterm;
 
 
 public interface IBooktermService {
@@ -13,12 +15,27 @@ public interface IBooktermService {
 	 * @return
 	 */
 	public List<Bookterm> search(Bookterm t);
+	
 	/**
-	 * 分页读取账期
+	 * 分页读取台账信息
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Book> detailBookList(Book t,PageBean<Book> pageBean);
+	
+	/**
+	 * 分页读取总台账账期信息
 	 * @param pageBean
 	 * @return
 	 */
 	public PageBean<Bookterm> list(Bookterm t,PageBean<Bookterm> pageBean);
+	
+	/**
+	 * 分页读取单元台账账期信息
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Unitterm> detailList(Unitterm t,PageBean<Unitterm> pageBean);
 	
 	/**
 	 * 插入总台账账期

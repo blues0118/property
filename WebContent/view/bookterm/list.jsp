@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE HTML>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.8.2.js"></script>
@@ -47,7 +48,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	function callback() {
 		loadData();
 	}
-	
 	jQuery.extend($.fn.fmatter, {
         tremstatusFormatter: function (cellvalue, options, rowdata) {
 			if (cellvalue != 1)
@@ -56,15 +56,23 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		        return '已结束';
         },
         funFormatter: function (cellvalue, options, rowdata) {
-		    //var result = '<div style="float:center;cursor:pointer;"><a title="修改总台账账期信息" href="javascript:;" onclick="edit(\''+rowdata.id+'\')"><span class="ui-icon ui-icon-pencil"></span></a></div>';
 		    var result = '<button title="详细" type="button" onclick="loadDetailData(\''+rowdata.id+'\')">详细</button>';
 		    result += '<button title="修改" type="button" onclick="edit(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button title="删除" type="button" onclick="del()">删除</button>';
+		    return result;
+	    },
+	    funDetailFormatter: function (cellvalue, options, rowdata) {
+		    var result = '<button title="详细" type="button" onclick="loadBookData(\''+rowdata.projectid+'\',\''+rowdata.unitid+'\',\''+rowdata.termid+'\',\''+rowdata.id+'\')">详细</button>';
 		    return result;
 	    }
     });
 	
 	function loadData() {
+
+		$("#uinttermenu").hide();
+		$("#unittermbt").hide();
+		$("#unittermlist").hide();
+		
 		var title = "总台账账期管理";
 		var pageer = "#pager";
 		var colNames;
@@ -106,6 +114,14 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function loadDetailData(termid) {
+		
+		$("#booktermenu").hide();
+		$("#booktermbt").hide();
+		$("#booktermlist").hide();
+
+		$("#uinttermenu").show();
+		$("#unittermbt").show();
+		$("#unittermlist").show();
 		var title = "单元台账账期";
 		var pageer = "#pager";
 		var colNames;
@@ -115,12 +131,12 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var size;
 		var url = "${pageContext.request.contextPath}/bookterm/detaillist.do";
 		
-		colNames = ['账期名称','备注', '单元账期状态','操作1'];
+		colNames = ['账期名称','备注', '单元账期状态','操作'];
 		colModel = [
                    {name:'unittermcode',index:'unittermcode', width:100,align:"center"},
 		           {name:'unittermmemo',index:'unittermmemo', width:100,align:"center"},
 		           {name:'unittermstatus',index:'unittermstatus', width:100,align:"center",formatter:"tremstatusFormatter"}, 
-                   {name:'fun1',index:'fun1', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"fun1Formatter"}
+                   {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funDetailFormatter"}
 		];
 		
 		var searchTxt = termid;
@@ -129,6 +145,59 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		var _option = {
 				gridObject:"detailDataGrid",
+				url:url,
+				datatype:"json",
+				colNames:colNames,
+				colModel:colModel,
+				postData:postData,
+				pageer:pageer,
+				page:page,
+				title:title,
+				size:size
+		};
+		
+		//创建grid
+		$.loadGridData(_option);
+	}
+	
+	function loadBookData(projectid,unitid,termid,unittermid) {
+
+
+		$("#uinttermenu").show();
+		$("#unittermbt").show();
+		$("#unittermlist").show();
+		var title = "台账详细";
+		var pageer = "#pager";
+		var colNames;
+		var colModel;
+		var datatype = "json";
+		var page = 50;
+		var size;
+		var url = "${pageContext.request.contextPath}/bookterm/detailbooklist.do?";
+		
+		colNames = ['计费时间','收费时间', '收费项目名称','是否按表计费','上期读数','本期读数','台账状态','收费金额','操作'];
+		colModel = [
+                   {name:'chargetime',index:'chargetime', width:100,align:"center"},
+		           {name:'chargeovertime',index:'chargeovertime', width:100,align:"center"},
+		           {name:'itemcode',index:'itemcode', width:100,align:"center"},
+		           {name:'iswatch',index:'iswatch', width:100,align:"center"},
+		           {name:'lastnumber',index:'lastnumber', width:100,align:"center"},
+		           {name:'newnumber',index:'newnumber', width:100,align:"center"},
+		           {name:'chargestatus',index:'chargestatus', width:100,align:"center",formatter:"tremstatusFormatter"},
+		           {name:'chargesum',index:'chargesum', width:100,align:"center"}, 
+                   {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funDetailFormatter"}
+		];
+
+		size = $(window).height()-120;
+		var book = {};
+		
+		book.projectid = projectid;
+		book.unitid = unitid;
+		book.termid = termid;
+		book.unittermid = unittermid;
+		var postData={projectid:projectid,unitid:unitid,termid:termid,unittermid:unittermid};
+		var _option = {
+				gridObject:"detailbookDataGrid",
 				url:url,
 				datatype:"json",
 				colNames:colNames,
@@ -282,21 +351,33 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
-			<div class="dqwz_l">当前位置：台账管理－总台账账期</div>
-			<div  class="caozuoan">
+			<div id="booktermenu" class="dqwz_l">当前位置：台账管理－总台账账期</div>
+			<div id="uinttermenu" class="dqwz_l">当前位置：台账管理－总台账账期－单元账期</div>
+			<div id="booktermbt" class="caozuoan">
 				[ <a href="#" onclick="add()">添加总账期</a> ]
 				<input type="text" id="searchTxt" name="searchTxt" />
 				<button type="button" onclick="loadData()">查询</button>
 	         </div>
+			<div id="unittermbt" class="caozuoan">
+				<input type="text" id="searchTxt" name="searchTxt" />
+				<button type="button" onclick="loadData()">查询</button>
+	         </div>
 	         <div style="clear:both"></div>
+
 	    </div>
-		<div class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
+		<div id="booktermlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 			<table id="dataGrid"></table>
 			<div id="pager"></div>
 		</div>
-		<div class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
+		<div id="unittermlist" >
+		<div>
 			<table id="detailDataGrid"></table>
 			<div id="pager"></div>
+		</div>
+		<div>
+			<table id="detailbookDataGrid"></table>
+			<div id="pager"></div>
+		</div>
 		</div>
 		<div>
 			<input type="hidden" name="projectid" value="${projectid}"/>

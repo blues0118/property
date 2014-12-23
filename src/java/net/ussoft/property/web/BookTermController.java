@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.ussoft.property.base.BaseConstroller;
+import net.ussoft.property.model.Book;
 import net.ussoft.property.model.Bookterm;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
@@ -46,7 +47,7 @@ public class BookTermController extends BaseConstroller {
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView index(ModelMap modelMap) {
 		
-		modelMap = super.getModelMap("BOOKTERM","index");
+		modelMap = super.getModelMap("BOOKTERM","BOOKTERM");
 		
 		//物业项目树形数据取得
 		List<Project> list = projectService.list();
@@ -57,13 +58,62 @@ public class BookTermController extends BaseConstroller {
 	}
 	
 	/**
-	 * 台账管理初期
+	 * 单元台账管理初期
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value = "/detailbooklist", method = RequestMethod.POST)
+	public void detailbooklist(Integer page,String projectid, String unitid,String termid,String unittermid, HttpServletResponse response) throws Exception {
+		
+		ModelMap modelMap = this.getModelMap("BOOKTERM","BOOKTERM");
+		modelMap.put("booktermflag", "2");
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		PageBean<Book> pageBean = new PageBean<Book>();
+
+		//每页行数
+		Integer pageSize = 50;
+		
+		pageBean.setIsPage(true);
+		pageBean.setPageSize(pageSize);
+		pageBean.setPageNo(page);
+		
+		pageBean.setOrderBy("projectid");
+		pageBean.setOrderType("desc");
+		
+		Book t = new Book();
+		if (null != projectid) {
+			t.setProjectid(projectid);
+			t.setUnitid(unitid);
+			t.setTermid(termid);
+			t.setUnittermid(unittermid);
+		}
+		
+		//获取数据
+		pageBean = booktermService.detailBookList(t, pageBean);
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalpages", pageBean.getPageCount());
+		resultMap.put("currpage", pageBean.getPageNo());
+		resultMap.put("totalrecords", pageBean.getRowCount());
+		resultMap.put("rows", pageBean.getList());
+		
+		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
+	
+	/**
+	 * 单元台账管理初期
 	 * @param modelMap
 	 * @return
 	 */
 	@RequestMapping(value = "/detaillist", method = RequestMethod.POST)
 	public void detaillist(Integer page,String searchTxt, HttpServletResponse response) throws Exception {
 		
+		ModelMap modelMap = this.getModelMap("BOOKTERM","BOOKTERM");
+		modelMap.put("booktermflag", "2");
 		response.setContentType("text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -86,7 +136,7 @@ public class BookTermController extends BaseConstroller {
 		}
 		
 		//获取数据
-		//pageBean = booktermService.list(t, pageBean);
+		pageBean = booktermService.detailList(t, pageBean);
 		
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("totalpages", pageBean.getPageCount());
@@ -99,7 +149,7 @@ public class BookTermController extends BaseConstroller {
 	}
 	
 	/**
-	 * 台账管理初期
+	 * 总台账管理初期
 	 * @param modelMap
 	 * @return
 	 */
@@ -148,6 +198,7 @@ public class BookTermController extends BaseConstroller {
 	@RequestMapping(value="/relist",method=RequestMethod.GET)
 	public ModelAndView relist(String projectid,ModelMap modelMap) {
 		modelMap.put("projectid", projectid);
+		modelMap.put("booktermflag", "1");
 		return new ModelAndView("/view/bookterm/list",modelMap);
 	}
 	
@@ -181,8 +232,7 @@ public class BookTermController extends BaseConstroller {
 			out.print(result);
 			return;
 		}
-		// 插入总台账账期
-
+		// 总台账账期
 		// id
 		bookterm.setId(UUID.randomUUID().toString());
 		// session取得

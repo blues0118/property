@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import net.ussoft.property.dao.BookDao;
 import net.ussoft.property.dao.BooktermDao;
 import net.ussoft.property.dao.MeterDao;
 import net.ussoft.property.dao.UnitDao;
 import net.ussoft.property.dao.UnittermDao;
+import net.ussoft.property.model.Book;
 import net.ussoft.property.model.Bookterm;
 import net.ussoft.property.model.Meter;
 import net.ussoft.property.model.PageBean;
@@ -34,6 +36,9 @@ public class BooktermService implements IBooktermService {
 	private UnittermDao unittermDao;
 	
 	@Resource
+	private BookDao bookDao;
+	
+	@Resource
 	private UnitDao unitDao;
 
 	@Override
@@ -45,9 +50,38 @@ public class BooktermService implements IBooktermService {
 	public List<Bookterm> search(Bookterm t) {
 		return booktermDao.search(t);
 	}
+	
+	/**
+	 * 分页读取台账信息
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Book> detailBookList(Book t,PageBean<Book> pageBean) {
+		pageBean = bookDao.search(t, pageBean);
+		return pageBean;
+	}
+	
+	/**
+	 * 分页读取单元台账账期信息
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Unitterm> detailList(Unitterm t,PageBean<Unitterm> pageBean) {
+		pageBean = unittermDao.search(t, pageBean);
+		return pageBean;
+	}
+	
 	@Override
 	public PageBean<Bookterm> list(Bookterm t,PageBean<Bookterm> pageBean) {
-		return booktermDao.search(t, pageBean);
+		if (t.getTermcode() == null) {
+			return booktermDao.search(t, pageBean);
+		} else {
+			String sql = "select * from bookterm where projectid= '"
+		                + t.getProjectid() +"' and termcode like '" + t.getTermcode() + "%'";
+			List<Object> sqlValues = new ArrayList<Object>();
+			return booktermDao.search(sql, sqlValues, pageBean);
+		}
+		
 	}
 	
 	@Transactional("txManager")
