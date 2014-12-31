@@ -105,10 +105,47 @@ public class ChargeitemController extends BaseConstroller {
 	public ModelAndView addforunit(String unitid,String iswatch,ModelMap modelMap) {
 		//获取对象
 		Chargeitem chargeitem = new Chargeitem();
-		chargeitem.setUnitid(unitid);
-		chargeitem.setIswatch(Integer.valueOf(iswatch));
+		if(unitid!=null && !"".equals(unitid)){
+			chargeitem.setUnitid(unitid);
+		}
+		if(iswatch!=null && !"".equals(iswatch)){
+			chargeitem.setIswatch(Integer.valueOf(iswatch));
+		}
 		modelMap.put("chargeitem", chargeitem);
+		if("0".equals(iswatch)){
+			return new ModelAndView("/view/property/chargeitem/addchargeitem",modelMap);
+		}
 		return new ModelAndView("/view/property/chargeitem/addmeterchargeitem",modelMap);
+	}
+	/**
+	 * 打开添加页面
+	 * @return
+	 */
+	@RequestMapping(value="/addforchargenote",method=RequestMethod.GET)
+	public ModelAndView addforchargenote(String unitid,String iswatch,ModelMap modelMap) {
+		//获取对象
+		Chargeitem chargeitem = new Chargeitem();
+		if(unitid!=null && !"".equals(unitid)){
+			chargeitem.setUnitid(unitid);
+		}
+		if(iswatch!=null && !"".equals(iswatch)){
+			chargeitem.setIswatch(Integer.valueOf(iswatch));
+		}
+		modelMap.put("chargeitem", chargeitem);
+		return new ModelAndView("/view/property/chargeitem/addchargeitemforchargenote",modelMap);
+	}
+	/**
+	 * 打开批量添加收费项目页面
+	 * @return
+	 */
+	@RequestMapping(value="/addbatchitemforunit",method=RequestMethod.GET)
+	public ModelAndView addBatchChargeitemForUnit(String ids,String iswatch,ModelMap modelMap) {
+		//获取对象
+		Chargeitem chargeitem = new Chargeitem();
+		chargeitem.setUnitid("");
+		modelMap.put("chargeitem", chargeitem);
+		modelMap.put("ids", ids);
+		return new ModelAndView("/view/property/chargeitem/batchadd",modelMap);
 	}
 	/**
 	 * 打开添加页面
@@ -255,6 +292,30 @@ public class ChargeitemController extends BaseConstroller {
 		modelMap.put("chargeitem", chargeitem);
 		modelMap.put("result", result);
 		return new ModelAndView("/view/system/charge/add",modelMap);
+	}
+	/**
+	 * 执行更新
+	 * @param id
+	 * @param value
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/savechargeitem",method=RequestMethod.POST)
+	public void savechargeitem(String unitid,String ids,ModelMap modelMap,HttpServletRequest request,HttpServletResponse response) {
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int num = chargeitemService.addChargeitem(unitid,ids);
+		String result = "success";
+		if (num <= 0 ) {
+			result = "failure";
+		}
+		out.print(result);
 	}
 	
 }

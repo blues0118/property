@@ -30,9 +30,10 @@ function callback() {
 
 function reloadGrid() {
 	jQuery("#agreementDataGrid").trigger("reloadGrid");
-}
-function reloadGridMeterItem() {
 	jQuery("#meterItemDataGrid").trigger("reloadGrid");
+	jQuery("#chargeItemDataGrid").trigger("reloadGrid");
+	jQuery("#meterchargeItemDataGrid").trigger("reloadGrid");
+	jQuery("#standingbookDataGrid").trigger("reloadGrid");
 }
 function refresh() {
 	reloadGrid();
@@ -149,6 +150,40 @@ function printTZD() {
         success : function(data) {
         	sessionOut(data);
         	create_print_data(data);
+        }
+    });
+}
+//单元台帐右键菜单
+function standingbookMenu() {
+	$("#gview_standingbookDataGrid").contextMenu('myMenu_standingbook', {
+    	menuStyle: {
+    		backgroundColor: '#fcfdfd',
+            border: '2px solid #a6c9e2',
+            //maxWidth: '600px',
+            width: '170px', // to have good width of the menu
+            padding:'1px 1px 5px 1px'
+	    },
+        itemStyle : {
+          //fontFamily: 'verdana',
+          //backgroundColor: '#666',
+          //color: '#1d5987',
+          //border: 'none',
+          //padding: '1px'
+        },
+        shadow:false,
+        itemHoverStyle: {
+        	border: '1px solid #79b7e7',
+	        color: '#1d5987',
+	        backgroundColor: '#d0e5f5',
+	        cursor:'pointer'
+        },
+        bindings: {
+          'add': function(t) {
+        	addChargeitemforunit();
+          },
+          'del': function(t) {
+        	delChargeitemforunit();
+          }
         }
     });
 }

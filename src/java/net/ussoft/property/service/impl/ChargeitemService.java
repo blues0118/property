@@ -5,6 +5,7 @@ package net.ussoft.property.service.impl;
  */
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -65,5 +66,28 @@ public class ChargeitemService implements IChargeitemService {
 	@Override
 	public List<Chargeitem> list(Chargeitem chargeitem) {
 		return chargeitemDao.search(chargeitem);
+	}
+	@Transactional("txManager")
+	@Override
+	public int addChargeitem(String unitid, String ids) {
+		try{
+			String[] addUnitStrings = unitid.split(",");
+			String[] addStrings = ids.split(",");
+			Chargeitem chargeitem = null;
+			Chargeitem chargeitemNew = null;
+			for(String unitidi:addUnitStrings){
+				for (String id : addStrings) {
+					chargeitem = new Chargeitem();
+					chargeitem.setId(id);
+					chargeitemNew = chargeitemDao.search(chargeitem).get(0);
+					chargeitemNew.setId(UUID.randomUUID().toString());
+					chargeitemNew.setUnitid(unitidi);
+					chargeitemDao.save(chargeitemNew);
+				}
+			}
+		}catch(Exception e){
+			return 0;
+		}
+		return 1;
 	}
 }

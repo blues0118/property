@@ -56,12 +56,10 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	jQuery.extend($.fn.fmatter, {
-		accountstateFormatter: function (cellvalue, options, rowdata) {
-			if (cellvalue != "0")
-		    	return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',0)"><font color=blue>启用</font></a>';
-		    else 
-		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
-        },
+		funFormatter: function (cellvalue, options, rowdata) {
+		    var result = '<button type="button" onclick="updateChargeitem(\''+rowdata.id+'\')">修改信息</button>';
+		    return result;
+    	},
         itemcontentFormatter: function (cellvalue, options, rowdata) {
 	    	console.log("cellvalue=="+cellvalue);
 	    	var cellvalueJson = $.parseJSON(cellvalue);
@@ -128,7 +126,7 @@ function loadData() {
 	var size;
 	var url = "${pageContext.request.contextPath}/charge/list.do";
 	
-	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注'];
+	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注','操作'];
 	colModel = [ 
 			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
 	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
@@ -142,12 +140,13 @@ function loadData() {
 	           {name:'watchtype',index:'watchtype', width:100,align:"center"},
 	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
 	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
-	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"},
+	           {name:'fun',index:'fun', width:100,align:"center",formatter:"funFormatter"}
 	];
 	
 	var iswatch = $("#iswatch").val();
 	size = $(window).height()-120;
-	var postData={iswatch:'1',unitid:'SYSTEM'};
+	var postData={unitid:'SYSTEM'};
 	
 	var _option = {
 			gridObject:"dataGrid",
@@ -175,6 +174,7 @@ function loadData() {
 		return rownumbers;
 	}
 	
+	//为单元添加收费项目
 	function add(){
 		var gridObject;
 		//设置滚动条
@@ -195,11 +195,12 @@ function loadData() {
 			var loadi = parent.layer.load(0);
 			$.ajax({
 		        async : false,
-		        url : '${pageContext.request.contextPath}/charge/savechargeitem.do',
+		        url : '${pageContext.request.contextPath}/bookterm/savechargeitem.do',
 		        type : 'post',
 		        data: {
 					ids:str.toString(),
-					unitid:$("#unitid").val()
+					unitid:$("#unitid").val(),
+					termid:$("#termid").val()
 				},
 		        dataType : 'text',
 		        success : function(data) {
@@ -213,7 +214,32 @@ function loadData() {
 	function refresh() {
 		reloadGrid();
 	}
-
+	function getSelectid(gridObject,rows) {
+		var result = new Array();
+		for (var i=0;i<rows.length;i++) {
+			var rowData = $("#"+gridObject).jqGrid('getRowData',rows[i]);
+			result[i] = rowData["id"] ;
+		}
+		return result.toString();
+	}
+//修改收费项目
+function updateChargeitem(id){
+	var url = "${pageContext.request.contextPath}/charge/editforunit.do?id="+id+"&time="+Date.parse(new Date());
+	var loadi = parent.layer.load(0);
+	parent.$.layer({
+        type: 2,
+        title: '修改收费项目',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['850px' , '400px'],
+        offset : ['150px', ''],
+        iframe: {src: url},
+        end: function(){
+        	parent.layer.close(loadi);
+        	reloadGrid();
+        }
+    });
+}
 
 </script>
 
@@ -221,9 +247,9 @@ function loadData() {
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
-			<input type="hidden" id="unitid" value="${chargeitem.unitid }">
-			<input type="hidden" id="iswatch" value="${chargeitem.iswatch }">
-			<div class="dqwz_l">当前位置：物业管理－收费项目管理</div>
+			<input type="hidden" id="unitid" value="${unitid }">
+			<input type="hidden" id="termid" value="${termid }">
+			<div class="dqwz_l">当前位置：物业管理－收费项目添加</div>
 			<div  class="caozuoan">
 				[ <a href="#" onclick="add()">确定添加</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
