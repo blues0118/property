@@ -87,4 +87,9 @@ public class BookServce implements IBookService {
 	public Book getById(String id) {
 		return bookDao.get(id);
 	}
+	@Override
+	public Book insert(Book book) {
+		bookDao.save(book);
+		return book;
+	}
 }

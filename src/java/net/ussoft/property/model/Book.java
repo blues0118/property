@@ -19,7 +19,7 @@ public class Book {
 	private Integer lastnumber;
 	private Integer newnumber;
 	private Integer chargestatus;
-	private Integer chargesum;
+	private Double chargesum;
 	private String noteid;
 	private String termid;
 	private String unittermid;
@@ -95,10 +95,10 @@ public class Book {
 	public void setChargestatus(Integer chargestatus) {
 		this.chargestatus = chargestatus;
 	}
-	public Integer getChargesum() {
+	public Double getChargesum() {
 		return chargesum;
 	}
-	public void setChargesum(Integer chargesum) {
+	public void setChargesum(Double chargesum) {
 		this.chargesum = chargesum;
 	}
 	public String getNoteid() {

@@ -54,4 +54,12 @@ public interface IBookService {
 	 * @return
 	 */
 	public Book getById(String id);
+	
+	/**
+	 * 插入总账期
+	 * @param standingbookterm
+	 * @return
+	 */
+	public Book insert(Book book);
+	
 }
