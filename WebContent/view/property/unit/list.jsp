@@ -10,6 +10,12 @@
 	src="${pageContext.request.contextPath}/js/util.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/jquery.ba-resize.min.js"></script>
+	
+
+<!-- 打印的js、css引入  -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
 
 
 <link type="text/css" rel="stylesheet"
@@ -32,10 +38,22 @@
 	
 	function init(){
 		for(var i=0;i<20;i++){
-			$('#con_right').append(buildRow(i+1));
+			$('#con_right').prepend(buildRow(i+1));
 		}
 	}
-	
+	function printTZD(unitId) {
+	    $.ajax({
+	        async : true,
+	        url : "../meterItem/listMeteritem.do",
+	        type : 'post',
+	        data:{unitId:unitId.toString()},
+	        dataType : 'text',
+	        success : function(data) {
+	        	sessionOut(data);
+	        	create_print_data(data);
+	        }
+	    });
+	}
 		
 	function buildRow(rNum){
 		
@@ -60,9 +78,9 @@
 					row += 		'</div>';
 					row += 		'<div class="btns">';
 					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
-					row += 			'<input type="button" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
-					row += 			'<input type="button" class="dayin">';
-					row += 			'<input type="button" class="time">';
+					row += 			'<input type="button" alt="单元详细信息" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
+					row += 			'<input type="button" alt="打印收款单" class="dayin" onclick="printTZD(\''+unitmap[tmp_rowNum]['id']+'\')">';
+					row += 			'<input type="button" alt="即将到期收费项目" class="time">';
 					row += 		'</div>';
 					row += 		'<div class="tixing">';
 					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
@@ -76,9 +94,9 @@
 					row += 		'</div>';
 					row += 		'<div class="btns">';
 					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
-					row += 			'<input type="button" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
-					row += 			'<input type="button" class="dayin">';
-					row += 			'<input type="button" class="time">';
+					row += 			'<input type="button" alt="单元详细信息" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
+					row += 			'<input type="button" alt="打印收款单" class="dayin" onclick="printTZD(\''+unitmap[tmp_rowNum]['id']+'\')" >';
+					row += 			'<input type="button" alt="即将到期收费项目" class="time">';
 					row += 		'</div>';
 					row += 		'<div class="tixing">';
 					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
@@ -108,15 +126,14 @@
 		var url = "../property/add.do?projeuctid="+projectid+"&time="+Date.parse(new Date());
 		parent.$.layer({
 	        type: 2,
-	        title: '添加单元',
+	        title: '批量添加单元',
 	        maxmin: false,
 	        shadeClose: true, //开启点击遮罩关闭层
-	        area : ['800px' , '460px'],
+	        area : ['850px' , '460px'],
 	        offset : ['', ''],
 	        iframe: {src: url},
 	        end:function() {
-	        	//关闭弹出框1时，刷新frame内容
-	        	$('#f').val("第一个弹出框，刷新后");
+	        	refresh();
 	        }
 	    });
 	}
@@ -133,15 +150,38 @@
 		//调用parent.util.js里的添加帐户方法。
 		parent.$.layer({
 	        type: 2,
-	        title: '添加租赁合同',
+	        title: '批量添加业主',
 	        maxmin: false,
 	        shadeClose: true, //开启点击遮罩关闭层
 	        area : ['850px' , '400px'],
 	        offset : ['', ''],
 	        iframe: {src: url},
 	        end:function() {
-	        	//关闭弹出框1时，刷新frame内容
-	        	$('#f').val("第一个弹出框，刷新后");
+	        	refresh();
+	        }
+	    });
+	}
+	function addBatchChargeitem(){
+		var ids = getCheckboxIds();
+		if (ids == "" ||ids == undefined) {
+			alert("请选择需要添加收费项目的单元，请重新尝试，或与管理员联系。");
+			return;
+		}
+		console.log("ids========"+ids);
+		var projectid = "${projeuctid}";
+		var url = "${pageContext.request.contextPath}/charge/addbatchitemforunit.do?ids="+ids+"&time="+Date.parse(new Date());
+		var loadi = parent.layer.load(0);
+		parent.$.layer({
+	        type: 2,
+	        title: '批量添加收费项目',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['850px' , '400px'],
+	        offset : ['150px', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	parent.layer.close(loadi);
+	        	refresh();
 	        }
 	    });
 	}
@@ -202,7 +242,7 @@ function edit(id){
 	
 	
 	var url = "../property/edit.do?id="+id + "&time="+Date.parse(new Date());
-	
+	var loadi = parent.layer.load(0);
 	parent.$.layer({
         type: 2,
         title: '查看或修改帐户信息',
@@ -212,8 +252,8 @@ function edit(id){
         offset : ['', ''],
         iframe: {src: url},
         end: function(){
-        	//调用iframe子页面的刷新方法
-        	tt.window.refresh();
+        	parent.layer.close(loadi);
+        	refresh();
         }
     });
 }
@@ -232,9 +272,10 @@ function edit(id){
 		</div>
 		<div class="top2_right">
 			<div class="buttons">
-				<a href="javascript:addBatchLease();" class="jia">&nbsp;</a><!-- 批量增加业主信息 -->
-				<a href="javascript:add();" class="jia" alt="批量添加业主信息">&nbsp;</a>
-				<a href="javascript:del();" class="jian" alt="新增单元">&nbsp;</a>
+				<a href="javascript:add();" class="jia" alt="批量添加单元">&nbsp;</a>
+				<a href="javascript:addBatchLease();" class="jia" alt="批量增加业主信息">&nbsp;</a>
+				<a href="javascript:addBatchChargeitem();" class="jia" alt="批量添加收费项目">&nbsp;</a>
+				<a href="javascript:del();" class="jian" alt="删除单元">&nbsp;</a>
 				<a href="#" class="money">&nbsp;</a>
 				<a href="#" class="dayin1">&nbsp;</a>
 				<div style="clear: both"></div>
@@ -254,7 +295,7 @@ function edit(id){
 	
 			</div>
 	</div>
-
+	<div id="print_div" style="height:0px;width:0px;overflow:hidden"></div>
 
 
 	<!--内容部分结束-->

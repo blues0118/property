@@ -17,8 +17,10 @@ import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Unitterm;
+import net.ussoft.property.service.IBookService;
 import net.ussoft.property.service.IBooktermService;
 import net.ussoft.property.service.IProjectService;
+import net.ussoft.property.service.IUnittermService;
 import net.ussoft.property.util.CommonUtils;
 
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,11 @@ public class BookTermController extends BaseConstroller {
 	
 	@Resource
 	private IBooktermService booktermService;
+	@Resource
+	private IUnittermService unittermService;
+	
+	@Resource
+	private IBookService bookService;
 	
 	/**
 	 * 台账管理初期
@@ -190,6 +197,54 @@ public class BookTermController extends BaseConstroller {
 		String json = JSON.toJSONString(resultMap);
 		out.print(json);
 	}
+	/**
+	 * 单元台账列表
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value = "/listStandingbook", method = RequestMethod.POST)
+	public void listStandingbook(Integer page,String unitid,String unittermid, HttpServletResponse response) throws Exception {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		PageBean<Book> pageBean = new PageBean<Book>();
+
+		//每页行数
+		Integer pageSize = 50;
+		
+		pageBean.setIsPage(true);
+		pageBean.setPageSize(pageSize);
+		pageBean.setPageNo(page);
+		
+		pageBean.setOrderBy("itemcode");
+		pageBean.setOrderType("desc");
+		
+		Book t = new Book();
+		if(unitid!=null && !"".equals(unitid)){
+			t.setUnitid(unitid);
+		}
+		List<Unitterm> unittermlist = unittermService.search(unitid);
+		if(unittermlist!=null && unittermlist.size()>0){
+			t.setUnittermid(unittermlist.get(0).getId());
+		}
+		if(unittermid!=null && !"".equals(unittermid)){
+			t.setUnittermid(unittermid);
+		}
+		
+		//获取数据
+		pageBean = bookService.list(t, pageBean);
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalpages", pageBean.getPageCount());
+		resultMap.put("currpage", pageBean.getPageNo());
+		resultMap.put("totalrecords", pageBean.getRowCount());
+		resultMap.put("rows", pageBean.getList());
+//		resultMap.put("unittermlist", unittermlist);
+		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
 	
 	/**
 	 * 打开添加页面
@@ -210,6 +265,16 @@ public class BookTermController extends BaseConstroller {
 	public ModelAndView add(String projectid, ModelMap modelMap) {
 		modelMap.put("projectid", projectid);
 		return new ModelAndView("/view/bookterm/add",modelMap);
+	}
+	/**
+	 * 打开添加页面
+	 * @return
+	 */
+	@RequestMapping(value="/addChargeitemforunit",method=RequestMethod.GET)
+	public ModelAndView addChargeitemforunit(String termid,String unitid, ModelMap modelMap) {
+		modelMap.put("termid", termid);
+		modelMap.put("unitid", unitid);
+		return new ModelAndView("/view/property/chargeitem/addchargeitemforunit",modelMap);
 	}
 
 	/**
@@ -289,7 +354,36 @@ public class BookTermController extends BaseConstroller {
 		
 		out.print(result);
 	}
-	
+	/**
+	 * 删除单元台帐。
+	 * @param orgid
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/deleteunitbook",method=RequestMethod.POST)
+	public void deleteunitbook(String ids,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		if (ids == null || ids.equals("") ) {
+			out.print(result);
+			return;
+		}
+		
+		String[] delStrings = ids.split(",");
+		
+		for (String id : delStrings) {
+			// 单元台帐删除
+			bookService.delete(id);
+			
+		}
+		result = "success";
+		
+		out.print(result);
+	}
 	/**
 	 * 打开总账期编辑页面
 	 * @param id
@@ -302,6 +396,19 @@ public class BookTermController extends BaseConstroller {
 		modelMap.put("bookterm", bookterm);
 		
 		return new ModelAndView("/view/bookterm/edit", modelMap);
+	}
+	/**
+	 * 打开单元台帐编辑页面
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/editforunit",method=RequestMethod.GET)
+	public ModelAndView editforunit(String id,ModelMap modelMap) {
+		Book book = bookService.getById(id);
+		modelMap.put("book", book);
+		
+		return new ModelAndView("/view/property/book/edit", modelMap);
 	}
 	
 	@RequestMapping(value="/update",method=RequestMethod.POST)
@@ -319,6 +426,30 @@ public class BookTermController extends BaseConstroller {
 		int num = booktermService.update(standingbookterm);
 		if (num > 0 ) {
 			result = "success";
+		}
+		out.print(result);
+	}
+	/**
+	 * 执行更新
+	 * @param id
+	 * @param value
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/savechargeitem",method=RequestMethod.POST)
+	public void savechargeitem(String projeuctid,String unitid,String termid,String unittermid,String ids,ModelMap modelMap,HttpServletRequest request,HttpServletResponse response) {
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int num = bookService.addChargeitem(projeuctid,unitid,termid,unittermid,ids);
+		String result = "success";
+		if (num <= 0 ) {
+			result = "failure";
 		}
 		out.print(result);
 	}

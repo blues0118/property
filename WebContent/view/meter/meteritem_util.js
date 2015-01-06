@@ -4,8 +4,8 @@
  */
 
 //创建meteritem.util命名空间
-if(typeof charge == "undefined"){
- var charge = {};
+if(typeof meteritem == "undefined"){
+ var meteritem = {};
 }
 
 meteritem.util = {};
@@ -34,12 +34,12 @@ meteritem.util.add = function() {
 
 
 //招标记录
-meteritem.util.setMeteritem = function(id) {
-	var url = "../meter/meteritem.do?id="+id + "&time="+Date.parse(new Date());
+meteritem.util.setMeteritem = function(id,projectid) {
+	var url = "../meter/meteritem.do?meterid="+id + "&projectid=" + projectid + "&time="+Date.parse(new Date());
 	
 	$.layer({
         type: 2,
-        title: '修改收费项',
+        title: '抄表记录',
         maxmin: false,
         shadeClose: true, //开启点击遮罩关闭层
         area : ['900px' , '500px'],

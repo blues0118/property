@@ -51,5 +51,10 @@ public interface IChargeitemService {
 	 * @return
 	 */
 	public List<Chargeitem> list(Chargeitem chargeitem);
-
+	/**
+	 * 为单元增加收费项目
+	 * @param id
+	 * @return
+	 */
+	public int addChargeitem(String unitid,String ids);
 }

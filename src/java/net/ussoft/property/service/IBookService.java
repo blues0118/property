@@ -19,6 +19,12 @@ public interface IBookService {
 	 * @return
 	 */
 	public PageBean<Bookterm> list(Bookterm t,PageBean<Bookterm> pageBean);
+	/**
+	 * 单元台帐分页读取
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Book> list(Book t,PageBean<Book> pageBean);
 	
 	/**
 	 * 插入总账期
@@ -31,4 +37,29 @@ public interface IBookService {
 	 * @return
 	 */
 	public List<Book> search(Book t);
+	/**
+	 * 增加单元台帐
+	 * @return
+	 */
+	public int addChargeitem(String projectid,String unitid,String termid,String unittermid,String ids);
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	public int delete(String id);
+	/**
+	 * 取得单元台账账期
+	 * @param id
+	 * @return
+	 */
+	public Book getById(String id);
+	
+	/**
+	 * 插入总账期
+	 * @param standingbookterm
+	 * @return
+	 */
+	public Book insert(Book book);
+	
 }

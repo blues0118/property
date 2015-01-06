@@ -144,10 +144,8 @@ function loadData() {
 	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
 	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
 	];
-	
-	var iswatch = $("#iswatch").val();
 	size = $(window).height()-120;
-	var postData={iswatch:'1',unitid:'SYSTEM'};
+	var postData={unitid:'SYSTEM'};
 	
 	var _option = {
 			gridObject:"dataGrid",
@@ -175,8 +173,8 @@ function loadData() {
 		return rownumbers;
 	}
 	
-	function add(){
-		var gridObject;
+	function add() {
+	   var gridObject;
 		//设置滚动条
 		setCroll('#dataGrid .ui-jqgrid-bdiv','jqgrid-div');
 		gridObject = "dataGrid";
@@ -188,10 +186,10 @@ function loadData() {
 		str = getSelectid(gridObject,rownumbers);
 		
 		if (str == "") {
-			alert("请先选择要添加的数据。");
+			alert("请先选择要添加的收费项目。");
 			return;
 		}
-		if (confirm("确定要为单元添加选中的收费项目吗？请谨慎操作!")) {
+		if (confirm("确定要将选中的收费项目添加到选择的单元吗？请谨慎操作。")) {
 			var loadi = parent.layer.load(0);
 			$.ajax({
 		        async : false,
@@ -203,11 +201,10 @@ function loadData() {
 				},
 		        dataType : 'text',
 		        success : function(data) {
-		        	parent.layer.close(loadi);
-					reloadGrid();
 					alert(data);
 		        }
 		    });
+			reloadGrid();
 		};
 	}
 	function refresh() {

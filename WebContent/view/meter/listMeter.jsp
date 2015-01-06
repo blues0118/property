@@ -68,7 +68,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    return result;
 	    },
         funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button type="button" onclick="setMeteritem(\''+rowdata.id+'\')">详细</button>';
+		    var result = '<button type="button" onclick="setMeteritem(\''+rowdata.id+'\',\''+rowdata.projectid+'\')">详细</button>';
 		    result += '<button type="button" onclick="saveChargeitem(saveChargeitem(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
 		    return result;
@@ -85,19 +85,20 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var size;
 		var url = "${pageContext.request.contextPath}/meter/meterList.do";
 		
-		colNames = ['抄表账期', '创建人', '创建时间','账期状态','备注','操作'];
+		colNames = ['抄表账期', '抄表人', '创建时间','账期状态','备注','操作'];
 		colModel = [ 
-		           {name:'termcode',index:'termcode', width:80,align:"center"},
-		           {name:'createman',index:'createman', width:80,align:"center"},
+		           {name:'meterdate',index:'meterdate', width:80,align:"center"},
+		           {name:'meterman',index:'meterman', width:80,align:"center"},
 		           {name:'createtime',index:'createtime', width:80,align:"center"},
-		           {name:'tremstatus',index:'tremstatus', width:100,align:"center",formatter:"typeFormatter"}, 
-		           {name:'termmemo',index:'termmemo', width:100,align:"center"}, 
+		           {name:'meterstatus',index:'meterstatus', width:100,align:"center",formatter:"typeFormatter"}, 
+		           {name:'metermemo',index:'metermemo', width:100,align:"center"}, 
 		           {name:'fun',index:'fun', width:140,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}, 
 		];
 		
-		var searchTxt = $("#searchTxt").val();
+		//var searchTxt = $("#searchTxt").val();
+		var proid = '${projectid}';
 		size = $(window).height()-120;
-		var postData={searchTxt:searchTxt};
+		var postData={projectid:proid};
 		
 		var _option = {
 				gridObject:"dataGrid",
@@ -139,7 +140,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 			alert("请先选择要删除的数据。");
 			return;
 		}
-		if (confirm("确定要删除选择的帐户吗？删除该帐户，将同时删除该帐户的一切附属信息。请谨慎操作。")) {
+		if (confirm("确定要删除选择的账期吗？删除该账期，将看不到该项目的一切抄表信息。请谨慎操作。")) {
 		    $.ajax({
 		        async : true,
 		        url : "${pageContext.request.contextPath}/account/delete.do",
@@ -158,9 +159,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	
-	function setMeteritem(id){
+	function setMeteritem(id,projectid){
 		//调用meteritem.util.js里的单元抄表记录方法。
-		parent.meteritem.util.setMeteritem(id);
+		parent.meteritem.util.setMeteritem(id,projectid);
 	}
 	
 	function refresh() {
@@ -205,12 +206,14 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
-			<div class="dqwz_l">当前位置：权限管理－帐户管理</div>
+			<div class="dqwz_l">当前位置：抄表管理</div>
+			<!-- 
 			<div  class="caozuoan">
-				[ <a href="#" onclick="add()">添加帐户</a> ]
-				[ <a href="#" onclick="del()">删除帐户</a> ]
+				[ <a href="#" onclick="add()">添加</a> ]
+				[ <a href="#" onclick="del()">删除</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
 	         </div>
+	          -->
 	         <div style="clear:both"></div>
 	    </div>
 		<div class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >

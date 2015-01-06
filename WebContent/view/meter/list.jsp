@@ -38,10 +38,10 @@
 	};
 	
 	function onClick(event, treeId,nodes) {
-	
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		if (nodes.projecttype == 'L') {
-			$("#fra").attr("src","${pageContext.request.contextPath}/meter/list.do?projeuctid=" + nodes.id);
+			var url = "${pageContext.request.contextPath}/meter/list.do?projectid=" + nodes.id;
+			$("#fra").attr("src",url);
 			return ;
 		}else{
 			treeObj.expandNode(nodes);

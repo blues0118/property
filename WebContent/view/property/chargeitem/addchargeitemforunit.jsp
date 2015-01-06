@@ -147,7 +147,7 @@ function loadData() {
 	
 	var iswatch = $("#iswatch").val();
 	size = $(window).height()-120;
-	var postData={iswatch:'1',unitid:'SYSTEM'};
+	var postData={unitid:'SYSTEM'};
 	
 	var _option = {
 			gridObject:"dataGrid",
@@ -175,6 +175,7 @@ function loadData() {
 		return rownumbers;
 	}
 	
+	//为单元添加收费项目
 	function add(){
 		var gridObject;
 		//设置滚动条
@@ -195,11 +196,12 @@ function loadData() {
 			var loadi = parent.layer.load(0);
 			$.ajax({
 		        async : false,
-		        url : '${pageContext.request.contextPath}/charge/savechargeitem.do',
+		        url : '${pageContext.request.contextPath}/bookterm/savechargeitem.do',
 		        type : 'post',
 		        data: {
 					ids:str.toString(),
-					unitid:$("#unitid").val()
+					unitid:$("#unitid").val(),
+					termid:$("#termid").val()
 				},
 		        dataType : 'text',
 		        success : function(data) {
@@ -213,6 +215,14 @@ function loadData() {
 	function refresh() {
 		reloadGrid();
 	}
+	function getSelectid(gridObject,rows) {
+		var result = new Array();
+		for (var i=0;i<rows.length;i++) {
+			var rowData = $("#"+gridObject).jqGrid('getRowData',rows[i]);
+			result[i] = rowData["id"] ;
+		}
+		return result.toString();
+	}
 
 
 </script>
@@ -221,9 +231,9 @@ function loadData() {
 <!--内容部分开始-->
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
-			<input type="hidden" id="unitid" value="${chargeitem.unitid }">
-			<input type="hidden" id="iswatch" value="${chargeitem.iswatch }">
-			<div class="dqwz_l">当前位置：物业管理－收费项目管理</div>
+			<input type="hidden" id="unitid" value="${unitid }">
+			<input type="hidden" id="termid" value="${termid }">
+			<div class="dqwz_l">当前位置：物业管理－收费项目添加</div>
 			<div  class="caozuoan">
 				[ <a href="#" onclick="add()">确定添加</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
