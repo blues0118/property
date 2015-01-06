@@ -66,4 +66,13 @@ public interface IBooktermService {
 	 * @return
 	 */
 	public Bookterm getById(String id);
+	
+
+	
+	/**
+	 * 总账期列表用数据取得
+	 * 
+	 * @return List<Bookterm>
+	 */
+	public List<Bookterm> getTermList();
 }

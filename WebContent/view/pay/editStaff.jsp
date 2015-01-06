@@ -17,28 +17,27 @@
 	}
 	
 	function update() {
-		var id = '${standbookterm.id }';
+		var id = '${staff.id }';
 		if (id == "") {
 			alert("没有获取足够数据，请退出后，重新尝试，或与管理员联系。");
 			return;
 		}
 		
-		var bookterm = {};
-		bookterm.id = id;
-		bookterm.termcode = $("#termcode").val();
-		bookterm.termmemo = $("#termmemo").val();
+		var staff = {};
+		staff.id = id;
+		staff.staffcode = $("#staffcode").val();
+		staff.staffmemo = $("#staffmemo").val();
 		
 	    $.ajax({
 	        async : true,
-	        url : "${pageContext.request.contextPath}/bookterm/update.do",
+	        url : "${pageContext.request.contextPath}/pay/updateStaff.do",
 	        type : 'post',
-	        data:bookterm,
+	        data:staff,
 	        dataType : 'text',
 	        success : function(data) {
 	        	sessionOut(data);
 	            if (data == "success") {
 	            	alert("更新完毕。");
-	            	
 	            } else {
 	            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
 	            }
@@ -47,21 +46,21 @@
 	}
 	
 </script>
-<title>修改总台账帐期</title>
+<title>修改员工</title>
 </head>
 <body>
 	<table width="400" cellspacing="0" cellpadding="8" align="center" style="margin-top:20px">
 		<tbody>
 			<tr>
-                <td colspan="2" align="center">修改总台账帐期</td>
+                <td colspan="2" align="center">修改员工信息</td>
             </tr>
             <tr>
-				<td>总账期名称 :</td>
-				<td><input type="text" id="termcode" name="termcode" value="${bookterm.termcode }"></td>
+				<td>员工名称:</td>
+				<td><input type="text" id="staffcode" name="staffcode" value="${staff.staffcode }"></td>
 			</tr>
 			<tr>
 				<td>备注 :</td>
-				<td><input type="text" id="termmemo" name="termmemo" value="${bookterm.termmemo }"></td>
+				<td><input type="text" id="staffmemo" name="staffmemo" value="${staff.staffmemo }"></td>
 			</tr>
 			<tr>
 				<td colspan="2" align="center">

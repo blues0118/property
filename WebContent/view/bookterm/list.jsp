@@ -69,16 +69,21 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	
 	function loadData() {
 
+		
+		$("#booktermenu").show();
+		$("#booktermbt").show();
+		$("#booktermlist").show();
+		
 		$("#uinttermenu").hide();
 		$("#unittermbt").hide();
 		$("#unittermlist").hide();
 		
 		var title = "总台账账期管理";
-		var pageer = "#pager";
+		var pageer = "#pager_bt";
 		var colNames;
 		var colModel;
 		var datatype = "json";
-		var page = 50;
+		var page = 17;
 		var size;
 		var url = "${pageContext.request.contextPath}/bookterm/list.do?projectid="+document.all("projectid").value;
 		
@@ -123,7 +128,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$("#unittermbt").show();
 		$("#unittermlist").show();
 		var title = "单元台账账期";
-		var pageer = "#pager";
+		var pageer = "#pager_ut";
 		var colNames;
 		var colModel;
 		var datatype = "json";
@@ -140,7 +145,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		];
 		
 		var searchTxt = termid;
-		size = $(window).height()-120;
+		size = $(window).height()-335;
 		var postData={searchTxt:searchTxt};
 		
 		var _option = {
@@ -167,7 +172,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$("#unittermbt").show();
 		$("#unittermlist").show();
 		var title = "台账详细";
-		var pageer = "#pager";
+		var pageer = "#pager_b";
 		var colNames;
 		var colModel;
 		var datatype = "json";
@@ -188,7 +193,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
                    {name:'fun',index:'fun', width:80,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funDetailFormatter"}
 		];
 
-		size = $(window).height()-120;
+		size = $(window).height()-395;
 		var book = {};
 		
 		book.projectid = projectid;
@@ -252,7 +257,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 			alert("请先选择要删除的数据。");
 			return;
 		}
-		if (confirm("确定要删除选择的帐户吗？删除该帐户，将同时删除该帐户的一切附属信息。请谨慎操作。")) {
+		if (confirm("确定要删除选择的总账期吗？删除该总账期，将同时删除该总账期的一切附属信息。请谨慎操作。")) {
 		    $.ajax({
 		        async : true,
 		        url : "${pageContext.request.contextPath}/bookterm/delete.do",
@@ -293,11 +298,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    });
 	}
 	
-	function update_password(id) {
-		//调用account.util.js里的修改帐户密码方法。
-		parent.account.util.update_password(id);
-	}
-	
 	function refresh() {
 		reloadGrid();
 	}
@@ -332,19 +332,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    });
 		}
 	}
-	
-	function setrole(id) {
-		//调用account.util.js里的修改帐户密码方法。
-		parent.account.util.setrole(id);
-	}
-	
-	function setauth(id) {
-		var url = "setauth.do?id="+id + "&time="+Date.parse(new Date());
-		var whObj = { width: 800, height: 500 };
-		var result = openShowModalDialog(url,window,whObj);
-	}
-
-
 </script>
 
 
@@ -359,24 +346,23 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 				<button type="button" onclick="loadData()">查询</button>
 	         </div>
 			<div id="unittermbt" class="caozuoan">
-				<input type="text" id="searchTxt" name="searchTxt" />
-				<button type="button" onclick="loadData()">查询</button>
+				<button type="button" onclick="loadData()">返回</button>
 	         </div>
 	         <div style="clear:both"></div>
 
 	    </div>
 		<div id="booktermlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 			<table id="dataGrid"></table>
-			<div id="pager"></div>
+			<div id="pager_bt"></div>
 		</div>
-		<div id="unittermlist" >
+		<div id="unittermlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 		<div>
 			<table id="detailDataGrid"></table>
-			<div id="pager"></div>
+			<div id="pager_ut"></div>
 		</div>
 		<div>
 			<table id="detailbookDataGrid"></table>
-			<div id="pager"></div>
+			<div id="pager_b"></div>
 		</div>
 		</div>
 		<div>

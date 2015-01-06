@@ -94,8 +94,8 @@ public class BooktermService implements IBooktermService {
 
 	@Transactional("txManager")
 	@Override
-	public int update(Bookterm Bookterm) {
-		Bookterm tmp = booktermDao.update(Bookterm);
+	public int update(Bookterm bookterm) {
+		Bookterm tmp = booktermDao.update(bookterm);
 		if (null != tmp) {
 			return 1;
 		}
@@ -171,8 +171,6 @@ public class BooktermService implements IBooktermService {
 		}
 	}
 	
-
-	
 	/**
 	 * 单元管理表的Id取得
 	 * 
@@ -185,4 +183,16 @@ public class BooktermService implements IBooktermService {
 		sqlValues.add(projectId);
 		return unitDao.search(sql , sqlValues);
 	}
+	
+	/**
+	 * 总账期列表用数据取得
+	 * 
+	 * @return List<Bookterm>
+	 */
+	public List<Bookterm> getTermList() {
+		String sql = "select id,termcode from bookterm where tremstatus=0 ";
+		List<Object> sqlValues = new ArrayList<Object>();
+		return booktermDao.search(sql , sqlValues);
+	}
+	
 }
