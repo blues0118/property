@@ -47,15 +47,21 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    return result;
 	    },
 	    funStaffFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button title="详细" type="button" onclick="loadStaffData(\''+rowdata.id+'\')">详细</button>';
+		    var result = '<button title="工资详细" type="button" onclick="loadstaffPayData(\''+rowdata.id+'\')">详细</button>';
 		    result += '<button title="修改" type="button" onclick="editStaff(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button title="删除" type="button" onclick="delStaff(\''+rowdata.id+'\')">删除</button>';
+		    result += '<button title="添加支出" type="button" onclick="addstaffPay(\''+rowdata.id+'\')">添加支出</button>';
 		    return result;
 	    },
 	    funOtherFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button title="详细" type="button" onclick="loadStaffData(\''+rowdata.id+'\')">详细</button>';
-		    result += '<button title="修改" type="button" onclick="editStaff(\''+rowdata.id+'\')">修改</button>';
-		    result += '<button title="删除" type="button" onclick="delStaff(\''+rowdata.id+'\')">删除</button>';
+		    var result = '<button title="详细" type="button" onclick="loadOtherData(\''+rowdata.id+'\')">详细</button>';
+		    result += '<button title="修改" type="button" onclick="editOther(\''+rowdata.id+'\')">修改</button>';
+		    result += '<button title="删除" type="button" onclick="delOther(\''+rowdata.id+'\')">删除</button>';
+		    return result;
+	    },
+	    funStaffContentFormatter: function (cellvalue, options, rowdata) {
+		    var result = '<button title="修改" type="button" onclick="editStaffcontent(\''+rowdata.id+'\')">修改</button>';
+		    result += '<button title="删除" type="button" onclick="delStaffcontent(\''+rowdata.id+'\')">删除</button>';
 		    return result;
 	    }
     });
@@ -81,7 +87,55 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    });
 	}
 	
+	function loadstaffPayData(id) {
+		$("#eqlist").hide();
+		$("#stlist").hide();
+		$("#otlist").hide();
+		$("#sclist").show();
+		
+		var title = "员工工资管理";
+		var pageer = "#pager_sc";
+		var colNames;
+		var colModel;
+		var datatype = "json";
+		var page = 17;
+		var size;
+		var url = "${pageContext.request.contextPath}/pay/staffContentList.do?staffid="+id;
+		
+		colNames = ['总台账id','工资','保险','操作'];
+		colModel = [
+                   {name:'termid',index:'termid', align:"center"},
+		           {name:'wage',index:'wage', align:"center"}, 
+		           {name:'safe',index:'safe', align:"center"}, 
+                   {name:'fun',index:'fun', fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffContentFormatter"}
+		];
+		
+		var searchTxt = $("#searchTxt").val();
+		size = $(window).height()-120;
+		var postData={searchTxt:searchTxt};
+		
+		var _option = {
+				gridObject:"dataGrid_sc",
+				url:url,
+				datatype:"json",
+				colNames:colNames,
+				colModel:colModel,
+				postData:postData,
+				pageer:pageer,
+				page:page,
+				title:title,
+				size:size
+		};
+		
+		//创建grid
+		$.loadGridData(_option);
+	}
+	
 	function loadEquipData() {
+		$("#eqlist").show();
+		$("#stlist").hide();
+		$("#otlist").hide();
+		$("#sclist").hide();
 		
 		var title = "设备管理";
 		var pageer = "#pager_eq";
@@ -190,8 +244,31 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	        }
 	    });
 	}
+
+
+	function addstaffPay(id){
+		
+		var url = "${pageContext.request.contextPath}/pay/addStaffPay.do?staffId="+id;
+		parent.$.layer({
+	        type: 2,
+	        title: '添加员工支出',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	// 数据重新读取方法
+	        	refresh();
+	        }
+	    });
+	}
 	
 	function loadStaffData() {
+		$("#eqlist").hide();
+		$("#stlist").show();
+		$("#sclist").hide();
+		$("#otlist").hide();
 		
 		var title = "员工管理";
 		var pageer = "#pager_st";
@@ -204,9 +281,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		colNames = ['员工名称','备注','操作'];
 		colModel = [
-                   {name:'staffcode',index:'staffcode', align:"center"},
-		           {name:'staffmemo',index:'staffmemo', align:"center"}, 
-                   {name:'fun',index:'fun', fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffFormatter"}
+                   {name:'staffcode',index:'staffcode', width:40, align:"center"},
+		           {name:'staffmemo',index:'staffmemo', width:40, align:"center"}, 
+                   {name:'fun',index:'fun', width:180, fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffFormatter"}
 		];
 		
 		var searchTxt = $("#searchTxt").val();
@@ -302,6 +379,10 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	function loadOtherData() {
+		$("#eqlist").hide();
+		$("#stlist").hide();
+		$("#sclist").hide();
+		$("#otlist").show();
 		
 		var title = "其他支出管理";
 		var pageer = "#pager_ot";
@@ -342,7 +423,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$.loadGridData(_option);
 	}
 	
-	function editStaff(id){
+	function editOther(id){
 		if (id == "") {
 			alert("请先选择要修改的数据。");
 			return;
@@ -365,7 +446,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    });
 	}
 	
-	function delStaff(id) {
+	function delOther(id) {
 		
 		//var ids = getGridSelectids();
 		var ids = id;
@@ -378,6 +459,56 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    $.ajax({
 		        async : true,
 		        url : "${pageContext.request.contextPath}/pay/deleteOther.do",
+		        type : 'post',
+		        data: {ids:ids.toString()},
+		        dataType : 'text',
+		        success : function(data) {
+		        	sessionOut(data);
+		            if (data == "success") {
+		            	alert("删除完毕。");
+		            	refresh();
+		            }
+		        }
+		    });
+		}
+	}
+	
+	function editStaffcontent(id){
+		if (id == "") {
+			alert("请先选择要修改的数据。");
+			return;
+		}
+		
+		var url = "${pageContext.request.contextPath}/pay/editStaffcontent.do?id="+id + "&time="+Date.parse(new Date());
+		
+		parent.$.layer({
+	        type: 2,
+	        title: '修改员工工资信息',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	// 数据重新读取方法
+	        	refresh();
+	        }
+	    });
+	}
+
+	function delStaffcontent(id) {
+		
+		//var ids = getGridSelectids();
+		var ids = id;
+		
+		if (ids == "") {
+			alert("请先选择要删除的数据。");
+			return;
+		}
+		if (confirm("确定要删除选择的员工工资吗？请谨慎操作。")) {
+		    $.ajax({
+		        async : true,
+		        url : "${pageContext.request.contextPath}/pay/deleteStaffcontent.do",
 		        type : 'post',
 		        data: {ids:ids.toString()},
 		        dataType : 'text',
@@ -418,6 +549,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		<div id="stlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 			<table id="dataGrid_st"></table>
 			<div id="pager_st"></div>
+		</div>
+		
+		<div id="sclist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
+			<table id="dataGrid_sc"></table>
+			<div id="pager_sc"></div>
 		</div>
 	    
 		<div id="otlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
