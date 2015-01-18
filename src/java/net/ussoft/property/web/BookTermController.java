@@ -55,9 +55,11 @@ public class BookTermController extends BaseConstroller {
 	public ModelAndView index(ModelMap modelMap) {
 		
 		modelMap = super.getModelMap("BOOKTERM","BOOKTERM");
+		// session取得
+		Sys_account accountSession = super.getSessionAccount();
 		
 		//物业项目树形数据取得
-		List<Project> list = projectService.list();
+		List<Project> list = projectService.list(accountSession.getId());
 		String listString = JSON.toJSONString(list);
 		modelMap.put("projectList", listString);
 		
@@ -170,7 +172,7 @@ public class BookTermController extends BaseConstroller {
 		PageBean<Bookterm> pageBean = new PageBean<Bookterm>();
 
 		//每页行数
-		Integer pageSize = 50;
+		Integer pageSize = 17;
 		
 		pageBean.setIsPage(true);
 		pageBean.setPageSize(pageSize);
