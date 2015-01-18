@@ -124,11 +124,14 @@ public class MeterController extends BaseConstroller  {
 	
 	/**
 	 * 抄表账期抄表记录列表
+	 * @param meterid
+	 * @param projectid
+	 * @param meterstatus
 	 * @param modelMap
 	 * @return
 	 */
 	@RequestMapping(value = "/meteritem")
-	public ModelAndView meteritem(String meterid,String projectid,ModelMap modelMap) {
+	public ModelAndView meteritem(String meterid,String projectid,int meterstatus,ModelMap modelMap) {
 		
 		Meteritem t = new Meteritem();
 		t.setProjectid(projectid);
@@ -172,7 +175,10 @@ public class MeterController extends BaseConstroller  {
 				
 				colModel.add("{name:'meteritemid" + i + "',index:'meteritemid" + i + "',width:80,align:'center'}");
 				colModel.add("{name:'lastnum_c" + i + "',index:'lastnum_c" + i + "',width:80,align:'center'}");
-				colModel.add("{name:'newnum_c" + i + "',index:'newnum_c" + i + "',width:80,editrules:{number:true},sortable:false,align:'center',editable:true}");
+				if(meterstatus != 1)
+					colModel.add("{name:'newnum_c" + i + "',index:'newnum_c" + i + "',width:80,editrules:{number:true},sortable:false,align:'center',editable:true}");
+				else
+					colModel.add("{name:'newnum_c" + i + "',index:'newnum_c" + i + "',width:80,editrules:{number:true},sortable:false,align:'center',editable:false}");
 				
 			}
 		}
@@ -181,6 +187,7 @@ public class MeterController extends BaseConstroller  {
 		modelMap.put("groupHeaders", JSON.toJSONString(groupHeaders));
 		modelMap.put("colModel", colModel.toString());
 		modelMap.put("colNames", JSON.toJSONString(colNames));
+		modelMap.put("meterstatus", meterstatus);
 		return new ModelAndView("/view/meter/listMeterItem",modelMap);
 	}
 	
@@ -281,9 +288,8 @@ public class MeterController extends BaseConstroller  {
 	
 	/**
 	 * 计入台账
-	 * @param id
-	 * @param value
-	 * @param modelMap
+	 * @param projectid
+	 * @param meterid
 	 * @return
 	 * @throws IOException 
 	 */
@@ -312,7 +318,7 @@ public class MeterController extends BaseConstroller  {
 			Chargeitem chargeitem = chargeitemService.getById(m.getChargeitemid());
 			JSONArray jsonArr = JSONObject.parseArray(chargeitem.getItemcontent());
 			JSONObject obj = jsonArr.getJSONObject(0);
-			System.out.println(obj.getString("watch_price"));
+//			System.out.println(obj.getString("watch_price"));
 			
 			double sum = Double.valueOf(obj.getString("watch_price"));
 			double chargesum = (m.getNewnumber() - m.getLastnumber()) * sum;
@@ -321,9 +327,19 @@ public class MeterController extends BaseConstroller  {
 //			book.setUnittermid(unittermid);	//单元台账账期id
 			
 			bookService.insert(book);
+			
+			//修改单元收费项
+			chargeitem.setWatchnumber(m.getNewnumber()); //最后表读数
+			chargeitemService.update(chargeitem);
 		}
 	
+		//修改抄表账期状态-计入台账为已完成
+		Meter m = new Meter();
+		m.setId(meterid);
+		m.setMeterstatus(1);
+		meterService.update(m);
 		
+		out.print("success");
 	}
 	
 }

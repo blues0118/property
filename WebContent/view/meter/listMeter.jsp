@@ -68,9 +68,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    return result;
 	    },
         funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button type="button" onclick="setMeteritem(\''+rowdata.id+'\',\''+rowdata.projectid+'\')">详细</button>';
-		    result += '<button type="button" onclick="saveChargeitem(saveChargeitem(\''+rowdata.id+'\')">修改</button>';
-		    result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
+		    var result = '<button type="button" onclick="setMeteritem(\''+rowdata.id+'\',\''+rowdata.projectid+'\',\''+rowdata.meterstatus+'\')">详细</button>';
+		    //result += '<button type="button" onclick="saveChargeitem(saveChargeitem(\''+rowdata.id+'\')">修改</button>';
+		    //result += '<button type="button" onclick="delChargeitem(\''+rowdata.id+'\')">删除</button>';
 		    return result;
 	    }
     });
@@ -159,9 +159,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	
-	function setMeteritem(id,projectid){
+	function setMeteritem(id,projectid,meterstatus){
 		//调用meteritem.util.js里的单元抄表记录方法。
-		parent.meteritem.util.setMeteritem(id,projectid);
+		parent.meteritem.util.setMeteritem(id,projectid,meterstatus);
 	}
 	
 	function refresh() {

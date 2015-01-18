@@ -17,4 +17,10 @@ public interface IMeterService {
 	 */
 	public PageBean<Meter> list(Meter t,PageBean<Meter> pageBean);
 	
+	/**
+	 * 更新
+	 * @param meter
+	 * @return
+	 */
+	public int update(Meter meter);
 }

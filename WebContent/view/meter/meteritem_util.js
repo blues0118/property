@@ -34,8 +34,8 @@ meteritem.util.add = function() {
 
 
 //招标记录
-meteritem.util.setMeteritem = function(id,projectid) {
-	var url = "../meter/meteritem.do?meterid="+id + "&projectid=" + projectid + "&time="+Date.parse(new Date());
+meteritem.util.setMeteritem = function(id,projectid,meterstatus) {
+	var url = "../meter/meteritem.do?meterid="+id + "&projectid=" + projectid + "&meterstatus=" + meterstatus + "&time="+Date.parse(new Date());
 	
 	$.layer({
         type: 2,

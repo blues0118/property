@@ -29,5 +29,13 @@ public class MeterService implements IMeterService{
 		pageBean = meterDao.search(t, pageBean);
 		return pageBean;
 	}
+	@Override
+	public int update(Meter meter) {
+		Meter m = meterDao.update(meter);
+		if (null != m) {
+			return 1;
+		}
+		return 0;
+	}
 
 }

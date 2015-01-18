@@ -2,7 +2,10 @@ package net.ussoft.property.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -91,8 +94,35 @@ public class ChargeitemController extends BaseConstroller {
 		resultMap.put("currpage", pageBean.getPageNo());
 		resultMap.put("totalrecords", pageBean.getRowCount());
 		resultMap.put("rows", pageBean.getList());
-		
-		String json = JSON.toJSONString(resultMap);
+		List<Map<String, Object>> c = new ArrayList<Map<String,Object>>();
+		List<Chargeitem> ciList = pageBean.getList();
+		for(int i=0;i<ciList.size();i++){
+			Map<String , Object> map = new HashMap<String, Object>();
+			Chargeitem chargeitem = ciList.get(i);
+			map.put("id", chargeitem.getId());
+			map.put("itemcode", chargeitem.getItemcode());
+			map.put("chargeremark", chargeitem.getChargeremark());
+			//收费内容
+			JSONArray jsonArr = JSONObject.parseArray(chargeitem.getItemcontent());
+			if(chargeitem.getIswatch() == 0){
+				JSONObject obj = jsonArr.getJSONObject(0);
+				map.put("itemtype",obj.getIntValue("itemtype"));
+				map.put("itemcatagory",obj.getIntValue("itemcatagory"));
+				map.put("itemmode",obj.getIntValue("itemmode"));
+				map.put("itemunit",obj.getIntValue("itemunit"));
+				map.put("chargecatagory",obj.getIntValue("chargecatagory"));
+				map.put("chargeprice",obj.getDoubleValue("chargeprice"));
+				map.put("chargeperiodunit",obj.getIntValue("chargepriceunit"));
+				map.put("chargeperiod",obj.getIntValue("chargeperiod"));
+				map.put("chargeperiodunit",obj.getIntValue("chargeperiodunit"));
+				
+			}else{
+				JSONObject obj = jsonArr.getJSONObject(0);
+				map.put("watch_price",obj.getDoubleValue("watch_price"));
+			}
+			c.add(map);
+		}
+		String json = JSON.toJSONString(c);
 		out.print(json);
 		
 	}
