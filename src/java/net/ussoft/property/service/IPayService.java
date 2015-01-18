@@ -4,6 +4,7 @@ import net.ussoft.property.model.Equipment;
 import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Staff;
+import net.ussoft.property.model.Staffcontent;
 
 
 public interface IPayService {
@@ -114,5 +115,41 @@ public interface IPayService {
 	 * @return
 	 */
 	public Otherpay getOtherById(String id);
+	
+	/**
+	 * 插入员工工资
+	 * @param staffcontent
+	 * @return
+	 */
+	public Staffcontent insertStaffcontent(Staffcontent staffcontent);
+	
+	/**
+	 * 取得员工工资管理信息
+	 * @param staffid
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Staffcontent> getByStaffId(String staffid, PageBean<Staffcontent> pageBean);
+	
+	/**
+	 * 取得员工工资
+	 * @param id
+	 * @return
+	 */
+	public Staffcontent getStaffcontentById(String id);
+	
+	/**
+	 * 删除员工工资
+	 * @param id
+	 * @return
+	 */
+	public int deleteStaffcontent(String id);
+
+	/**
+	 * 更新员工工资
+	 * @param staffcontent
+	 * @return
+	 */
+	public int updateStaffcontent(Staffcontent staffcontent);
 
 }

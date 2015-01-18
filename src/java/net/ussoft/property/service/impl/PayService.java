@@ -8,10 +8,12 @@ import javax.annotation.Resource;
 import net.ussoft.property.dao.EquipmentDao;
 import net.ussoft.property.dao.OtherpayDao;
 import net.ussoft.property.dao.StaffDao;
+import net.ussoft.property.dao.StaffcontentDao;
 import net.ussoft.property.model.Equipment;
 import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Staff;
+import net.ussoft.property.model.Staffcontent;
 import net.ussoft.property.service.IPayService;
 
 import org.springframework.stereotype.Service;
@@ -28,11 +30,14 @@ public class PayService implements IPayService {
 	@Resource
 	private OtherpayDao otherpayDao;
 	
+	@Resource
+	private StaffcontentDao staffcontentDao;
+	
 	@Override
 	public Equipment insertEquipment(Equipment equipment) {
 		equipmentDao.save(equipment);
 		return equipment;
-		}
+	}
 	
 	@Override
 	public PageBean<Equipment> getByProjetId(String projectId, PageBean<Equipment> pageBean) {
@@ -77,7 +82,7 @@ public class PayService implements IPayService {
 	public Staff insertStaff(Staff staff) {
 		staffDao.save(staff);
 		return staff;
-		}
+	}
 	
 	@Override
 	public PageBean<Staff> getStaffList(Staff t, PageBean<Staff> pageBean) {
@@ -157,6 +162,51 @@ public class PayService implements IPayService {
 	 */
 	public Otherpay getOtherById(String id) {
 		return otherpayDao.get(id);
+	}
+	
+	@Override
+	public Staffcontent insertStaffcontent(Staffcontent staffcontent) {
+		staffcontentDao.save(staffcontent);
+		return staffcontent;
+	}
+	
+	@Override
+	public PageBean<Staffcontent> getByStaffId(String staffid, PageBean<Staffcontent> pageBean) {
+		String sql = "select distinct te.* from bookterm tb, staffcontent te where te.staffid= '"
+	                + staffid +"' and te.termid=tb.id and tb.tremstatus=0";
+		List<Object> sqlValues = new ArrayList<Object>();
+		return staffcontentDao.search(sql, sqlValues, pageBean);
+	}
+	
+	/**
+	 * 取得员工工资
+	 * @param id
+	 * @return
+	 */
+	public Staffcontent getStaffcontentById(String id) {
+		return staffcontentDao.get(id);
+	}
+	
+	/**
+	 * 删除员工工资
+	 * @param id
+	 * @return
+	 */
+	public int deleteStaffcontent(String id) {
+		return staffcontentDao.del(id);
+	}
+
+	/**
+	 * 更新员工工资
+	 * @param staffcontent
+	 * @return
+	 */
+	public int updateStaffcontent(Staffcontent staffcontent) {
+		Staffcontent tmp = staffcontentDao.update(staffcontent);
+		if (null != tmp) {
+			return 1;
+		}
+		return 0;
 	}
 
 }

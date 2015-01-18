@@ -17,6 +17,7 @@ import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Staff;
+import net.ussoft.property.model.Staffcontent;
 import net.ussoft.property.service.IBooktermService;
 import net.ussoft.property.service.IPayService;
 import net.ussoft.property.service.IProjectService;
@@ -225,6 +226,19 @@ public class PayController extends BaseConstroller {
 	public ModelAndView addStaff(String projectid, ModelMap modelMap) {
 		modelMap.put("projectid", projectid);
 		return new ModelAndView("/view/pay/addstaff",modelMap);
+	}
+	
+	/**
+	 * 打开添加员工支出页面
+	 * @return
+	 */
+	@RequestMapping(value="/addStaffPay",method=RequestMethod.GET)
+	public ModelAndView addStaffPay(String staffId, ModelMap modelMap) {
+		modelMap.put("staffId", staffId);
+		
+		List<Bookterm> termList = booktermService.getTermList();
+		modelMap.put("termList", termList);
+		return new ModelAndView("/view/pay/addstaffpay",modelMap);
 	}
 
 	/**
@@ -461,6 +475,8 @@ public class PayController extends BaseConstroller {
 		Otherpay otherpay = payService.getOtherById(id);
 		modelMap.put("otherpay", otherpay);
 		
+		List<Bookterm> termList = booktermService.getTermList();
+		modelMap.put("termList", termList);
 		return new ModelAndView("/view/pay/editOther", modelMap);
 	}
 	
@@ -507,6 +523,146 @@ public class PayController extends BaseConstroller {
 		for (String id : delStrings) {
 			// 员工删除
 			payService.deleteOther(id);
+		}
+		result = "success";
+		
+		out.print(result);
+	}
+
+	/**
+	 * 保存员工信息
+	 * @param otherpay
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/savestaffPay",method=RequestMethod.POST)
+	public void savestaffPay(Staffcontent staffcontent,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "success";
+		if (staffcontent == null ) {
+			result = "failure";
+			out.print(result);
+			return;
+		}
+		// 员工工资
+		// id、
+		staffcontent.setId(UUID.randomUUID().toString());
+		staffcontent = payService.insertStaffcontent(staffcontent);
+		if (staffcontent == null ) {
+			result = "failure";
+			out.print(result);
+			return;
+		}
+		out.print(result);
+	}
+	
+	/**
+	 * 员工工资管理
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value = "/staffContentList", method = RequestMethod.POST)
+	public void staffContentList(String staffid, Integer page,String searchTxt, HttpServletResponse response) throws Exception {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		PageBean<Staffcontent> pageBean = new PageBean<Staffcontent>();
+
+		//每页行数
+		Integer pageSize = 17;
+		
+		pageBean.setIsPage(true);
+		pageBean.setPageSize(pageSize);
+		pageBean.setPageNo(page);
+		
+		pageBean.setOrderBy("termid");
+		pageBean.setOrderType("desc");
+		
+		Equipment t = new Equipment();
+		if (null != searchTxt && !"".equals(searchTxt)) {
+			t.setCode(searchTxt);
+		}
+		
+		//获取数据
+		pageBean = payService.getByStaffId(staffid, pageBean);
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalpages", pageBean.getPageCount());
+		resultMap.put("currpage", pageBean.getPageNo());
+		resultMap.put("totalrecords", pageBean.getRowCount());
+		resultMap.put("rows", pageBean.getList());
+		
+		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
+	
+	/**
+	 * 打开员工工资编辑页面
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/editStaffcontent",method=RequestMethod.GET)
+	public ModelAndView editStaffcontent(String id,ModelMap modelMap) {
+		Staffcontent staffcontent = payService.getStaffcontentById(id);
+		modelMap.put("staffcontent", staffcontent);
+		
+		List<Bookterm> termList = booktermService.getTermList();
+		modelMap.put("termList", termList);
+		
+		return new ModelAndView("/view/pay/editStaffcontent", modelMap);
+	}
+	
+	@RequestMapping(value="/updateStaffcontent",method=RequestMethod.POST)
+	public void updateStaffcontent(Staffcontent staffcontent,HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		if (staffcontent == null ) {
+			out.print(result);
+			return;
+		}
+		int num = payService.updateStaffcontent(staffcontent);
+		if (num > 0 ) {
+			result = "success";
+		}
+		out.print(result);
+	}
+	
+	/**
+	 * 删除设备。
+	 * @param ids
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/deleteStaffcontent",method=RequestMethod.POST)
+	public void deleteStaffcontent(String ids,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		if (ids == null || ids.equals("") ) {
+			out.print(result);
+			return;
+		}
+		
+		String[] delStrings = ids.split(",");
+		
+		for (String id : delStrings) {
+			// 员工删除
+			payService.deleteStaffcontent(id);
 		}
 		result = "success";
 		
