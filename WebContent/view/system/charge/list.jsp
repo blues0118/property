@@ -26,10 +26,21 @@ body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
 a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 -->
 </style>
-
+<style>
+<!--
+ *{ margin:0; padding:0;}
+ body { font:12px/19px Arial, Helvetica, sans-serif; color:#666;}
+ .tab { margin:10px;}
+ .tab_menu { clear:both;}
+ .tab_menu li { float:left; text-align:center; cursor:pointer; list-style:none; padding:1px 6px; margin-right:4px; background:#F1F1F1; border:1px solid #898989; border-bottom:none;}
+ .tab_menu li.hover { background:#DFDFDF;}
+ .tab_menu li.selected { color:#FFF; background:#6D84B4;}
+ .tab_box { clear:both; border:1px solid #898989; padding:10px; }
+-->
+</style>
 <script type="text/javascript">
 <!--
-
+	var iswatch = 0;
 	function loadComplete() {
 		
 	}
@@ -45,11 +56,29 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	$(function(){
-		
+		//收费项目
+		var $div_li_chargeItem =$("div[id='chargeItem'] > .tab_menu > ul > li");
+		$div_li_chargeItem.click(function(){
+			$(this).addClass("selected") //当前<li>元素高亮
+				   .siblings().removeClass("selected");  //去掉其它同辈<li>元素的高亮
+	        var index =  $div_li_chargeItem.index(this);  // 获取当前点击的<li>元素 在 全部li元素中的索引。
+	        console.log("div_li_chargeItem"+index);
+			$("div[id='chargeItem'] > .tab_box > div") //选取子节点。不选取子节点的话，会引起错误。如果里面还有div
+					.eq(index).show()   //显示 <li>元素对应的<div>元素
+					.siblings().hide(); //隐藏其它几个同辈的<div>元素
+
+			iswatch = $(this).attr('id');
+			loadData(iswatch);
+			
+		}).hover(function(){
+			$(this).addClass("hover");
+		},function(){
+			$(this).removeClass("hover");
+		});
 	});
 	
 	function callback() {
-		loadData();
+		loadData(iswatch);
 	}
 	
 	jQuery.extend($.fn.fmatter, {
@@ -61,7 +90,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
         }
     });
 	
-	function loadData() {
+	function loadData(v) {
 		var title = "收费项管理";
 		var pageer = "#pager";
 		var colNames;
@@ -70,18 +99,28 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var page = 50;
 		var size;
 		var url = "${pageContext.request.contextPath}/charge/list.do";
+		if(v == 0){
+			colNames = ['操作','费用项目名称','描述'];
+			colModel = [ 
+	           {name:'fun',index:'fun', width:60,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}, 
+	           {name:'itemcode',index:'itemcode', width:100,align:"center"}, 
+	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+			];
+		}else{
+			colNames = ['操作','费用项目名称','单价','描述'];
+			colModel = [ 
+	           {name:'fun',index:'fun', width:60,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}, 
+	           {name:'itemcode',index:'itemcode', width:100,align:"center"}, 
+	           {name:'watch_price',index:'watch_price', width:100,align:"center"},
+	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+			];
+		}
 		
-		colNames = ['操作','费用项目名称','描述'];
-		colModel = [ 
-		           {name:'fun',index:'fun', width:60,fixed:true,resizable:false,align:"center",frozen:true,formatter:"funFormatter"}, 
-		           {name:'itemcode',index:'itemcode', width:100,align:"center"}, 
-		           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
-		];
 		//size = $(".scrollTable").height() - 45;
 		size = $(window).height()-120;
 		
 		var searchTxt = $("#searchTxt").val();
-		var postData={searchTxt:searchTxt};
+		var postData={searchTxt:searchTxt,iswatch:v};
 		
 		var _option = {
 				gridObject:"dataGrid",
@@ -167,7 +206,17 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	        </div>
 	        <div style="clear:both"></div>
 	    </div>
-		<div class="scrollTable" align="left" style="padding-left:5px;  padding-right: 8px;">
-			<table id="dataGrid"></table>
-			<div id="pager"></div>
+		<div class="hide" align="center" id="chargeItem">
+			<div class="tab_menu">
+				<ul>
+					<li class="selected" id="0">收费项目</li>
+					<li id="1">抄表收费项目</li>
+				</ul>
+			</div>
+			<div class="tab_box">
+				<div class = "hide" id = "chargeItem_div">
+					<table id="dataGrid"></table>
+					<div id="pager"></div>
+				</div>
+ 			</div>
 		</div>

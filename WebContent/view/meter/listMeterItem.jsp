@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE HTML>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.8.2.js"></script>
@@ -95,21 +96,23 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 
 	function book(){
-		var meterid = '${meterid}';
-		var projectid = '${projectid}';
-		$.ajax({
-	       async : true,
-	       url : "${pageContext.request.contextPath}/meter/book.do",
-	       type : 'post',
-	       data: {projectid:projectid,meterid:meterid},
-	       dataType : 'text',
-	       success : function(data) {
-	           if (data == "success") {
-	           	alert("修改完毕。");
-	           	//refresh();
-	           }
-	       }
-	   });
+		if (confirm("确定要计入台账吗？计入台账后，抄表记录表读数将不能进行修改。请谨慎操作。")) {
+			var meterid = '${meterid}';
+			var projectid = '${projectid}';
+			$.ajax({
+		       async : true,
+		       url : "${pageContext.request.contextPath}/meter/book.do",
+		       type : 'post',
+		       data: {projectid:projectid,meterid:meterid},
+		       dataType : 'text',
+		       success : function(data) {
+		           if (data == "success") {
+		           	alert("修改完毕。");
+		           	//refresh();
+		           }
+		       }
+		   	});
+		}
 	}
 
 	 
@@ -139,7 +142,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
 			<div class="dqwz_l">当前位置：抄表管理－抄表记录</div>
 			<div  class="caozuoan">
+				<c:if test="${meterstatus != 1}">
 				[ <a href="#" onclick="book()">计入台账</a> ]
+				</c:if>
 				[ <a href="javascript:;" id="btnPrint">打印</a> ]
 	         </div>
 	         <div style="clear:both"></div>
