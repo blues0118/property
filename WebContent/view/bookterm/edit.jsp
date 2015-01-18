@@ -17,7 +17,7 @@
 	}
 	
 	function update() {
-		var id = '${standbookterm.id }';
+		var id = '${bookterm.id }';
 		if (id == "") {
 			alert("没有获取足够数据，请退出后，重新尝试，或与管理员联系。");
 			return;

@@ -163,14 +163,16 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		//创建grid
 		$.loadGridData(_option);
+		
+		loadBookData("","","","");
 	}
 	
 	function loadBookData(projectid,unitid,termid,unittermid) {
 
-
 		$("#uinttermenu").show();
 		$("#unittermbt").show();
 		$("#unittermlist").show();
+		
 		var title = "台账详细";
 		var pageer = "#pager_b";
 		var colNames;
