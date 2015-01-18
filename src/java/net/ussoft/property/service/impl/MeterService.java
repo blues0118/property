@@ -37,5 +37,9 @@ public class MeterService implements IMeterService{
 		}
 		return 0;
 	}
+	@Override
+	public Meter getById(String id) {
+		return meterDao.get(id);
+	}
 
 }

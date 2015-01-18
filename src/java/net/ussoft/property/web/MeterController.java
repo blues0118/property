@@ -20,12 +20,15 @@ import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.model.Unit;
+import net.ussoft.property.model.Unitterm;
 import net.ussoft.property.service.IBookService;
 import net.ussoft.property.service.IChargeitemService;
 import net.ussoft.property.service.IMeterItemService;
 import net.ussoft.property.service.IMeterService;
 import net.ussoft.property.service.IProjectService;
 import net.ussoft.property.service.IUnitService;
+import net.ussoft.property.service.IUnittermService;
+import net.ussoft.property.service.impl.UnittermService;
 import net.ussoft.property.util.CommonUtils;
 
 import org.springframework.stereotype.Controller;
@@ -37,6 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.star.util.Date;
 
 @Controller
 @RequestMapping(value="meter")
@@ -54,6 +58,9 @@ public class MeterController extends BaseConstroller  {
 	private IChargeitemService chargeitemService;
 	@Resource
 	private IBookService bookService;
+	@Resource
+	private IUnittermService unittermService;
+	
 	
 	
 	/**
@@ -302,12 +309,23 @@ public class MeterController extends BaseConstroller  {
 		meteritem.setProjectid(projectid);
 		meteritem.setMeterid(meterid);
 		List<Meteritem> meteritemList = meteritemService.list(meteritem);
+		
+		Meter meter = meterService.getById(meterid);
+		//单元账期
+		Unitterm u = new Unitterm();
+		u.setProjectid(meter.getProjectid());
+		u.setTermid(meter.getTermid());
+		List<Unitterm> unittermList = unittermService.search(u);
+		Map<String, String> utMap = new HashMap<String, String>(); //用于存放单元账期ID
+		for(Unitterm ut:unittermList){
+			utMap.put(ut.getUnitid(), ut.getId());
+		}
 		for(Meteritem m:meteritemList){
 			Book book = new Book();
 			book.setId(UUID.randomUUID().toString());
 			book.setProjectid(m.getProjectid());
 			book.setUnitid(m.getUnitid());
-//			book.setChargetime();		//计费时间
+			book.setChargetime(CommonUtils.getTimeStamp());		//计费时间
 //			book.setChargeovertime();	//收费时间
 			book.setItemid(m.getChargeitemid());
 			book.setItemcode(m.getWatchcode());
@@ -323,9 +341,9 @@ public class MeterController extends BaseConstroller  {
 			double sum = Double.valueOf(obj.getString("watch_price"));
 			double chargesum = (m.getNewnumber() - m.getLastnumber()) * sum;
 			book.setChargesum(chargesum);	//收费金额
-//			book.setTermid(termid);	//总台账账期id
-//			book.setUnittermid(unittermid);	//单元台账账期id
-			
+			book.setTermid(meter.getTermid());	//总台账账期id
+			book.setUnittermid(utMap.get(m.getUnitid()));	//单元台账账期id
+
 			bookService.insert(book);
 			
 			//修改单元收费项

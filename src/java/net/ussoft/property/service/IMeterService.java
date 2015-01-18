@@ -2,6 +2,7 @@ package net.ussoft.property.service;
 
 import java.util.List;
 
+import net.ussoft.property.model.Chargeitem;
 import net.ussoft.property.model.Meter;
 import net.ussoft.property.model.PageBean;
 
@@ -23,4 +24,11 @@ public interface IMeterService {
 	 * @return
 	 */
 	public int update(Meter meter);
+	
+	/**
+	 * 获取收费项
+	 * @param id
+	 * @return
+	 */
+	public Meter getById(String id);
 }
