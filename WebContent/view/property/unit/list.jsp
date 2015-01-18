@@ -248,7 +248,7 @@ function edit(id){
         title: '查看或修改帐户信息',
         maxmin: false,
         shadeClose: true, //开启点击遮罩关闭层
-        area : ['1300px' , '500px'],
+        area : ['1000px' , '500px'],
         offset : ['', ''],
         iframe: {src: url},
         end: function(){

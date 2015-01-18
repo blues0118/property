@@ -223,6 +223,8 @@ public class RoleController extends BaseConstroller {
 		List<Sys_function> authfunList = roleService.searchFunctions(id);
 		String authfunString = JSON.toJSONString(authfunList);
 		modelMap.put("authfunList", authfunString);
+		System.out.println("funList="+funString);
+		System.out.println("authfunList="+authfunString);
 		modelMap.put("roleid", id);
 		return new ModelAndView("/view/auth/role/auth",modelMap);
 	}
