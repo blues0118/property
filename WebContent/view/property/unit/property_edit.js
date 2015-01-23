@@ -2,8 +2,38 @@ $(function(){
 	console.log();
 	initStyle();//初始化样式
     //initData();//初始化 单元信息、住户资料、租赁合同
+	$.fn.zTree.init($("#treeDemo"), setting);
     
 });
+//start
+var unittermid='';
+var setting = {
+		async: {
+			enable: true,
+			url:"../bookterm/listBookterm.do",
+			autoParam:["id", "name=termcode", "level=tremstatus"],
+			otherParam:{"otherParam":"zTreeAsyncTest"},
+			dataFilter: filter
+		},
+		callback:{
+			onClick:refreshBookterm
+		}
+	};
+
+	function filter(treeId, parentNode, childNodes) {
+		if (!childNodes) return null;
+		for (var i=0, l=childNodes.length; i<l; i++) {
+			childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+		}
+		return childNodes;
+	}
+	function refreshBookterm(event, treeId, treeNode) {
+	    //alert(treeNode.id + ", " + treeNode.name);
+	    unittermid = treeNode.id;
+	    loadStandingbookData();
+	};
+
+//end
 var roles = "";
 
 function loadComplete() {
@@ -268,7 +298,7 @@ function meterchargeitemMenu() {
         },
         bindings: {
           'add': function(t) {
-            addChargeitem();
+        	addMeterChargeitem();
           },
           'del': function(t) {
             delChargeitem();
@@ -306,12 +336,12 @@ function upload(id){
 	    title: '查看或修改帐户信息',
 	    maxmin: false,
 	    shadeClose: true, //开启点击遮罩关闭层
-	    area : ['1300px' , '500px'],
+	    area : ['1000px' , '500px'],
 	    offset : ['', ''],
 	    iframe: {src: url},
 	    end: function(){
-	    	//调用iframe子页面的刷新方法
-	    	tt.window.refresh();
+	    	parent.layer.close(loadi);
+        	reloadGrid();
 	    }
 	});
 }
@@ -325,58 +355,75 @@ jQuery.extend($.fn.fmatter, {
 	    return result;
     },
     itemcontentFormatter: function (cellvalue, options, rowdata) {
-    	console.log("cellvalue=="+cellvalue);
-    	var cellvalueJson = $.parseJSON(cellvalue);
     	if(options.colModel.index =='itemtype'){
-    		if(cellvalueJson[0].itemtype =='1'){
+    		if(cellvalue =='1'){
     			return "收入";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "支出";
+    		}else{
+    			return '';
     		}
     	}else if(options.colModel.index =='itemcatagory'){
-    		if(cellvalueJson[0].itemtype =='1'){
+    		if(cellvalue =='1'){
     			return "正常";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "押金";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "预收款";
+    		}else{
+    			return '';
     		}
     	}else if(options.colModel.index =='itemmode'){
-    		if(cellvalueJson[0].itemtype =='1'){
+    		if(cellvalue =='1'){
     			return "使用面积";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "个数";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "建筑面积";
     		}
     	}else if(options.colModel.index =='itemunit'){
-    		if(cellvalueJson[0].itemtype =='1'){
+    		if(cellvalue =='1'){
     			return "按次收费";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "按天收费";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "按月收费";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "按年收费";
+    		}else{
+    			return '';
     		}
     	}else if(options.colModel.index =='chargecatagory'){
-    		if(cellvalueJson[0].itemtype =='1'){
+    		if(cellvalue =='1'){
     			return "周期性";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "一次性";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "临时性";
-    		}else if(cellvalueJson[0].itemtype =='2'){
+    		}else if(cellvalue =='2'){
     			return "季节性";
+    		}else{
+    			return '';
     		}
     	}else if(options.colModel.index =='chargeprice'){
-    		return cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+    		return cellvalue;						//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
     	}else if(options.colModel.index =='chargeperiod'){
-    		return cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+    		return cellvalue;						//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
     	}else if(options.colModel.index =='watch_price'){
-    		return cellvalueJson[0].watch_price;
+    		return cellvalue;						//cellvalueJson[0].watch_price;
     	}
 	    return "";
+    },
+    watchtypeFormatter:function (cellvalue, options, rowdata) {
+    	if(cellvalue =='0'){
+			return "水费";
+		}else if(cellvalue =='1'){
+			return "电费";
+		}else if(cellvalue =='2'){
+			return "燃气费";
+		}else{
+			return '';
+		}
     },
     chargeitemFunFormatter: function (cellvalue, options, rowdata) {
 	    var result = '<button type="button" onclick="updateChargeitem(\''+rowdata.id+'\')">修改</button>';
@@ -494,12 +541,12 @@ function loadMeterItemData() {
 	
 	colNames = ['id','抄表日期','项目名称', '上期度数', '本次度数','抄表人'];
 	colModel = [ 
-			   {name:'id',index:'id',hidden:true, width:270,align:"center"},
-	           {name:'createtime',index:'createtime', width:270,align:"center"},
-	           {name:'watchcode',index:'watchcode', width:270,align:"center"},
-	           {name:'lastnumber',index:'lastnumber', width:270,align:"center"},
-	           {name:'newnumber',index:'newnumber', width:270,align:"center"},
-	           {name:'meterman',index:'meterman', width:270,align:"center"}
+			   {name:'id',index:'id',hidden:true, align:"center"},
+	           {name:'createtime',index:'createtime',align:"center"},
+	           {name:'watchcode',index:'watchcode', align:"center"},
+	           {name:'lastnumber',index:'lastnumber',align:"center"},
+	           {name:'newnumber',index:'newnumber', align:"center"},
+	           {name:'meterman',index:'meterman', align:"center"}
 	];
 	
 	var searchTxt = $("#unitid").val();
@@ -521,11 +568,11 @@ function loadMeterItemData() {
 	//创建grid
 	$.loadGridData(_option);
 	$("#meterItemDataGrid").setGridWidth($("#meterItem_div").width() -10);
-	$('#meterItem_div').css('overflow', 'hidden');
+	$('#meterItem_div').css('overflow', 'auto');
 	
 }
 function loadChargeItemData() {
-	var title = "收费项目管理";
+	var title = "固定收费项目管理";
 	var pageer = "#chargeItemPager";
 	var colNames;
 	var colModel;
@@ -538,13 +585,13 @@ function loadChargeItemData() {
 	colModel = [ 
 			   {name:'id',index:'id',hidden:true, width:110,align:"center"},
 	           {name:'itemcode',index:'itemcode', width:110,align:"center"},
-	           {name:'itemcontent',index:'itemtype', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemcatagory', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemmode', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemunit', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargecatagory', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeprice', width:110,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemsort',index:'itemsort', width:110,align:"center"},
+	           {name:'itemtype',index:'itemtype', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemmode',index:'itemmode', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemunit',index:'itemunit', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargecatagory',index:'chargecatagory', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeprice',index:'chargeprice', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeperiod',index:'chargeperiod', width:110,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemsort',index:'itemsort', width:110,align:"center",formatter:"itemcontentFormatter"},
 	           {name:'chargeremark',index:'chargeremark', width:110,align:"center"},
 	           {name:'meterman',index:'meterman', width:120,align:"center",formatter:"chargeitemFunFormatter"}
 	];
@@ -596,12 +643,12 @@ function loadChargeItemData() {
 	//租赁合同右键
 	chargeitemMenu();
 	$("#chargeItemDataGrid").setGridWidth($("#chargeItem_div").width() -10);
-	$('#chargeItem').css('overflow', 'hidden');
+	$('#chargeItem_div').css('overflow', 'auto');
 	
 }
 //抄表收费项目管理
 function loadMeterchargeItemData() {
-	var title = "收费项目管理";
+	var title = "抄表收费项目管理";
 	var pageer = "#meterchargeItemPager";
 	var colNames;
 	var colModel;
@@ -610,21 +657,13 @@ function loadMeterchargeItemData() {
 	var size;
 	var url = "../charge/list.do";
 	
-	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注','操作'];
+	colNames = ['id','收费项名称','按表计费类型', '单价', '收费备注','操作'];
 	colModel = [ 
-			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
-	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
-	           {name:'itemcontent',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemsort',index:'itemsort', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
-	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"},
+			   {name:'id',index:'id',hidden:true,align:"center"},
+	           {name:'itemcode',index:'itemcode',align:"center"},
+	           {name:'watchtype',index:'watchtype',align:"center",formatter:"watchtypeFormatter"},
+	           {name:'chargeprice',index:'chargeprice',align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeremark',index:'chargeremark',align:"center"},
 	           {name:'meterman',index:'meterman',align:"center",formatter:"meterchargeitemFunFormatter"}
 	];
 	
@@ -658,7 +697,7 @@ function loadMeterchargeItemData() {
 					   caption:"",   
 					   buttonicon:"ui-icon-plus",
 					   onClickButton: function(){   
-						   addChargeitem();
+						   addMeterChargeitem();
 					   },
 					   title:"添加",
 					   position:"last"
@@ -675,7 +714,7 @@ function loadMeterchargeItemData() {
 	//租赁合同右键
 	meterchargeitemMenu();
 	$("#meterchargeItemDataGrid").setGridWidth($("#meterchargeItem_div").width() -10);
-	$('#chargeItem').css('overflow', 'hidden');
+	$('#meterchargeItem_div').css('overflow', 'auto');
 	
 }
 function loadStandingbookData() {
@@ -707,7 +746,7 @@ function loadStandingbookData() {
 	
 	var searchTxt = $("#unitid").val();
 	size = $(window).height()-120;
-	var postData={searchTxt:searchTxt};
+	var postData={unitid:searchTxt,unittermid:unittermid};
 	
 	var _option = {
 			gridObject:"standingbookDataGrid",
@@ -750,8 +789,8 @@ function loadStandingbookData() {
 				});
 	//单元台帐右键
 	standingbookMenu();
-	$("#standingbookDataGrid").setGridWidth($("#standingbook_div").width() -10);
-	$('#standingbook_div').css('overflow', 'hidden');
+	$("#standingbookDataGrid").setGridWidth($("#standingbook_div").width() -150);
+	$('#standingbook_div').css('overflow', 'auto');
 	
 }
 
@@ -773,7 +812,7 @@ function loadChargenoteData() {
 	           {name:'chargestatus',index:'chargestatus',align:"center"},
 	           {name:'invoicenumber',index:'invoicenumber',align:"center"},
 	           {name:'jbr',index:'jbr', align:"center"},
-	           {name:'fun',index:'fun', width:100,align:"center",formatter:"chargenoteFunFormatter"}
+	           {name:'fun',index:'fun', align:"center",formatter:"chargenoteFunFormatter"}
 	];
 	
 	var searchTxt = $("#unitid").val();
@@ -794,9 +833,8 @@ function loadChargenoteData() {
 	};
 	//创建grid
 	$.loadGridData(_option);
-	
 	$("#chargenoteDataGrid").setGridWidth($("#chargenote_div").width() -10);
-	$('#chargenote_div').css('overflow', 'hidden');
+	$('#chargenote_div').css('overflow', 'auto');
 	
 }
 //增加合同记录
@@ -893,7 +931,7 @@ function updateOneChargeitemforunit(id){
         }
     });
 }
-//增加收费项目记录
+//增加固定收费项目记录
 function addChargeitem(){
 	var unitid = $("#unitid").val();
 	var leaseid = $("#leaseid").val();
@@ -901,7 +939,27 @@ function addChargeitem(){
 	var loadi = parent.layer.load(0);
 	parent.$.layer({
         type: 2,
-        title: '添加收费项目',
+        title: '添加固定收费项目',
+        maxmin: false,
+        shadeClose: true, //开启点击遮罩关闭层
+        area : ['850px' , '400px'],
+        offset : ['150px', ''],
+        iframe: {src: url},
+        end: function(){
+        	parent.layer.close(loadi);
+        	reloadGrid();
+        }
+    });
+}
+//增加抄表收费项目记录
+function addMeterChargeitem(){
+	var unitid = $("#unitid").val();
+	var leaseid = $("#leaseid").val();
+	var url = "../charge/addforunit.do?unitid="+unitid+"&iswatch=1&time="+Date.parse(new Date());
+	var loadi = parent.layer.load(0);
+	parent.$.layer({
+        type: 2,
+        title: '添加抄表收费项目',
         maxmin: false,
         shadeClose: true, //开启点击遮罩关闭层
         area : ['850px' , '400px'],

@@ -2,8 +2,10 @@ package net.ussoft.property.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -110,6 +112,46 @@ public class BookTermController extends BaseConstroller {
 		resultMap.put("rows", pageBean.getList());
 		
 		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
+	/**
+	 * 展示台帐账期
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value = "/listBookterm", method = RequestMethod.POST)
+	public void listBookterm(String id, HttpServletResponse response) throws Exception {
+		
+		ModelMap modelMap = this.getModelMap("BOOKTERM","BOOKTERM");
+		modelMap.put("booktermflag", "2");
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		List<Map<String,Object>> map = new ArrayList<Map<String,Object>>();
+		Map<String,Object> mapObject ;
+		//获取数据
+		List<Bookterm> booktermList = new ArrayList<Bookterm>();
+		if(id ==null || "".equals(id)){
+			mapObject = new HashMap<String,Object>();
+			mapObject.put("id", "001");
+			mapObject.put("name", "账期列表");
+			mapObject.put("isParent", true);
+			map.add(mapObject);
+		}else{
+			
+			booktermList = booktermService.getBooktermAllList();
+			for(Bookterm term:booktermList){
+				mapObject = new HashMap<String,Object>();
+				mapObject.put("id", term.getId());
+				mapObject.put("name", term.getTermcode());
+				mapObject.put("isParent", false);
+				map.add(mapObject);
+			}
+			
+		}
+		
+		
+		String json = JSON.toJSONString(map);
 		out.print(json);
 	}
 	
@@ -227,10 +269,10 @@ public class BookTermController extends BaseConstroller {
 		if(unitid!=null && !"".equals(unitid)){
 			t.setUnitid(unitid);
 		}
-		List<Unitterm> unittermlist = unittermService.search(unitid);
-		if(unittermlist!=null && unittermlist.size()>0){
-			t.setUnittermid(unittermlist.get(0).getId());
-		}
+//		List<Unitterm> unittermlist = unittermService.search(unitid);
+//		if(unittermlist!=null && unittermlist.size()>0){
+//			t.setUnittermid(unittermlist.get(0).getId());
+//		}
 		if(unittermid!=null && !"".equals(unittermid)){
 			t.setUnittermid(unittermid);
 		}

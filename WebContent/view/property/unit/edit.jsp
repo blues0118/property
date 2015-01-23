@@ -14,6 +14,11 @@
 
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/redmond/jquery-ui-1.8.2.custom.css"/>
 <script src="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
+<!-- ztree的css和js引入 -->
+<link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/zTree/css/zTreeStyle/zTreeStyle.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/zTree/css/demo.css"/>
+<script src="${pageContext.request.contextPath}/js/zTree/js/jquery.ztree.all-3.5.min.js" type="text/javascript"></script>
+
 
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/jqgrid/css/ui.jqgrid.css"/>
 <script src="${pageContext.request.contextPath}/js/jqgrid/js/i18n/grid.locale-cn.js" type="text/javascript"></script>
@@ -25,7 +30,6 @@
 
 
 <!-- 打印的js、css引入  -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
 <!-- 单元的操作js -->
@@ -67,9 +71,13 @@
 
     .content_tr td {
         height: 10px;
-        overflow: scroll;
+        overflow: no;
         font-size: 12px;
     }
+    .tableStyle{border:1px solid #08408b;border-collapse:collapse;font-size:12px;}
+	.tableStyle th{border:1px solid #08408b;border-collapse:collapse;font-size:12px;}
+	.tableStyle td{border:1px solid #08408b;border-collapse:collapse;font-size:12px;}
+    
 </style>
 
 <script>
@@ -98,7 +106,7 @@
 			 		<input type="hidden" name="unitid" id="unitid" value="${unit.id}">
 			 		<input type="hidden" name="leaseid" id="leaseid" value="${lease.id }">
 			 		<input type="hidden" name="rowNum" value="${rowNum}">
-					<table cellspacing="10" cellpadding="0" align="center" width="100%">
+					<table cellspacing="10" cellpadding="0" class="tableStyle" align="center" width="100%">
 						<tbody>
 							<tr>
 								<td>单元编号</td>
@@ -153,7 +161,7 @@
 					</table>
 			 </div>
 			 <div align="center" class="hide">
-			 	<table cellspacing="10" cellpadding="0" align="center" width="100%">
+			 	<table cellspacing="10" cellpadding="0" class="tableStyle" align="center" width="100%">
 						<tbody>
 							<tr>
 								<td width="100px">住户姓名</td>
@@ -209,8 +217,14 @@
 				<div id="meterchargeItemPager"></div>
 			</div>
 			 <div align="center" class="hide" id = "standingbook_div">
-			 	<table id="standingbookDataGrid"></table>
-				<div id="standingbookPager"></div>
+			 	<div style="width:25%;float:left">
+					<ul id="treeDemo" class="ztree"></ul>
+				</div>
+			 	<div style="width:75%;float:right">
+				 	<table id="standingbookDataGrid"></table>
+					<div id="standingbookPager"></div>
+				</div>
+				<div style="clear:both"></div>
 			 </div>
 			 <div align="center" class="hide" id = "chargenote_div">
 			 	<table id="chargenoteDataGrid"></table>

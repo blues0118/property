@@ -85,6 +85,7 @@ public class ChargeitemController extends BaseConstroller {
 		if(unitid !=null && !"".equals(unitid)){
 			t.setUnitid(unitid);
 		}
+		System.out.println("iswatch=="+iswatch+"==unitid=="+unitid);
 		
 		//获取数据
 		pageBean = chargeitemService.list(t, pageBean);
@@ -123,6 +124,7 @@ public class ChargeitemController extends BaseConstroller {
 			c.add(map);
 		}
 		String json = JSON.toJSONString(c);
+		System.out.println("json=="+json);
 		out.print(json);
 		
 	}

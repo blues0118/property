@@ -174,7 +174,15 @@ function loadData() {
 		rownumbers = $("#dataGrid").jqGrid('getGridParam','selarrrow');
 		return rownumbers;
 	}
-	
+	function getSelectid(gridObject,rows) {
+		var result = new Array();
+		for (var i=0;i<rows.length;i++) {
+			var rowData = $("#"+gridObject).jqGrid('getRowData',rows[i]);
+			result[i] = rowData["id"] ;
+		}
+		
+		return result.toString();
+	}
 	//为单元添加收费项目
 	function add(){
 		var gridObject;

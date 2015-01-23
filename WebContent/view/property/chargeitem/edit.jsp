@@ -148,8 +148,8 @@
 
 		$(function() {
 			var iswatch = '${chargeitem.iswatch}';
-			$('input').attr("readonly",true);
-			$("select").attr("disabled", "disabled");
+			///$('input').attr("readonly",true);
+			//$("select").attr("disabled", "disabled");
 			selIswatch(iswatch);
 		});
 
