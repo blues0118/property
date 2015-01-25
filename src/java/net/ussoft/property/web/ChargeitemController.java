@@ -84,6 +84,8 @@ public class ChargeitemController extends BaseConstroller {
 		}
 		if(unitid !=null && !"".equals(unitid)){
 			t.setUnitid(unitid);
+		}else{
+			t.setUnitid("SYSTEM");
 		}
 		System.out.println("iswatch=="+iswatch+"==unitid=="+unitid);
 		
@@ -195,6 +197,8 @@ public class ChargeitemController extends BaseConstroller {
 		
 		if (chargeitem != null ) {
 			chargeitem.setId(UUID.randomUUID().toString());
+			chargeitem.setUnitid("SYSTEM");
+			chargeitem.setProjectid("SYSTEM");
 		}
 		
 		chargeitem = chargeitemService.insert(chargeitem);
