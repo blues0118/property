@@ -18,6 +18,7 @@ import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
 import net.ussoft.property.model.Staff;
 import net.ussoft.property.model.Staffcontent;
+import net.ussoft.property.model.Sys_account;
 import net.ussoft.property.service.IBooktermService;
 import net.ussoft.property.service.IPayService;
 import net.ussoft.property.service.IProjectService;
@@ -51,9 +52,11 @@ public class PayController extends BaseConstroller {
 	public ModelAndView index(ModelMap modelMap) {
 		
 		modelMap = super.getModelMap("PAY","PAY");
+		// session取得
+		Sys_account accountSession = super.getSessionAccount();
 		
 		//物业项目树形数据取得
-		List<Project> list = projectService.list();
+		List<Project> list = projectService.list(accountSession.getId());
 		String listString = JSON.toJSONString(list);
 		modelMap.put("projectList", listString);
 		

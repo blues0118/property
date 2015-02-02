@@ -75,4 +75,25 @@ public interface IBooktermService {
 	 * @return List<Bookterm>
 	 */
 	public List<Bookterm> getTermList();
+	
+	/**
+	 * 状态改变
+	 * @param barcodes
+	 * @return
+	 */
+	public int changeStatus(String barcodes);
+	
+	/**
+	 * 抄表数据件数
+	 * @param id
+	 * @return
+	 */
+	public int getMeteritemCnt(String id);
+	
+	/**
+	 * 打印台账信息
+	 * @param id
+	 * @return
+	 */
+	public List<Book> printBookList(String id);
 }
