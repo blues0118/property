@@ -63,63 +63,71 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
         },
         itemcontentFormatter: function (cellvalue, options, rowdata) {
-	    	console.log("cellvalue=="+cellvalue);
-	    	var cellvalueJson = $.parseJSON(cellvalue);
 	    	if(options.colModel.index =='itemtype'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "收入";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "支出";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemcatagory'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "正常";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "押金";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "预收款";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemmode'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "使用面积";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "个数";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "建筑面积";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemunit'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "按次收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "按天收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "按月收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "按年收费";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargecatagory'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "周期性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "一次性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "临时性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "季节性";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargeprice'){
-	    		return cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
 	    	}else if(options.colModel.index =='chargeperiod'){
-	    		return cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		return cellvalue//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
 	    	}else if(options.colModel.index =='watch_price'){
-	    		return cellvalueJson[0].watch_price;
+	    		return cellvalue;//cellvalueJson[0].watch_price;
 	    	}
-		    return "";
+		    return '';
 	   }
     });
 	
 function loadData() {
-	var title = "收费项目管理";
+	var title = "抄表收费项目管理";
 	var pageer = "#pager";
 	var colNames;
 	var colModel;
@@ -128,21 +136,14 @@ function loadData() {
 	var size;
 	var url = "${pageContext.request.contextPath}/charge/list.do";
 	
-	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注'];
+	colNames = ['id','收费项名称','按表计费类型', '单价', '收费备注','操作'];
 	colModel = [ 
-			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
-	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
-	           {name:'itemcontent',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center"},
-	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
-	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
-	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+			   {name:'id',index:'id',hidden:true,align:"center"},
+	           {name:'itemcode',index:'itemcode',align:"center"},
+	           {name:'watchtype',index:'watchtype',align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeprice',index:'chargeprice',align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeremark',index:'chargeremark',align:"center",formatter:"itemcontentFormatter"},
+	           {name:'meterman',index:'meterman',align:"center",formatter:"meterchargeitemFunFormatter"}
 	];
 	
 	var iswatch = $("#iswatch").val();
@@ -213,7 +214,15 @@ function loadData() {
 	function refresh() {
 		reloadGrid();
 	}
-
+	function getSelectid(gridObject,rows) {
+		var result = new Array();
+		for (var i=0;i<rows.length;i++) {
+			var rowData = $("#"+gridObject).jqGrid('getRowData',rows[i]);
+			result[i] = rowData["id"] ;
+		}
+		
+		return result.toString();
+	}
 
 </script>
 

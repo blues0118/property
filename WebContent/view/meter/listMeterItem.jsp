@@ -45,6 +45,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	var colModel = ${colModel};
 	function reload() {
 		var size = $(window).height()-120;
+		alert(size);
 		var temp;
 		$("#dataGrid").jqGrid({
 			url:'${pageContext.request.contextPath}/meter/meteritemList.do?meterid=${meterid}&projectid=${projectid}',

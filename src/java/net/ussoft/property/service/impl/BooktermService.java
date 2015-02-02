@@ -364,4 +364,15 @@ public class BooktermService implements IBooktermService {
 		return bookDao.search(sql , sqlValues);
 	}
 	
+	/**
+	 * 获取所有总账期列表
+	 * 
+	 * @return List<Bookterm>
+	 */
+	public List<Bookterm> getBooktermAllList() {
+		String sql = "select id,termcode from bookterm ";
+		List<Object> sqlValues = new ArrayList<Object>();
+		return booktermDao.search(sql , sqlValues);
+	}
+	
 }

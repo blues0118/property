@@ -75,6 +75,12 @@ public interface IBooktermService {
 	 * @return List<Bookterm>
 	 */
 	public List<Bookterm> getTermList();
+	/**
+	 * 获取所有总账期列表
+	 * 
+	 * @return List<Bookterm>
+	 */
+	public List<Bookterm> getBooktermAllList();
 	
 	/**
 	 * 状态改变

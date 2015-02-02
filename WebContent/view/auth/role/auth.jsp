@@ -51,6 +51,7 @@
 	}
 
 	var nodes =  ${funList};
+	console.log("nodes======"+nodes);
 	
 	function setchecknodes() {
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
@@ -85,6 +86,7 @@
 		$.fn.zTree.init($("#treeDemo"), setting, nodes);
 		
 		var authfunlist = ${authfunList};
+		console.log("authfunlist===="+authfunlist);
 		
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		if (authfunlist != null) {
