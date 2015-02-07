@@ -50,7 +50,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 		// L：项目下节点的情况（P：项目  F：项目夹）
 		if (nodes.projecttype == 'L') {
-			alert(nodes.projectname);
+			//alert(nodes.projectname);
 			$("#fra").attr("src","${pageContext.request.contextPath}/bookterm/relist.do?projectid=" + nodes.id+"&projectname="+nodes.projectname);
 			return ;
 		}else{

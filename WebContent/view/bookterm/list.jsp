@@ -312,8 +312,8 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	function printData(termcode, id, status) {
 		var myDate = new Date();
         var mytime=myDate.toLocaleTimeString();
-        alert(document.all("projectname").value);
-        alert(myDate.toLocaleString());
+        //alert(document.all("projectname").value);
+        //alert(myDate.toLocaleString());
 		var unitId = "1212";
 		
 	    $.ajax({
@@ -370,15 +370,20 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 					var rowspan = data_json[j][field.unittermid];
 					rowspan = Number(rowspan) +2;
 					html += "<tr style=\"font-size:12px;height:30px;border:1px #000 solid;text-align: center\">";
-						html += "<td rowspan="+rowspan.toString()+" style=\"border:1px #000 solid;\">"+ (field.unitid == 'NOTHING' ? '': data_json[j][field.unitid]) +"</td>";
+						html += "<td rowspan="+rowspan.toString()+" style=\"border:1px #000 solid;\">"+ (field.chargetime == 'NOTHING' ? '': data_json[j][field.chargetime]) +"</td>";
 						html += "<td style=\"border:1px #000 solid;\">收款单状态:</td>";
-						html += "<td style=\"border:1px #000 solid;\">"+ (field.noteid == 'NOTHING' ? '' : data_json[j][field.noteid]) +"</td>";
+						if (data_json[j][field.chargestatus]==0) {
+							html += "<td style=\"border:1px #000 solid;\">未结束</td>";
+						} else {
+							html += "<td style=\"border:1px #000 solid;\">已结束</td>";
+						}
+						
 						html += "<td style=\"border:1px #000 solid;\">发票号:</td>";
-						html += "<td style=\"border:1px #000 solid;\">"+ (field.noteid == 'NOTHING' ? '' : data_json[j][field.noteid]) +"</td>";
+						html += "<td style=\"border:1px #000 solid;\">"+ (field.projectid == 'NOTHING' ? '' : data_json[j][field.projectid]) +"</td>";
 						html += "<td style=\"border:1px #000 solid;\">经办人:</td>";
-						html += "<td style=\"border:1px #000 solid;\">"+ (field.noteid == 'NOTHING' ? '' : data_json[j][field.noteid]) +"</td>";
+						html += "<td style=\"border:1px #000 solid;\">"+ (field.itemid == 'NOTHING' ? '' : data_json[j][field.itemid]) +"</td>";
 						html += "<td style=\"border:1px #000 solid;\">收款日期:</td>";
-						html += "<td style=\"border:1px #000 solid;\">"+ (field.noteid == 'NOTHING' ? '' : data_json[j][field.noteid]) +"</td>";
+						html += "<td style=\"border:1px #000 solid;\">"+ (field.chargeovertime == 'NOTHING' ? '' : data_json[j][field.chargeovertime]) +"</td>";
 						html += "</tr>";
 						html += "<tr style=\"font-size:12px;height:30px;border:1px #000 solid;text-align: center\">";
 
@@ -405,7 +410,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 						for(var m=0;m<rowspan-3;m++) {
 							j++;
 							var rowxuh=2+m;
-							alert(rowxuh);
+							//alert(rowxuh);
 							html += "<tr style=\"font-size:12px;height:30px;border:1px #000 solid;text-align: center\">";
 
 							html += "<td style=\"border:1px #000 solid;\">"+rowxuh.toString()+"</td>";
@@ -436,7 +441,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	        html += "</div>";
 		}
 		console.log("html============"+html);
-		alert(html);
+		//alert(html);
 		
 		return html;
 	}
@@ -449,6 +454,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 
 	function create_print_data(data,termcode, id, status) {
+		var data_json = JSON.parse(data);
+		if (data_json.length == 0) {
+			alert ("打印对象没有，请重新选择。");
+			return;
+		}
 		//获取打印字段对应
 		var field = {};
 		field.unitid = "unitid";
@@ -459,6 +469,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		field.chargesum = "chargesum";
 		field.bookmemo = "bookmemo";
 		field.unittermid = "unittermid";
+		field.chargeovertime = "chargeovertime";
+		field.chargestatus = "chargestatus";
+		field.projectid = "projectid";
+		field.itemid = "itemid";
+		field.chargetime = "chargetime";
 		var html = ajml_html(field,data,termcode, id, status);
 		$("#print_div").html(html);
 		onPrint();

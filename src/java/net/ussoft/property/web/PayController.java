@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.ussoft.property.base.BaseConstroller;
 import net.ussoft.property.model.Bookterm;
 import net.ussoft.property.model.Equipment;
+import net.ussoft.property.model.Equipmentcontent;
 import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Project;
@@ -229,6 +230,19 @@ public class PayController extends BaseConstroller {
 	public ModelAndView addStaff(String projectid, ModelMap modelMap) {
 		modelMap.put("projectid", projectid);
 		return new ModelAndView("/view/pay/addstaff",modelMap);
+	}
+	
+	/**
+	 * 打开添加设备支出页面
+	 * @return
+	 */
+	@RequestMapping(value="/addEquipPay",method=RequestMethod.GET)
+	public ModelAndView addEquipPay(String id, ModelMap modelMap) {
+		modelMap.put("equipmentid", id);
+		
+		List<Bookterm> termList = booktermService.getTermList();
+		modelMap.put("termList", termList);
+		return new ModelAndView("/view/pay/addequippay",modelMap);
 	}
 	
 	/**
@@ -533,8 +547,40 @@ public class PayController extends BaseConstroller {
 	}
 
 	/**
-	 * 保存员工信息
-	 * @param otherpay
+	 * 保存设备支出信息
+	 * @param equipmentcontent
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/saveequipPay",method=RequestMethod.POST)
+	public void saveequipPay(Equipmentcontent equipmentcontent,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "success";
+		if (equipmentcontent == null ) {
+			result = "failure";
+			out.print(result);
+			return;
+		}
+
+		// id
+		equipmentcontent.setId(UUID.randomUUID().toString());
+		equipmentcontent = payService.insertEquipmentcontent(equipmentcontent);
+		if (equipmentcontent == null ) {
+			result = "failure";
+			out.print(result);
+			return;
+		}
+		out.print(result);
+	}
+
+	/**
+	 * 保存员工支出信息
+	 * @param staffcontent
 	 * @param request
 	 * @param response
 	 * @throws IOException
@@ -552,8 +598,8 @@ public class PayController extends BaseConstroller {
 			out.print(result);
 			return;
 		}
-		// 员工工资
-		// id、
+
+		// id
 		staffcontent.setId(UUID.randomUUID().toString());
 		staffcontent = payService.insertStaffcontent(staffcontent);
 		if (staffcontent == null ) {
@@ -565,8 +611,45 @@ public class PayController extends BaseConstroller {
 	}
 	
 	/**
+	 * 设备支出管理
+	 * @param 
+	 * @return
+	 */
+	@RequestMapping(value = "/equipPayList", method = RequestMethod.POST)
+	public void equipPayList(String id, Integer page,String searchTxt, HttpServletResponse response) throws Exception {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		PageBean<Equipmentcontent> pageBean = new PageBean<Equipmentcontent>();
+
+		//每页行数
+		Integer pageSize = 17;
+		
+		pageBean.setIsPage(true);
+		pageBean.setPageSize(pageSize);
+		pageBean.setPageNo(page);
+		
+		pageBean.setOrderBy("termid");
+		pageBean.setOrderType("desc");
+		
+		//获取数据
+		pageBean = payService.getByEquipId(id, pageBean);
+		
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("totalpages", pageBean.getPageCount());
+		resultMap.put("currpage", pageBean.getPageNo());
+		resultMap.put("totalrecords", pageBean.getRowCount());
+		resultMap.put("rows", pageBean.getList());
+		
+		String json = JSON.toJSONString(resultMap);
+		out.print(json);
+	}
+	
+	/**
 	 * 员工工资管理
-	 * @param modelMap
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(value = "/staffContentList", method = RequestMethod.POST)
@@ -607,6 +690,72 @@ public class PayController extends BaseConstroller {
 	}
 	
 	/**
+	 * 打开设备支出编辑页面
+	 * @param id
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(value="/editEquipPay",method=RequestMethod.GET)
+	public ModelAndView editEquipPay(String id,ModelMap modelMap) {
+		Equipmentcontent equipmentcontent = payService.getEquipmentcontentById(id);
+		modelMap.put("equipmentcontent", equipmentcontent);
+		
+		List<Bookterm> termList = booktermService.getTermList();
+		modelMap.put("termList", termList);
+		
+		return new ModelAndView("/view/pay/editEquippay", modelMap);
+	}
+	
+	@RequestMapping(value="/updateEquippay",method=RequestMethod.POST)
+	public void updateEquippay(Equipmentcontent equipmentcontent,HttpServletResponse response) throws IOException {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		if (equipmentcontent == null ) {
+			out.print(result);
+			return;
+		}
+		int num = payService.updateEquipmentcontent(equipmentcontent);
+		if (num > 0 ) {
+			result = "success";
+		}
+		out.print(result);
+	}
+	
+	/**
+	 * 删除员工工资。
+	 * @param ids
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/deleteEquipPay",method=RequestMethod.POST)
+	public void deleteEquipPay(String ids,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		String result = "failure";
+		if (ids == null || ids.equals("") ) {
+			out.print(result);
+			return;
+		}
+		
+		String[] delStrings = ids.split(",");
+		
+		for (String id : delStrings) {
+			// 设备支出删除
+			payService.deleteEquipmentcontent(id);
+		}
+		result = "success";
+		
+		out.print(result);
+	}
+	
+	/**
 	 * 打开员工工资编辑页面
 	 * @param id
 	 * @param modelMap
@@ -643,7 +792,7 @@ public class PayController extends BaseConstroller {
 	}
 	
 	/**
-	 * 删除设备。
+	 * 删除员工工资。
 	 * @param ids
 	 * @param request
 	 * @param response

@@ -41,9 +41,10 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	jQuery.extend($.fn.fmatter, {
         funEquipFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button title="详细" type="button" onclick="loadEquipData(\''+rowdata.id+'\')">详细</button>';
+		    var result = '<button title="详细" type="button" onclick="loadequipPayData(\''+rowdata.id+'\')">详细</button>';
 		    result += '<button title="修改" type="button" onclick="editEquip(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button title="删除" type="button" onclick="delEquip(\''+rowdata.id+'\')">删除</button>';
+		    result += '<button title="添加支出" type="button" onclick="addEquipPay(\''+rowdata.id+'\')">添加支出</button>';
 		    return result;
 	    },
 	    funStaffFormatter: function (cellvalue, options, rowdata) {
@@ -57,6 +58,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    var result = '<button title="详细" type="button" onclick="loadOtherData(\''+rowdata.id+'\')">详细</button>';
 		    result += '<button title="修改" type="button" onclick="editOther(\''+rowdata.id+'\')">修改</button>';
 		    result += '<button title="删除" type="button" onclick="delOther(\''+rowdata.id+'\')">删除</button>';
+		    return result;
+	    },
+	    funequipPayFormatter: function (cellvalue, options, rowdata) {
+		    var result = '<button title="修改" type="button" onclick="editEquipPay(\''+rowdata.id+'\')">修改</button>';
+		    result += '<button title="删除" type="button" onclick="delEquipPay(\''+rowdata.id+'\')">删除</button>';
 		    return result;
 	    },
 	    funStaffContentFormatter: function (cellvalue, options, rowdata) {
@@ -87,11 +93,58 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    });
 	}
 	
+	function loadequipPayData(id) {
+		$("#eqlist").hide();
+		$("#stlist").hide();
+		$("#otlist").hide();
+		$("#sclist").hide();
+		$("#eplist").show();
+		
+		var title = "设备支出管理";
+		var pageer = "#pager_ep";
+		var colNames;
+		var colModel;
+		var datatype = "json";
+		var page = 17;
+		var size;
+		var url = "${pageContext.request.contextPath}/pay/equipPayList.do?id="+id;
+		
+		colNames = ['总台账id','维护内容','金额','日期','操作'];
+		colModel = [
+                   {name:'termid',index:'termid', width:10, align:"center"},
+		           {name:'eqcontent',index:'eqcontent', width:10, align:"center"}, 
+		           {name:'eqsum',index:'eqsum', width:10, align:"center"}, 
+		           {name:'eqdate',index:'eqdate', width:10, align:"center"}, 
+                   {name:'fun',index:'fun', width:180, fixed:true,resizable:false,align:"center",frozen:true,formatter:"funequipPayFormatter"}
+		];
+		
+		var searchTxt = $("#searchTxt").val();
+		size = $(window).height()-120;
+		var postData={searchTxt:searchTxt};
+		
+		var _option = {
+				gridObject:"dataGrid_ep",
+				url:url,
+				datatype:"json",
+				colNames:colNames,
+				colModel:colModel,
+				postData:postData,
+				pageer:pageer,
+				page:page,
+				title:title,
+				size:size
+		};
+		
+		//创建grid
+		$.loadGridData(_option);
+	}
+	
 	function loadstaffPayData(id) {
 		$("#eqlist").hide();
 		$("#stlist").hide();
 		$("#otlist").hide();
 		$("#sclist").show();
+		$("#eplist").hide();
 		
 		var title = "员工工资管理";
 		var pageer = "#pager_sc";
@@ -104,10 +157,10 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		colNames = ['总台账id','工资','保险','操作'];
 		colModel = [
-                   {name:'termid',index:'termid', align:"center"},
-		           {name:'wage',index:'wage', align:"center"}, 
-		           {name:'safe',index:'safe', align:"center"}, 
-                   {name:'fun',index:'fun', fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffContentFormatter"}
+                   {name:'termid',index:'termid', width:10, align:"center"},
+		           {name:'wage',index:'wage', width:10, align:"center"}, 
+		           {name:'safe',index:'safe', width:10, align:"center"}, 
+                   {name:'fun',index:'fun', width:180, fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffContentFormatter"}
 		];
 		
 		var searchTxt = $("#searchTxt").val();
@@ -136,6 +189,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$("#stlist").hide();
 		$("#otlist").hide();
 		$("#sclist").hide();
+		$("#eplist").hide();
 		
 		var title = "设备管理";
 		var pageer = "#pager_eq";
@@ -148,9 +202,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		colNames = ['设备名称','设备描述','操作'];
 		colModel = [
-                   {name:'code',index:'code', align:"center"},
-		           {name:'memo',index:'memo', align:"center"}, 
-                   {name:'fun',index:'fun', fixed:true,resizable:false,align:"center",frozen:true,formatter:"funEquipFormatter"}
+                   {name:'code',index:'code', width:10, align:"center"},
+		           {name:'memo',index:'memo', width:10, align:"center"}, 
+                   {name:'fun',index:'fun', width:180, fixed:true,resizable:false,align:"center",frozen:true,formatter:"funEquipFormatter"}
 		];
 		
 		var searchTxt = $("#searchTxt").val();
@@ -245,6 +299,23 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    });
 	}
 
+	function addEquipPay(id){
+		
+		var url = "${pageContext.request.contextPath}/pay/addEquipPay.do?id="+id;
+		parent.$.layer({
+	        type: 2,
+	        title: '添加设备支出',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	// 数据重新读取方法
+	        	refresh();
+	        }
+	    });
+	}
 
 	function addstaffPay(id){
 		
@@ -269,6 +340,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$("#stlist").show();
 		$("#sclist").hide();
 		$("#otlist").hide();
+		$("#eplist").hide();
 		
 		var title = "员工管理";
 		var pageer = "#pager_st";
@@ -281,9 +353,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		
 		colNames = ['员工名称','备注','操作'];
 		colModel = [
-                   {name:'staffcode',index:'staffcode', width:40, align:"center"},
-		           {name:'staffmemo',index:'staffmemo', width:40, align:"center"}, 
-                   {name:'fun',index:'fun', width:180, fixed:true,resizable:false,align:"center",frozen:true,formatter:"funStaffFormatter"}
+                   {name:'staffcode',index:'staffcode', width:10, align:"left"},
+		           {name:'staffmemo',index:'staffmemo', width:10, align:"left"}, 
+                   {name:'fun',index:'fun', width:200, fixed:true,resizable:false,align:"right",frozen:true,formatter:"funStaffFormatter"}
 		];
 		
 		var searchTxt = $("#searchTxt").val();
@@ -383,6 +455,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		$("#stlist").hide();
 		$("#sclist").hide();
 		$("#otlist").show();
+		$("#eplist").hide();
 		
 		var title = "其他支出管理";
 		var pageer = "#pager_ot";
@@ -522,6 +595,56 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    });
 		}
 	}
+	
+	function editEquipPay(id){
+		if (id == "") {
+			alert("请先选择要修改的数据。");
+			return;
+		}
+		
+		var url = "${pageContext.request.contextPath}/pay/editEquipPay.do?id="+id + "&time="+Date.parse(new Date());
+		
+		parent.$.layer({
+	        type: 2,
+	        title: '修改设备支出信息',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['600px' , '300px'],
+	        offset : ['', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	// 数据重新读取方法
+	        	refresh();
+	        }
+	    });
+	}
+
+	function delEquipPay(id) {
+		
+		//var ids = getGridSelectids();
+		var ids = id;
+		
+		if (ids == "") {
+			alert("请先选择要删除的数据。");
+			return;
+		}
+		if (confirm("确定要删除选择的设备支出吗？请谨慎操作。")) {
+		    $.ajax({
+		        async : true,
+		        url : "${pageContext.request.contextPath}/pay/deleteEquipPay.do",
+		        type : 'post',
+		        data: {ids:ids.toString()},
+		        dataType : 'text',
+		        success : function(data) {
+		        	sessionOut(data);
+		            if (data == "success") {
+		            	alert("删除完毕。");
+		            	refresh();
+		            }
+		        }
+		    });
+		}
+	}
 
 </script>
 
@@ -559,6 +682,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		<div id="otlist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
 			<table id="dataGrid_ot"></table>
 			<div id="pager_ot"></div>
+		</div>
+	    
+		<div id="eplist" class="scrollTable" align="left" style="padding-left:5px; padding-right: 8px;" >
+			<table id="dataGrid_ep"></table>
+			<div id="pager_ep"></div>
 		</div>
 		
 		<div>
