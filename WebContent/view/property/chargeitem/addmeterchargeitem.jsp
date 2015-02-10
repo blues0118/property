@@ -56,12 +56,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	jQuery.extend($.fn.fmatter, {
-		accountstateFormatter: function (cellvalue, options, rowdata) {
-			if (cellvalue != "0")
-		    	return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',0)"><font color=blue>启用</font></a>';
-		    else 
-		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
-        },
         itemcontentFormatter: function (cellvalue, options, rowdata) {
 	    	if(options.colModel.index =='itemtype'){
 	    		if(cellvalue =='1'){
@@ -116,11 +110,41 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargeprice'){
-	    		return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='chargeperiod'){
-	    		return cellvalue//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='watch_price'){
-	    		return cellvalue;//cellvalueJson[0].watch_price;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].watch_price;
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='iswatch'){
+	    		if(cellvalue =='0'){
+	    			return "否";
+	    		}else if(cellvalue =='1'){
+	    			return "是";
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='watchtype'){
+	    		if(cellvalue =='0'){
+	    			return "水费";
+	    		}else if(cellvalue =='1'){
+	    			return "电费";
+	    		}else if(cellvalue =='2'){
+	    			return "燃气费";
+	    		}else{
+	    			return '';
+	    		}
 	    	}
 		    return '';
 	   }
@@ -136,14 +160,13 @@ function loadData() {
 	var size;
 	var url = "${pageContext.request.contextPath}/charge/list.do";
 	
-	colNames = ['id','收费项名称','按表计费类型', '单价', '收费备注','操作'];
+	colNames = ['id','收费项名称','按表计费类型', '单价', '收费备注'];
 	colModel = [ 
 			   {name:'id',index:'id',hidden:true,align:"center"},
 	           {name:'itemcode',index:'itemcode',align:"center"},
 	           {name:'watchtype',index:'watchtype',align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeprice',index:'chargeprice',align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeremark',index:'chargeremark',align:"center",formatter:"itemcontentFormatter"},
-	           {name:'meterman',index:'meterman',align:"center",formatter:"meterchargeitemFunFormatter"}
+	           {name:'watch_price',index:'watch_price',align:"center"},
+	           {name:'chargeremark',index:'chargeremark',align:"center"},
 	];
 	
 	var iswatch = $("#iswatch").val();

@@ -1,6 +1,7 @@
 package net.ussoft.property.service;
 
 import java.util.List;
+import java.util.Map;
 
 import net.ussoft.property.model.Unit;
 
@@ -15,6 +16,7 @@ public interface IUnitService {
 	 * 获取全部信息
 	 * @return
 	 */
+	public List<Map<String,Object>> searchForMap(Unit t);
 	public List<Unit> search(Unit t);
 	
 	/**

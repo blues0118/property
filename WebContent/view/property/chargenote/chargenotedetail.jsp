@@ -20,6 +20,12 @@
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/jquery.contextmenu.js" type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/js/jqgrid/plugins/ui.multiselect.js" type="text/javascript"></script>
 
+
+<!-- 打印的js、css引入  -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
+
 <style>
 <!--
 body{ height:100%; margin:0; font-size:12px; font-family:"微软雅黑";  }
@@ -56,11 +62,53 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	
 	jQuery.extend($.fn.fmatter, {
 		funFormatter: function (cellvalue, options, rowdata) {
-		    var result = '<button type="button" onclick="chargenoteDetail(\''+rowdata.unittermid+'\')">确认收款</button>';
+		
+		    var result ='';
+		    if(rowdata.chargestatus == '0'){
+		    	result = '<button type="button" onclick="confirmReceived(\''+rowdata.id+'\')">确认收款</button>';
+		    }else{
+		    	result = '已收款';
+		    }
+		     
 		    return result;
     	}
     });
-	
+    function confirmReceived(id){
+    	if(!confirm("确定要进行收款吗？")){
+    		return;
+    	}
+    	var url = "../book/confirmReceived.do";
+    	data={
+    		id:id
+    	}
+		console.log("requestData="+data);
+		var result = httpPostReqeust(url, data);
+		console.log(result);
+		if(result!=null && result.status == true){
+			alert("收款成功");
+		}else{
+			alert("收款失败");
+		}
+    }
+    
+function httpPostReqeust(url, data, _async, headerUserId){
+//	console.log('参数输出:');
+//	console.log(data);	//调试用
+	var async = false;// 是否异步 默认同步
+	if(_async){
+		async = _async;
+	}
+	var _result = $.ajax({
+		  url: url,
+		  dataType: "json",
+		  async: async,
+		  cache: false,
+		  data: data,
+		  type: "POST"
+	}).responseText;
+	eval("var result="+_result);
+	return result;
+}
 function loadData() {
 	var title = "单元台帐详细信息";
 	var pageer = "#pager";
@@ -197,6 +245,20 @@ function addChargeitem(){
     });
 	
 }
+
+function printTZD() {
+	    $.ajax({
+	        async : true,
+	        url : "../book/chargeNotice.do",
+	        type : 'post',
+	        data:{unitid:$("#unitid").val(),unittermid:$("#unittermid").val()},
+	        dataType : 'text',
+	        success : function(data) {
+	        	sessionOut(data);
+	        	create_print_data(data);
+	        }
+	    });
+	}
 </script>
 
 
@@ -208,8 +270,8 @@ function addChargeitem(){
 			<div class="dqwz_l">当前位置：物业管理－单元台帐</div>
 			<div  class="caozuoan">
 				发票号码：<input type="text" name="invoiceNum"/>
-				[ <a href="#" onclick="refresh()">通知单打印</a> ]
-				[ <a href="#" onclick="refresh()">收款单打印</a> ]
+				[ <a href="#" onclick="printTZD()">通知单打印</a> ]
+				[ <a href="#" onclick="printTZD()">收款单打印</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
 	         </div>
 	         <div style="clear:both"></div>
@@ -226,4 +288,6 @@ function addChargeitem(){
 			      <!-- <span class="menu_span"></span>
 			      <li id="doc">挂接电子文件</li> -->
 			    </ul>
-			</div>
+		</div>
+		<div id="print_div" style="height:0px;width:0px;overflow:hidden"></div>
+		

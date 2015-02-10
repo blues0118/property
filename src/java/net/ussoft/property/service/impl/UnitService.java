@@ -2,6 +2,7 @@ package net.ussoft.property.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -39,6 +40,16 @@ public class UnitService implements IUnitService {
 	@Resource
 	private ChargeitemDao chargeitemDao;
 	
+	@Override
+	public List<Map<String,Object>> searchForMap(Unit t) {
+		StringBuffer sql=new StringBuffer("select u.id,u.unitcode,u.building_area,u.using_area,u.unitstate,u.unittype,").
+				append("u.ischarge,u.leaseid,u.projeuctid,u.unitsort,u.unitrowsort,u.unitcolor,l.leasename ").
+				append(" from unit u left join lease l on u.leaseid=l.id where 1=1 ").
+				append(" and u.projeuctid = '"+t.getProjeuctid()+"' and isdelete ='0' ");
+		//return unitDao.search(t);
+		List<Object> values = new ArrayList<Object>();
+		return unitDao.searchForMap(sql.toString(), values);
+	}
 	@Override
 	public List<Unit> search(Unit t) {
 		return unitDao.search(t);

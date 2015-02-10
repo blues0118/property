@@ -1,6 +1,7 @@
 package net.ussoft.property.service;
 
 import java.util.List;
+import java.util.Map;
 
 import net.ussoft.property.model.Book;
 import net.ussoft.property.model.Bookterm;
@@ -61,5 +62,8 @@ public interface IBookService {
 	 * @return
 	 */
 	public Book insert(Book book);
+	
+	public Boolean confirmReceived(Book t);
+	public List<Map<String,Object>> list(Book t);
 	
 }

@@ -54,7 +54,46 @@
 	        }
 	    });
 	}
-		
+	/*
+	打印抄表收费项目收费通知单
+	*/
+	function meterChargeitemRemind(unitid) {
+		var url = "../charge/remindChargeitem.do?unitid="+unitid+"&iswatch=1&time="+Date.parse(new Date());
+		var loadi = parent.layer.load(0);
+		parent.$.layer({
+	        type: 2,
+	        title: '固定收费项目提醒',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['850px' , '400px'],
+	        offset : ['150px', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	parent.layer.close(loadi);
+	        	refresh();
+	        }
+	    });
+	}
+	/*
+	打印固定收费项目收费通知单
+	*/
+	function chargeitemRemind(unitid) {
+		var url = "../charge/remindChargeitem.do?unitid="+unitid+"&iswatch=0&time="+Date.parse(new Date());
+		var loadi = parent.layer.load(0);
+		parent.$.layer({
+	        type: 2,
+	        title: '固定收费项目提醒',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['850px' , '400px'],
+	        offset : ['150px', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	parent.layer.close(loadi);
+	        	refresh();
+	        }
+	    });
+	}
 	function buildRow(rNum){
 		
 		var row = '';
@@ -74,18 +113,19 @@
 					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
 					row += 		'<div>';
 					row += 			'<p><span class="mianji">NT12-11    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
-					row += 			'<p>'+unitmap[tmp_rowNum]['unitcode']+'</p>';
+					row += 			'<p>'+unitmap[tmp_rowNum]['leasename']+'</p>';
 					row += 		'</div>';
 					row += 		'<div class="btns">';
 					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
 					row += 			'<input type="button" alt="单元详细信息" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
 					row += 			'<input type="button" alt="打印收款单" class="dayin" onclick="printTZD(\''+unitmap[tmp_rowNum]['id']+'\')">';
-					row += 			'<input type="button" alt="即将到期收费项目" class="time">';
+					row += 			'<input type="button" alt="即将到期收费项目" class="time" onclick="meterChargeitemRemind(\''+unitmap[tmp_rowNum]['id']+'\')">';
 					row += 		'</div>';
 					row += 		'<div class="tixing">';
-					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
+					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" style="cursor:hand" width="27" height="24" onclick="chargeitemRemind(\''+unitmap[tmp_rowNum]['id']+'\')">';
 					row += 		'</div>';
 					row += '</li>';
+					$("#projeuctId").val(unitmap[tmp_rowNum]['projeuctid']);
 				}else{
 					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
 					row += 		'<div>';
@@ -174,6 +214,35 @@
 		parent.$.layer({
 	        type: 2,
 	        title: '批量添加收费项目',
+	        maxmin: false,
+	        shadeClose: true, //开启点击遮罩关闭层
+	        area : ['850px' , '400px'],
+	        offset : ['150px', ''],
+	        iframe: {src: url},
+	        end: function(){
+	        	parent.layer.close(loadi);
+	        	refresh();
+	        }
+	    });
+	}
+	function remindBatch(value){
+		var ids='';
+		if(value =='1'){
+			ids = getCheckboxIds();
+			if (ids == "" ||ids == undefined) {
+				alert("请选择单元，请重新尝试，或与管理员联系。");
+				return;
+			}
+			console.log("ids========"+ids);
+		}
+		
+		var projectid = "${projeuctid}";
+		
+		var url = "../charge/chargenotePrintPre.do?unitid="+ids+"&projectid="+projectid+"&time="+Date.parse(new Date());
+		var loadi = parent.layer.load(0);
+		parent.$.layer({
+	        type: 2,
+	        title: '收款通知单打印编辑',
 	        maxmin: false,
 	        shadeClose: true, //开启点击遮罩关闭层
 	        area : ['850px' , '400px'],
@@ -276,13 +345,14 @@ function edit(id){
 				<a href="javascript:addBatchLease();" class="jia" alt="批量增加业主信息">&nbsp;</a>
 				<a href="javascript:addBatchChargeitem();" class="jia" alt="批量添加收费项目">&nbsp;</a>
 				<a href="javascript:del();" class="jian" alt="删除单元">&nbsp;</a>
-				<a href="#" class="money">&nbsp;</a>
-				<a href="#" class="dayin1">&nbsp;</a>
+				<a href="javascript:remindBatch(0)" alt="打印所有单元的收费提醒项目" class="money">&nbsp;</a>
+				<a href="javascript:remindBatch(1)" alt="打印选中单元的收费提醒"项目 class="dayin1">&nbsp;</a>
 				<div style="clear: both"></div>
 			</div>
 			<div id="seach" class="seach">
 				<input type="text" class="txtbox">
 				<input type="button" class="btn1" value="搜索">
+				<input type="hidden" id="projeuctId">
 			</div>
 
 		</div>

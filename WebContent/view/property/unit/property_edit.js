@@ -11,7 +11,7 @@ var setting = {
 		async: {
 			enable: true,
 			url:"../bookterm/listBookterm.do",
-			autoParam:["id", "name=termcode", "level=tremstatus"],
+			autoParam:["id", "name=name", "level=lv"],
 			otherParam:{"otherParam":"zTreeAsyncTest"},
 			dataFilter: filter
 		},
@@ -30,6 +30,7 @@ var setting = {
 	function refreshBookterm(event, treeId, treeNode) {
 	    //alert(treeNode.id + ", " + treeNode.name);
 	    unittermid = treeNode.id;
+	    $("#unittermid").val(unittermid);
 	    loadStandingbookData();
 	};
 
@@ -93,44 +94,68 @@ function initStyle(){
 
 function del(ids) {
 		if (confirm("确定要删除选择的合同吗？")) {
-		    $.ajax({
-		        async : true,
-		        url : "$('#contextPath')/agreement/delete.do",
-		        type : 'post',
-		        data: {ids:ids.toString()},
-		        dataType : 'text',
-		        success : function(data) {
-		        	sessionOut(data);
-		            if (data == "success") {
-		            	alert("删除完毕。");
-		            	window.location.reload();
-		            } else {
-		            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系！");
-		            }
-		        }
-		    });
+			setTimeout(function () {
+				$.ajax({
+			        async : false,
+			        url : '../agreement/delete.do',
+			        type : 'post',
+			        data: {
+						ids:ids.toString()
+					},
+			        dataType : 'text',
+			        success : function(data) {
+			        	sessionOut(data);
+			            if (data == "success") {
+			            	alert("删除完毕。");
+			            	window.location.reload();
+			            } else {
+			            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
+			            }
+			        }
+			    });
+				reloadGrid();
+			},200);  
 		}
 		
 }
 function delChargeitem(ids) {
-
+		//得到选中行的id
+		var gridObject;
+		gridObject = "chargeItemDataGrid";
+		var str = "";
+		var rownumbers = "";
+		rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
+		str = getSelectid(gridObject,rownumbers);
+		//得到选中行的id
+		
+		if (str == "") {
+			alert("请先选择要删除的数据。");
+			return;
+		}
 		if (confirm("确定要删除选择的收费项目吗？")) {
-		    $.ajax({
-		        async : true,
-		        url : "../chargeitem/delete.do",
-		        type : 'post',
-		        data: {ids:ids.toString()},
-		        dataType : 'text',
-		        success : function(data) {
-		        	sessionOut(data);
-		            if (data == "success") {
-		            	alert("删除完毕。");
-		            	window.location.reload();
-		            } else {
-		            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
-		            }
-		        }
-		    });
+			var loadi = parent.layer.load(0);
+			setTimeout(function () {
+				$.ajax({
+			        async : false,
+			        url : '../charge/delete.do',
+			        type : 'post',
+			        data: {
+						ids:str.toString()
+					},
+			        dataType : 'text',
+			        success : function(data) {
+			        	sessionOut(data);
+			            if (data == "success") {
+			            	alert("删除完毕。");
+			            	window.location.reload();
+			            } else {
+			            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
+			            }
+			        }
+			    });
+				reloadGrid();
+			},200);  
+			
 		}
 		
 }
@@ -330,7 +355,7 @@ function upload(id){
 	
 	
 	var url = "../agreement/upload.do?id="+id + "&time="+Date.parse(new Date());
-	
+	var loadi = parent.layer.load(0);
 	parent.$.layer({
 	    type: 2,
 	    title: '查看或修改帐户信息',
@@ -368,7 +393,7 @@ jQuery.extend($.fn.fmatter, {
     			return "正常";
     		}else if(cellvalue =='2'){
     			return "押金";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='3'){
     			return "预收款";
     		}else{
     			return '';
@@ -378,7 +403,7 @@ jQuery.extend($.fn.fmatter, {
     			return "使用面积";
     		}else if(cellvalue =='2'){
     			return "个数";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='3'){
     			return "建筑面积";
     		}
     	}else if(options.colModel.index =='itemunit'){
@@ -386,9 +411,9 @@ jQuery.extend($.fn.fmatter, {
     			return "按次收费";
     		}else if(cellvalue =='2'){
     			return "按天收费";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='3'){
     			return "按月收费";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='4'){
     			return "按年收费";
     		}else{
     			return '';
@@ -398,19 +423,49 @@ jQuery.extend($.fn.fmatter, {
     			return "周期性";
     		}else if(cellvalue =='2'){
     			return "一次性";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='3'){
     			return "临时性";
-    		}else if(cellvalue =='2'){
+    		}else if(cellvalue =='4'){
     			return "季节性";
     		}else{
     			return '';
     		}
     	}else if(options.colModel.index =='chargeprice'){
-    		return cellvalue;						//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+    		if(cellvalue!=null && cellvalue!=undefined){
+    			return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+    		}else{
+    			return '';
+    		}
     	}else if(options.colModel.index =='chargeperiod'){
-    		return cellvalue;						//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+    		if(cellvalue!=null && cellvalue!=undefined){
+    			return cellvalue;//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+    		}else{
+    			return '';
+    		}
     	}else if(options.colModel.index =='watch_price'){
-    		return cellvalue;						//cellvalueJson[0].watch_price;
+    		if(cellvalue!=null && cellvalue!=undefined){
+    			return cellvalue;//cellvalueJson[0].watch_price;
+    		}else{
+    			return '';
+    		}
+    	}else if(options.colModel.index =='iswatch'){
+    		if(cellvalue =='0'){
+    			return "否";
+    		}else if(cellvalue =='1'){
+    			return "是";
+    		}else{
+    			return '';
+    		}
+    	}else if(options.colModel.index =='watchtype'){
+    		if(cellvalue =='0'){
+    			return "水费";
+    		}else if(cellvalue =='1'){
+    			return "电费";
+    		}else if(cellvalue =='2'){
+    			return "燃气费";
+    		}else{
+    			return '';
+    		}
     	}
 	    return "";
     },
@@ -442,7 +497,7 @@ jQuery.extend($.fn.fmatter, {
     },
     chargenoteFunFormatter: function (cellvalue, options, rowdata) {
 	    var result = '<button type="button" onclick="chargenoteDetail(\''+rowdata.unittermid+'\')">详细</button>';
-	    	result += '<button type="button" onclick="chargenoteDetail(\''+rowdata.unittermid+'\')">确认收款</button>';
+	    	result += '<button type="button" onclick="confirmReceived(\''+rowdata.unittermid+'\')">确认收款</button>';
 	    return result;
     },
     initDataFormatter: function (cellvalue, options, rowdata) {
@@ -455,6 +510,42 @@ jQuery.extend($.fn.fmatter, {
 	    return cellvalue;
     }
 });
+function confirmReceived(id){
+	if(!confirm("确定要进行收款吗？")){
+		return;
+	}
+	var url = "../book/confirmReceived.do";
+	data={
+		unittermid:id
+	}
+	console.log("requestData="+data);
+	var result = httpPostReqeust(url, data);
+	console.log(result);
+	if(result!=null && result.status == true){
+		alert("收款成功");
+	}else{
+		alert("收款失败");
+	}
+}
+
+function httpPostReqeust(url, data, _async, headerUserId){
+//console.log('参数输出:');
+//console.log(data);	//调试用
+var async = false;// 是否异步 默认同步
+if(_async){
+	async = _async;
+}
+var _result = $.ajax({
+	  url: url,
+	  dataType: "json",
+	  async: async,
+	  cache: false,
+	  data: data,
+	  type: "POST"
+}).responseText;
+eval("var result="+_result);
+return result;
+}
 function loadAgreementData() {
 	var title = "租赁合同管理";
 	var pageer = "#agreementPager";
@@ -640,7 +731,7 @@ function loadChargeItemData() {
 					   position:"last"
 				});
 		
-	//租赁合同右键
+	//固定收费项目右键
 	chargeitemMenu();
 	$("#chargeItemDataGrid").setGridWidth($("#chargeItem_div").width() -10);
 	$('#chargeItem_div').css('overflow', 'auto');
@@ -662,7 +753,7 @@ function loadMeterchargeItemData() {
 			   {name:'id',index:'id',hidden:true,align:"center"},
 	           {name:'itemcode',index:'itemcode',align:"center"},
 	           {name:'watchtype',index:'watchtype',align:"center",formatter:"watchtypeFormatter"},
-	           {name:'chargeprice',index:'chargeprice',align:"center",formatter:"itemcontentFormatter"},
+	           {name:'watch_price',index:'watch_price',align:"center",formatter:"itemcontentFormatter"},
 	           {name:'chargeremark',index:'chargeremark',align:"center"},
 	           {name:'meterman',index:'meterman',align:"center",formatter:"meterchargeitemFunFormatter"}
 	];
@@ -711,7 +802,7 @@ function loadMeterchargeItemData() {
 					   position:"last"
 				});
 		
-	//租赁合同右键
+	//抄表收费项目右键
 	meterchargeitemMenu();
 	$("#meterchargeItemDataGrid").setGridWidth($("#meterchargeItem_div").width() -10);
 	$('#meterchargeItem_div').css('overflow', 'auto');
@@ -861,7 +952,11 @@ function addAgreement(){
 function addChargeitemforunit(){
 	var projeuctid = $("#projeuctid").val();
 	var unitid = $("#unitid").val();
-	var url = "../bookterm/addChargeitemforunit.do?termid="+termid_ini+"&unittermid="+unittermid_ini+"unitid="+unitid+"&projeuctid="+projeuctid+"&time="+Date.parse(new Date());
+	if(unittermid ==null || unittermid ==undefined || unittermid ==''){
+		alert("请先选择相应的账期");
+		return;
+	}
+	var url = "../bookterm/addChargeitemforunit.do?termid="+termid_ini+"&unittermid="+$("#unittermid").val()+"&unitid="+unitid+"&projeuctid="+projeuctid+"&time="+Date.parse(new Date());
 	var loadi = parent.layer.load(0);
 	parent.$.layer({
         type: 2,
@@ -897,7 +992,7 @@ function updateChargeitem(id){
 }
 //收款单详细信息显示 
 function chargenoteDetail(id){
-	var url = "../chargenote/chargenoteDetail.do?unittermid="+id+"&time="+Date.parse(new Date());
+	var url = "../chargenote/chargenoteDetail.do?id="+id+"&time="+Date.parse(new Date());
 	var loadi = parent.layer.load(0);
 	parent.$.layer({
         type: 2,
@@ -1034,16 +1129,15 @@ function delOneChargeitemforunit(id){
 }
 //删除合同记录
 function delAgreement(){
+	//得到选中行的id
 	var gridObject;
-	//设置滚动条
 	setCroll('#agreementDataGrid .ui-jqgrid-bdiv','jqgrid-div');
 	gridObject = "agreementDataGrid";
-	
 	var str = "";
-	
 	var rownumbers = "";
 	rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
 	str = getSelectid(gridObject,rownumbers);
+	//得到选中行的id
 	
 	if (str == "") {
 		alert("请先选择要删除的数据。");

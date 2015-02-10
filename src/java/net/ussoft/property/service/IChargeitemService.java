@@ -1,6 +1,7 @@
 package net.ussoft.property.service;
 
 import java.util.List;
+import java.util.Map;
 
 import net.ussoft.property.model.Chargeitem;
 import net.ussoft.property.model.PageBean;
@@ -57,4 +58,10 @@ public interface IChargeitemService {
 	 * @return
 	 */
 	public int addChargeitem(String unitid,String ids);
+	/**
+	 * 查询提醒收费的项目
+	 * @param id
+	 * @return
+	 */
+	public List<Map<String,Object>> list(String projeuctid,String unitid,String isWatch);
 }

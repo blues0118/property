@@ -61,63 +61,101 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		    return result;
     	},
         itemcontentFormatter: function (cellvalue, options, rowdata) {
-	    	console.log("cellvalue=="+cellvalue);
-	    	var cellvalueJson = $.parseJSON(cellvalue);
 	    	if(options.colModel.index =='itemtype'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "收入";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "支出";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemcatagory'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "正常";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "押金";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='3'){
 	    			return "预收款";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemmode'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "使用面积";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "个数";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='3'){
 	    			return "建筑面积";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='itemunit'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "按次收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "按天收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='3'){
 	    			return "按月收费";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='4'){
 	    			return "按年收费";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargecatagory'){
-	    		if(cellvalueJson[0].itemtype =='1'){
+	    		if(cellvalue =='1'){
 	    			return "周期性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='2'){
 	    			return "一次性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='3'){
 	    			return "临时性";
-	    		}else if(cellvalueJson[0].itemtype =='2'){
+	    		}else if(cellvalue =='4'){
 	    			return "季节性";
+	    		}else{
+	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargeprice'){
-	    		return cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='chargeperiod'){
-	    		return cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='watch_price'){
-	    		return cellvalueJson[0].watch_price;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].watch_price;
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='iswatch'){
+	    		if(cellvalue =='0'){
+	    			return "否";
+	    		}else if(cellvalue =='1'){
+	    			return "是";
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='watchtype'){
+	    		if(cellvalue =='0'){
+	    			return "水费";
+	    		}else if(cellvalue =='1'){
+	    			return "电费";
+	    		}else if(cellvalue =='2'){
+	    			return "燃气费";
+	    		}else{
+	    			return '';
+	    		}
 	    	}
 		    return "";
 	   }
     });
 	
 function loadData() {
-	var title = "收费项目管理";
+	var title = "固定收费项目管理";
 	var pageer = "#pager";
 	var colNames;
 	var colModel;
@@ -130,14 +168,14 @@ function loadData() {
 	colModel = [ 
 			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
 	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
-	           {name:'itemcontent',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcontent',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center"},
+	           {name:'itemtype',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemcatagory',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemunit',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'itemmode',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeprice',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'chargeperiod',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
 	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
 	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
 	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"},

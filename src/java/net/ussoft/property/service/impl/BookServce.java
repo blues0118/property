@@ -1,6 +1,10 @@
 package net.ussoft.property.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -57,9 +61,43 @@ public class BookServce implements IBookService {
 		return bookDao.search(t, pageBean);
 	}
 	@Override
+	public List<Map<String,Object>> list(Book t) {
+		StringBuffer sql = new StringBuffer("select * from book where 1=1");
+		if(t.getUnitid()!=null && !"".equals(t.getUnitid())){
+			sql.append(" and unitid='"+t.getUnitid()+"'");
+		}
+		if(t.getUnittermid()!=null && !"".equals(t.getUnittermid())){
+			sql.append(" and unittermid='"+t.getUnittermid()+"'");
+		}
+		List<Object> values = new ArrayList<Object>();
+		return bookDao.searchForMap(sql.toString(), values);
+	}
+	@Override
+	public Boolean confirmReceived(Book t) {
+		try{
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			String datatime = format.format(new Date());
+			StringBuffer str = new StringBuffer("update book set chargeovertime='"+datatime+"', chargestatus='1' where 1=1");
+			if(t.getId()!=null && !"".equals(t.getId())){
+				str.append(" and id='"+t.getId()+"'");
+			}
+			if(t.getUnittermid()!=null && !"".equals(t.getUnittermid())){
+				str.append(" and unittermid='"+t.getUnittermid()+"'");
+			}
+			bookDao.execute(str.toString());
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+	@Override
 	public int addChargeitem(String projectid,String unitid, String termid,String unittermid, String ids) {
 		try{
 			String[] addStrings = ids.split(",");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			String chargetime = dateFormat.format(new Date());
 			Chargeitem chargeitem = null;
 			Book book;
 			for (String id : addStrings) {
@@ -70,6 +108,9 @@ public class BookServce implements IBookService {
 				book.setId(UUID.randomUUID().toString());
 				book.setProjectid(projectid);
 				book.setUnitid(unitid);
+				book.setChargetime(chargetime);//收费时间 由系统生成
+				book.setItemcode(chargeitem.getItemcode());//收费项目名称
+				book.setChargestatus(0);//默认的台帐状态为 未结束
 				book.setTermid(unittermid);
 				book.setUnittermid(unittermid);
 				bookDao.save(book);

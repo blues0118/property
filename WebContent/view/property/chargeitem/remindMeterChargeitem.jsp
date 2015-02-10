@@ -56,12 +56,6 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	}
 	
 	jQuery.extend($.fn.fmatter, {
-		accountstateFormatter: function (cellvalue, options, rowdata) {
-			if (cellvalue != "0")
-		    	return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',0)"><font color=blue>启用</font></a>';
-		    else 
-		        return '<a title="帐户状态" href="javascript:;" onclick="updatestate(\''+rowdata.id+'\',1)"><font color=red>禁用</font></a>';
-        },
         itemcontentFormatter: function (cellvalue, options, rowdata) {
 	    	if(options.colModel.index =='itemtype'){
 	    		if(cellvalue =='1'){
@@ -76,7 +70,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return "正常";
 	    		}else if(cellvalue =='2'){
 	    			return "押金";
-	    		}else if(cellvalue =='3'){
+	    		}else if(cellvalue =='2'){
 	    			return "预收款";
 	    		}else{
 	    			return '';
@@ -86,7 +80,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return "使用面积";
 	    		}else if(cellvalue =='2'){
 	    			return "个数";
-	    		}else if(cellvalue =='3'){
+	    		}else if(cellvalue =='2'){
 	    			return "建筑面积";
 	    		}else{
 	    			return '';
@@ -96,9 +90,9 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return "按次收费";
 	    		}else if(cellvalue =='2'){
 	    			return "按天收费";
-	    		}else if(cellvalue =='3'){
+	    		}else if(cellvalue =='2'){
 	    			return "按月收费";
-	    		}else if(cellvalue =='4'){
+	    		}else if(cellvalue =='2'){
 	    			return "按年收费";
 	    		}else{
 	    			return '';
@@ -108,17 +102,14 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return "周期性";
 	    		}else if(cellvalue =='2'){
 	    			return "一次性";
-	    		}else if(cellvalue =='3'){
+	    		}else if(cellvalue =='2'){
 	    			return "临时性";
-	    		}else if(cellvalue =='4'){
+	    		}else if(cellvalue =='2'){
 	    			return "季节性";
 	    		}else{
 	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargeprice'){
-	    		if(rowdata.iswatch =='1'){//当为1时 说明是抄表收费的，需要返回watch_price
-	    			return rowdata.watch_price;
-	    		}
 	    		if(cellvalue!=null && cellvalue!=undefined){
 	    			return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
 	    		}else{
@@ -155,38 +146,35 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return '';
 	    		}
 	    	}
-		    return "";
+		    return '';
 	   }
     });
 	
 function loadData() {
-	var title = "收费项目管理";
+	var title = "抄表收费项目提醒";
 	var pageer = "#pager";
 	var colNames;
 	var colModel;
 	var datatype = "json";
 	var page = 50;
 	var size;
-	var url = "${pageContext.request.contextPath}/charge/list.do";
+	var url = "${pageContext.request.contextPath}/charge/listForRemind.do";
 	
-	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注'];
+	colNames = ['id','收费项名称','计算类型', '单价', '表最后读数','收费备注','提醒日期','下次收费日期'];
 	colModel = [ 
-			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
-	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
-	           {name:'itemtype',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcatagory',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemunit',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemmode',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeprice',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeperiod',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
-	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
-	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+			   {name:'id',index:'id',hidden:true,align:"center"},
+	           {name:'itemcode',index:'itemcode',align:"center"},
+	           {name:'watchtype',index:'watchtype',align:"center"},
+	           {name:'watch_price',index:'watch_price',align:"center"},
+	           {name:'watchnumber',index:'watchnumber',align:"center"},
+	           {name:'chargeremark',index:'chargeremark',align:"center"},
+	           {name:'reminddate',index:'reminddate',align:"center"},
+	           {name:'nextdate',index:'nextdate',align:"center"}
 	];
+	
+	var iswatch = $("#iswatch").val();
 	size = $(window).height()-120;
-	var postData={unitid:'SYSTEM'};
+	var postData={iswatch:1,unitid:$("#unitid").val()};
 	
 	var _option = {
 			gridObject:"dataGrid",
@@ -207,51 +195,9 @@ function loadData() {
 	function reloadGrid() {
 		jQuery("#dataGrid").trigger("reloadGrid");
 	}
-	
-	function getGridSelectids() {
-		var rownumbers = "";
-		rownumbers = $("#dataGrid").jqGrid('getGridParam','selarrrow');
-		return rownumbers;
-	}
-	
-	function add() {
-	   var gridObject;
-		//设置滚动条
-		setCroll('#dataGrid .ui-jqgrid-bdiv','jqgrid-div');
-		gridObject = "dataGrid";
-		
-		var str = "";
-		
-		var rownumbers = "";
-		rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
-		str = getSelectid(gridObject,rownumbers);
-		
-		if (str == "") {
-			alert("请先选择要添加的收费项目。");
-			return;
-		}
-		if (confirm("确定要将选中的收费项目添加到选择的单元吗？请谨慎操作。")) {
-			var loadi = parent.layer.load(0);
-			$.ajax({
-		        async : false,
-		        url : '${pageContext.request.contextPath}/charge/savechargeitem.do',
-		        type : 'post',
-		        data: {
-					ids:str.toString(),
-					unitid:$("#unitid").val()
-				},
-		        dataType : 'text',
-		        success : function(data) {
-					alert(data);
-		        }
-		    });
-			reloadGrid();
-		};
-	}
 	function refresh() {
 		reloadGrid();
 	}
-
 
 </script>
 
@@ -261,9 +207,8 @@ function loadData() {
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
 			<input type="hidden" id="unitid" value="${chargeitem.unitid }">
 			<input type="hidden" id="iswatch" value="${chargeitem.iswatch }">
-			<div class="dqwz_l">当前位置：物业管理－收费项目管理</div>
+			<div class="dqwz_l">当前位置：物业管理－抄表收费项目收费提醒</div>
 			<div  class="caozuoan">
-				[ <a href="#" onclick="add()">确定添加</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
 	         </div>
 	         <div style="clear:both"></div>

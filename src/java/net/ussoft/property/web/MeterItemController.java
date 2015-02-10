@@ -75,7 +75,7 @@ public class MeterItemController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/listMeteritem", method = RequestMethod.POST)
-	public void list(String unitId,HttpServletResponse response) throws Exception {
+	public void list(String unitId,String isWatch,HttpServletResponse response) throws Exception {
 		
 		response.setContentType("text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");

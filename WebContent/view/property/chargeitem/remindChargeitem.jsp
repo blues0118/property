@@ -155,38 +155,37 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return '';
 	    		}
 	    	}
-		    return "";
+		    return '';
 	   }
     });
 	
 function loadData() {
-	var title = "收费项目管理";
+	var title = "固定收费项目提醒";
 	var pageer = "#pager";
 	var colNames;
 	var colModel;
 	var datatype = "json";
 	var page = 50;
 	var size;
-	var url = "${pageContext.request.contextPath}/charge/list.do";
+	var url = "${pageContext.request.contextPath}/charge/listForRemind.do";
 	
-	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','按表计费','计费类型','排序','最后读数','备注'];
+	colNames = ['id','名称','费用类型', '计算方式', '计算单位','收费方式','收费单价','收费周期','提醒日期','下次收费日期'];
 	colModel = [ 
 			   {name:'id',index:'id',hidden:true, width:100,align:"center"},
 	           {name:'itemcode',index:'itemcode', width:100,align:"center"},
-	           {name:'itemtype',index:'itemtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemcatagory',index:'itemcatagory', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemunit',index:'itemunit', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemmode',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeprice',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'chargeperiod',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
-	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
-	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}
+	           {name:'itemtype',index:'itemtype', width:100,align:"center"},
+	           {name:'itemcatagory',index:'itemcatagory', width:100,align:"center"},
+	           {name:'itemunit',index:'itemunit', width:100,align:"center"},
+	           {name:'itemmode',index:'itemmode', width:100,align:"center"},
+	           {name:'chargeprice',index:'chargeprice', width:100,align:"center"},
+	           {name:'chargeperiod',index:'chargeperiod', width:100,align:"center"},
+	           {name:'reminddate',index:'reminddate', width:100,align:"center"},
+	           {name:'nextdate',index:'nextdate', width:100,align:"center"}
 	];
+	
+	var iswatch = $("#iswatch").val();
 	size = $(window).height()-120;
-	var postData={unitid:'SYSTEM'};
+	var postData={unitid:$("#unitid").val(),iswatch:0};
 	
 	var _option = {
 			gridObject:"dataGrid",
@@ -208,46 +207,7 @@ function loadData() {
 		jQuery("#dataGrid").trigger("reloadGrid");
 	}
 	
-	function getGridSelectids() {
-		var rownumbers = "";
-		rownumbers = $("#dataGrid").jqGrid('getGridParam','selarrrow');
-		return rownumbers;
-	}
 	
-	function add() {
-	   var gridObject;
-		//设置滚动条
-		setCroll('#dataGrid .ui-jqgrid-bdiv','jqgrid-div');
-		gridObject = "dataGrid";
-		
-		var str = "";
-		
-		var rownumbers = "";
-		rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
-		str = getSelectid(gridObject,rownumbers);
-		
-		if (str == "") {
-			alert("请先选择要添加的收费项目。");
-			return;
-		}
-		if (confirm("确定要将选中的收费项目添加到选择的单元吗？请谨慎操作。")) {
-			var loadi = parent.layer.load(0);
-			$.ajax({
-		        async : false,
-		        url : '${pageContext.request.contextPath}/charge/savechargeitem.do',
-		        type : 'post',
-		        data: {
-					ids:str.toString(),
-					unitid:$("#unitid").val()
-				},
-		        dataType : 'text',
-		        success : function(data) {
-					alert(data);
-		        }
-		    });
-			reloadGrid();
-		};
-	}
 	function refresh() {
 		reloadGrid();
 	}
@@ -260,10 +220,8 @@ function loadData() {
 
 		<div class="top_dd" style="margin-bottom: 10px;position:relative;z-index:5555;">
 			<input type="hidden" id="unitid" value="${chargeitem.unitid }">
-			<input type="hidden" id="iswatch" value="${chargeitem.iswatch }">
-			<div class="dqwz_l">当前位置：物业管理－收费项目管理</div>
+			<div class="dqwz_l">当前位置：物业管理－固定收费项目收费提醒</div>
 			<div  class="caozuoan">
-				[ <a href="#" onclick="add()">确定添加</a> ]
 				[ <a href="#" onclick="refresh()">刷新列表</a> ]
 	         </div>
 	         <div style="clear:both"></div>

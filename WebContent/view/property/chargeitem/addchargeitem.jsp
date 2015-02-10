@@ -116,11 +116,41 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 	    			return '';
 	    		}
 	    	}else if(options.colModel.index =='chargeprice'){
-	    		return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeprice+"/"+cellvalueJson[0].chargepriceunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='chargeperiod'){
-	    		return cellvalue//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].chargeperiod+"/"+cellvalueJson[0].chargeperiodunit;
+	    		}else{
+	    			return '';
+	    		}
 	    	}else if(options.colModel.index =='watch_price'){
-	    		return cellvalue;//cellvalueJson[0].watch_price;
+	    		if(cellvalue!=null && cellvalue!=undefined){
+	    			return cellvalue;//cellvalueJson[0].watch_price;
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='iswatch'){
+	    		if(cellvalue =='0'){
+	    			return "否";
+	    		}else if(cellvalue =='1'){
+	    			return "是";
+	    		}else{
+	    			return '';
+	    		}
+	    	}else if(options.colModel.index =='watchtype'){
+	    		if(cellvalue =='0'){
+	    			return "水费";
+	    		}else if(cellvalue =='1'){
+	    			return "电费";
+	    		}else if(cellvalue =='2'){
+	    			return "燃气费";
+	    		}else{
+	    			return '';
+	    		}
 	    	}
 		    return '';
 	   }
@@ -146,8 +176,8 @@ function loadData() {
 	           {name:'itemmode',index:'itemmode', width:100,align:"center",formatter:"itemcontentFormatter"},
 	           {name:'chargeprice',index:'chargeprice', width:100,align:"center",formatter:"itemcontentFormatter"},
 	           {name:'chargeperiod',index:'chargeperiod', width:100,align:"center",formatter:"itemcontentFormatter"},
-	           {name:'iswatch',index:'iswatch', width:100,align:"center"},
-	           {name:'watchtype',index:'watchtype', width:100,align:"center"},
+	           {name:'iswatch',index:'iswatch', width:100,align:"center",formatter:"itemcontentFormatter"},
+	           {name:'watchtype',index:'watchtype', width:100,align:"center",formatter:"itemcontentFormatter"},
 	           {name:'itemsort',index:'itemsort', width:100,align:"center"},
 	           {name:'watchnumber',index:'watchnumber', width:100,align:"center"},
 	           {name:'chargeremark',index:'chargeremark', width:100,align:"center"}

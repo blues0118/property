@@ -100,12 +100,12 @@ public class PropertyController extends BaseConstroller {
 	@RequestMapping(value = "/list")
 	public ModelAndView list(Unit unit,ModelMap modelMap) {
 		modelMap.put("projeuctid", unit.getProjeuctid());
-		List<Unit> list = unitService.search(unit);
+		List<Map<String,Object>> list = unitService.searchForMap(unit);
 		if(list != null){
-			Map<String, Unit> map = new HashMap<String,Unit>();
+			Map<String, Object> map = new HashMap<String,Object>();
 			for (int i = 0; i < list.size(); i++) {
-				Unit u = list.get(i);
-				map.put(u.getUnitrowsort() + "-" + u.getUnitsort(), u);
+				Map<String,Object> u = list.get(i);
+				map.put(u.get("unitrowsort") + "-" + u.get("unitsort"), u);
 			}
 			modelMap.put("UnitMap", JSON.toJSONString(map));
 			System.out.println(JSON.toJSONString(map));

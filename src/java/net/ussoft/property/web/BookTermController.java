@@ -141,17 +141,20 @@ public class BookTermController extends BaseConstroller {
 			
 			booktermList = booktermService.getBooktermAllList();
 			for(Bookterm term:booktermList){
-				mapObject = new HashMap<String,Object>();
-				mapObject.put("id", term.getId());
-				mapObject.put("name", term.getTermcode());
-				mapObject.put("isParent", false);
-				map.add(mapObject);
+				if(term.getTermcode()!=null && !"".equals(term.getTermcode())){
+					mapObject = new HashMap<String,Object>();
+					mapObject.put("id", term.getId());
+					mapObject.put("name", term.getTermcode());
+					mapObject.put("isParent", false);
+					map.add(mapObject);
+				}
 			}
 			
 		}
 		
 		
 		String json = JSON.toJSONString(map);
+		System.out.println(json);
 		out.print(json);
 	}
 	
@@ -297,6 +300,7 @@ public class BookTermController extends BaseConstroller {
 	@RequestMapping(value="/relist",method=RequestMethod.GET)
 	public ModelAndView relist(String projectid, String projectname, ModelMap modelMap) {
 		modelMap.put("projectid", projectid);
+		modelMap.put("booktermflag", "1");
 		modelMap.put("projectname", projectname);
 		// session取得
 		Sys_account accountSession = super.getSessionAccount();
@@ -315,7 +319,17 @@ public class BookTermController extends BaseConstroller {
 	}
 	
 
-	
+	/**
+	 * 打开添加页面
+	 * @return
+	 */
+	@RequestMapping(value="/addChargeitemforunit",method=RequestMethod.GET)
+	public ModelAndView addChargeitemforunit(String termid,String unitid,String unittermid, ModelMap modelMap) {
+		modelMap.put("termid", termid);
+		modelMap.put("unitid", unitid);
+		modelMap.put("unittermid", unittermid);
+		return new ModelAndView("/view/property/chargeitem/addchargeitemforunit",modelMap);
+	}
 	/**
 	 * 打开扫码页面
 	 * @return
