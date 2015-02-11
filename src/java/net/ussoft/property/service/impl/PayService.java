@@ -6,10 +6,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import net.ussoft.property.dao.EquipmentDao;
+import net.ussoft.property.dao.EquipmentcontentDao;
 import net.ussoft.property.dao.OtherpayDao;
 import net.ussoft.property.dao.StaffDao;
 import net.ussoft.property.dao.StaffcontentDao;
 import net.ussoft.property.model.Equipment;
+import net.ussoft.property.model.Equipmentcontent;
 import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Staff;
@@ -32,6 +34,9 @@ public class PayService implements IPayService {
 	
 	@Resource
 	private StaffcontentDao staffcontentDao;
+	
+	@Resource
+	private EquipmentcontentDao equipmentcontentDao;
 	
 	@Override
 	public Equipment insertEquipment(Equipment equipment) {
@@ -165,9 +170,54 @@ public class PayService implements IPayService {
 	}
 	
 	@Override
+	public Equipmentcontent insertEquipmentcontent(Equipmentcontent equipmentcontent) {
+		equipmentcontentDao.save(equipmentcontent);
+		return equipmentcontent;
+	}
+	
+	@Override
 	public Staffcontent insertStaffcontent(Staffcontent staffcontent) {
 		staffcontentDao.save(staffcontent);
 		return staffcontent;
+	}
+	
+	@Override
+	public PageBean<Equipmentcontent> getByEquipId(String id, PageBean<Equipmentcontent> pageBean) {
+		String sql = "select distinct te.* from bookterm tb, equipmentcontent te where te.equipmentid= '"
+	                + id +"' and te.termid=tb.id and tb.tremstatus=0";
+		List<Object> sqlValues = new ArrayList<Object>();
+		return equipmentcontentDao.search(sql, sqlValues, pageBean);
+	}
+	
+	/**
+	 * 取得设备支出
+	 * @param id
+	 * @return
+	 */
+	public Equipmentcontent getEquipmentcontentById(String id) {
+		return equipmentcontentDao.get(id);
+	}
+	
+	/**
+	 * 删除设备支出
+	 * @param id
+	 * @return
+	 */
+	public int deleteEquipmentcontent(String id) {
+		return equipmentcontentDao.del(id);
+	}
+
+	/**
+	 * 更新设备支出
+	 * @param equipmentcontent
+	 * @return
+	 */
+	public int updateEquipmentcontent(Equipmentcontent equipmentcontent) {
+		Equipmentcontent tmp = equipmentcontentDao.update(equipmentcontent);
+		if (null != tmp) {
+			return 1;
+		}
+		return 0;
 	}
 	
 	@Override
@@ -208,5 +258,4 @@ public class PayService implements IPayService {
 		}
 		return 0;
 	}
-
 }

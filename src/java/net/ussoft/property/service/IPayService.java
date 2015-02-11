@@ -1,11 +1,11 @@
 package net.ussoft.property.service;
 
 import net.ussoft.property.model.Equipment;
+import net.ussoft.property.model.Equipmentcontent;
 import net.ussoft.property.model.Otherpay;
 import net.ussoft.property.model.PageBean;
 import net.ussoft.property.model.Staff;
 import net.ussoft.property.model.Staffcontent;
-
 
 public interface IPayService {
 	/**
@@ -117,11 +117,48 @@ public interface IPayService {
 	public Otherpay getOtherById(String id);
 	
 	/**
+	 * 插入设备支出
+	 * @param equipmentcontent
+	 * @return
+	 */
+	public Equipmentcontent insertEquipmentcontent(Equipmentcontent equipmentcontent);
+	
+	/**
 	 * 插入员工工资
 	 * @param staffcontent
 	 * @return
 	 */
 	public Staffcontent insertStaffcontent(Staffcontent staffcontent);
+
+	
+	/**
+	 * 取得设备支出管理信息
+	 * @param id
+	 * @param pageBean
+	 * @return
+	 */
+	public PageBean<Equipmentcontent> getByEquipId(String id, PageBean<Equipmentcontent> pageBean);
+	
+	/**
+	 * 取得设备支出
+	 * @param id
+	 * @return
+	 */
+	public Equipmentcontent getEquipmentcontentById(String id);
+	
+	/**
+	 * 删除设备支出
+	 * @param id
+	 * @return
+	 */
+	public int deleteEquipmentcontent(String id);
+
+	/**
+	 * 更新设备支出
+	 * @param equipmentcontent
+	 * @return
+	 */
+	public int updateEquipmentcontent(Equipmentcontent equipmentcontent);
 	
 	/**
 	 * 取得员工工资管理信息
