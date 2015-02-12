@@ -108,7 +108,7 @@ public class BookController extends BaseConstroller {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
-		//第一步：现在台账表中查询 查表收款
+		//第一步：先在台账表中查询 查表收款
 		Book t = new Book();
 		if(unitid!=null && !"".equals(unitid)){
 			t.setUnitid(unitid);

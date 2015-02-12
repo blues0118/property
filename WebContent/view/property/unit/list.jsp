@@ -41,19 +41,6 @@
 			$('#con_right').prepend(buildRow(i+1));
 		}
 	}
-	function printTZD(unitId) {
-	    $.ajax({
-	        async : true,
-	        url : "../meterItem/listMeteritem.do",
-	        type : 'post',
-	        data:{unitId:unitId.toString()},
-	        dataType : 'text',
-	        success : function(data) {
-	        	sessionOut(data);
-	        	create_print_data(data);
-	        }
-	    });
-	}
 	/*
 	打印抄表收费项目收费通知单
 	*/
@@ -112,8 +99,13 @@
 					row += '<li  isdata="1" class="num">'+rNum+'<input type="checkbox" id = "'+tmp_rowNum+'" value="" onchange="chgCheckboxStatus(\''+tmp_rowNum+'\')" class="btn0"></li>';
 					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
 					row += 		'<div>';
-					row += 			'<p><span class="mianji">NT12-11    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
-					row += 			'<p>'+unitmap[tmp_rowNum]['leasename']+'</p>';
+					row += 			'<p><span class="mianji">'+unitmap[tmp_rowNum]['unitcode']+'    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
+					if(unitmap[tmp_rowNum]['leasename'] =="undefined" || unitmap[tmp_rowNum]['leasename'] ==undefined || unitmap[tmp_rowNum]['leasename']==""){
+						row += 		'<p>暂无</p>';
+					}else{
+						row += 		'<p>'+unitmap[tmp_rowNum]['leasename']+'</p>';
+					}
+					
 					row += 		'</div>';
 					row += 		'<div class="btns">';
 					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
@@ -129,17 +121,21 @@
 				}else{
 					row += '<li isdata="1" rownum="'+tmp_rowNum+'" class="info c1" style="background-color:'+unitmap[tmp_rowNum]['unitcolor']+'">';
 					row += 		'<div>';
-					row += 			'<p><span class="mianji">NT12-11    '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
-					row += 			'<p>'+unitmap[tmp_rowNum]['unitcode']+'</p>';
+					row += 			'<p><span class="mianji">'+unitmap[tmp_rowNum]['unitcode']+'   '+unitmap[tmp_rowNum]['using_area']+'m<sup>2</sup> </span></p>';
+					if(unitmap[tmp_rowNum]['leasename'] =="undefined" || unitmap[tmp_rowNum]['leasename'] ==undefined || unitmap[tmp_rowNum]['leasename']==""){
+						row += 		'<p>暂无</p>';
+					}else{
+						row += 		'<p>'+unitmap[tmp_rowNum]['leasename']+'</p>';
+					}
 					row += 		'</div>';
 					row += 		'<div class="btns">';
 					row += 			'<input type="checkbox" value="'+unitmap[tmp_rowNum]['id']+'" class="btn2">';
 					row += 			'<input type="button" alt="单元详细信息" onclick="edit(\''+unitmap[tmp_rowNum]['id']+'\')"  class="xinxi">';
 					row += 			'<input type="button" alt="打印收款单" class="dayin" onclick="printTZD(\''+unitmap[tmp_rowNum]['id']+'\')" >';
-					row += 			'<input type="button" alt="即将到期收费项目" class="time">';
+					row += 			'<input type="button" alt="即将到期收费项目" class="time" onclick="meterChargeitemRemind(\''+unitmap[tmp_rowNum]['id']+'\')">';
 					row += 		'</div>';
 					row += 		'<div class="tixing">';
-					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24">';
+					row += 			'<img src="${pageContext.request.contextPath}/images/r_07.png" width="27" height="24" onclick="chargeitemRemind(\''+unitmap[tmp_rowNum]['id']+'\')">';
 					row += 		'</div>';
 					row += '</li>';
 				}
@@ -225,6 +221,26 @@
 	        }
 	    });
 	}
+	/*
+	*function：单元的收费通知单打印
+	*/
+	function printTZD(unitId) {
+		var projectid = "${projeuctid}";
+		
+		var url = "../property/queryChargenote.do?time="+Date.parse(new Date());
+		
+	    $.ajax({
+	        async : true,
+	        url : url,
+	        type : 'post',
+	        data:{unitids:unitId,projectid:projectid},
+	        dataType : 'text',
+	        success : function(data) {
+	        	sessionOut(data);
+	        	create_print_data_batch(data);
+	        }
+	    });
+	}
 	function remindBatch(value){
 		var ids='';
 		if(value =='1'){
@@ -238,19 +254,16 @@
 		
 		var projectid = "${projeuctid}";
 		
-		var url = "../charge/chargenotePrintPre.do?unitid="+ids+"&projectid="+projectid+"&time="+Date.parse(new Date());
-		var loadi = parent.layer.load(0);
-		parent.$.layer({
-	        type: 2,
-	        title: '收款通知单打印编辑',
-	        maxmin: false,
-	        shadeClose: true, //开启点击遮罩关闭层
-	        area : ['850px' , '400px'],
-	        offset : ['150px', ''],
-	        iframe: {src: url},
-	        end: function(){
-	        	parent.layer.close(loadi);
-	        	refresh();
+		var url = "../property/queryChargenote.do?time="+Date.parse(new Date());
+		 $.ajax({
+	        async : true,
+	        url : url,
+	        type : 'post',
+	        data:{unitids:ids,projectid:projectid},
+	        dataType : 'text',
+	        success : function(data) {
+	        	sessionOut(data);
+	        	create_print_data_batch(data);
 	        }
 	    });
 	}

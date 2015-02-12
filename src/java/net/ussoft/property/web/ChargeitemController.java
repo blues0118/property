@@ -60,9 +60,9 @@ public class ChargeitemController extends BaseConstroller {
 	 * @return
 	 * @throws Exception 
 	 */
-	@RequestMapping(value="/list",method=RequestMethod.POST)
+	@RequestMapping(value="/list")
 	public void list(Integer page,String unitid,String iswatch, HttpServletResponse response) throws Exception {
-		
+		try{
 		response.setContentType("text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
@@ -124,9 +124,9 @@ public class ChargeitemController extends BaseConstroller {
 				map.put("itemunit",obj.getIntValue("itemunit"));
 				map.put("chargecatagory",obj.getIntValue("chargecatagory"));
 				map.put("chargeprice",obj.getDoubleValue("chargeprice"));
-				map.put("chargeperiodunit",obj.getIntValue("chargepriceunit"));
+				map.put("chargeperiodunit",obj.get("chargepriceunit"));
 				map.put("chargeperiod",obj.getIntValue("chargeperiod"));
-				map.put("chargeperiodunit",obj.getIntValue("chargeperiodunit"));
+				map.put("chargeperiodunit",obj.get("chargeperiodunit"));
 				
 			}else{
 				JSONObject obj = jsonArr.getJSONObject(0);
@@ -137,6 +137,9 @@ public class ChargeitemController extends BaseConstroller {
 		String json = JSON.toJSONString(c);
 		System.out.println("json=="+json);
 		out.print(json);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 	}
 	/**
@@ -485,36 +488,43 @@ public class ChargeitemController extends BaseConstroller {
 	 * @param modelMap
 	 * @return
 	 */
-	@RequestMapping(value="/editforunit",method=RequestMethod.GET)
+	@RequestMapping(value="/editforunit")
 	public ModelAndView editforunit(String id,ModelMap modelMap) {
-		//判断id是否存在
-		if (id == null || id.equals("")) {
-			return null;
-		}
-		//获取对象
-		Chargeitem chargeitem = chargeitemService.getById(id);
-		
-		//收费内容
-		JSONArray jsonArr = JSONObject.parseArray(chargeitem.getItemcontent());
-		Chargeitemcontent itemcontent = new Chargeitemcontent();
-		if(chargeitem.getIswatch() == 0){
-			JSONObject obj = jsonArr.getJSONObject(0);
-			itemcontent.setItemtype(obj.getIntValue("itemtype"));
-			itemcontent.setItemcatagory(obj.getIntValue("itemcatagory"));
-			itemcontent.setItemmode(obj.getIntValue("itemmode"));
-			itemcontent.setItemunit(obj.getIntValue("itemunit"));
-			itemcontent.setChargecatagory(obj.getIntValue("chargecatagory"));
-			itemcontent.setChargeprice(obj.getDoubleValue("chargeprice"));
-			itemcontent.setChargeperiodunit(obj.getIntValue("chargepriceunit"));
-			itemcontent.setChargeperiod(obj.getIntValue("chargeperiod"));
-			itemcontent.setChargeperiodunit(obj.getIntValue("chargeperiodunit"));
+		try{
+			//判断id是否存在
+			if (id == null || id.equals("")) {
+				return null;
+			}
+			//获取对象
+			Chargeitem chargeitem = chargeitemService.getById(id);
 			
-		}else{
-			JSONObject obj = jsonArr.getJSONObject(0);
-			itemcontent.setWatch_price(obj.getDoubleValue("watch_price"));
+			//收费内容
+			JSONArray jsonArr = JSONObject.parseArray(chargeitem.getItemcontent());
+			//Chargeitemcontent itemcontent = new Chargeitemcontent();
+			Map<String,Object> itemcontent = new HashMap<String,Object>();
+			if(chargeitem.getIswatch() == 0){
+				JSONObject obj = jsonArr.getJSONObject(0);
+				itemcontent.put("itemtype", obj.get("itemtype"));
+				itemcontent.put("itemcatagory", obj.get("itemcatagory"));
+				itemcontent.put("itemmode", obj.get("itemmode"));
+				itemcontent.put("itemunit", obj.get("itemunit"));
+				itemcontent.put("chargecatagory", obj.get("chargecatagory"));
+				itemcontent.put("chargeprice", obj.get("chargeprice"));
+				itemcontent.put("chargepriceunit", obj.get("chargepriceunit"));
+				itemcontent.put("chargeperiod", obj.get("chargeperiod"));
+				itemcontent.put("chargeperiodunit", obj.get("chargeperiodunit"));
+				
+			}else{
+				JSONObject obj = jsonArr.getJSONObject(0);
+				itemcontent.put("watch_price", obj.get("watch_price"));
+				
+			}
+			modelMap.put("chargeitem", chargeitem);
+			modelMap.put("itemcontent", itemcontent);
+			
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		modelMap.put("chargeitem", chargeitem);
-		modelMap.put("itemcontent", itemcontent);
 		return new ModelAndView("/view/property/chargeitem/edit",modelMap);
 	}
 	

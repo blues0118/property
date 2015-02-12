@@ -39,7 +39,7 @@
 		<table width="90%" cellspacing="0" cellpadding="8" align="center" style="margin-top:20px">
 			<tbody>
 				<tr >
-	                <td colspan="4" align="center">添加收付费项</td>
+	                <td colspan="4" align="center">修改收付费项</td>
 	            </tr>
 				<tr>
 					<td>收费项目排序：</td>

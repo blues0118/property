@@ -22,7 +22,6 @@
 
 
 <!-- 打印的js、css引入  -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/table.css" type="text/css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.jqprint-0.3.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/view/property/unit/property_print_util.js"></script>
 
@@ -85,7 +84,7 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 		var result = httpPostReqeust(url, data);
 		console.log(result);
 		if(result!=null && result.status == true){
-			alert("收款成功");
+			reloadGrid();
 		}else{
 			alert("收款失败");
 		}
@@ -245,20 +244,23 @@ function addChargeitem(){
     });
 	
 }
-
+/*
+*function：单元的收费通知单打印
+*/
 function printTZD() {
-	    $.ajax({
-	        async : true,
-	        url : "../book/chargeNotice.do",
-	        type : 'post',
-	        data:{unitid:$("#unitid").val(),unittermid:$("#unittermid").val()},
-	        dataType : 'text',
-	        success : function(data) {
-	        	sessionOut(data);
-	        	create_print_data(data);
-	        }
-	    });
-	}
+	var url = "../property/queryChargenote.do?time="+Date.parse(new Date());
+    $.ajax({
+        async : true,
+        url : url,
+        type : 'post',
+        data:{unitids:$("#unitid").val()},
+        dataType : 'text',
+        success : function(data) {
+        	sessionOut(data);
+        	create_print_data_batch(data);
+        }
+    });
+}
 </script>
 
 

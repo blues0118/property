@@ -2,6 +2,7 @@ package net.ussoft.property.web;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -77,7 +78,13 @@ public class ChargenoteController extends BaseConstroller  {
 		//获取对象
 		Chargenote chargenote = new Chargenote();
 		chargenote.setUnittermid(id);
-		modelMap.put("chargenote", chargenote);
+		List<Chargenote> chargenoteList =  chargenoteService.list(chargenote);
+		if(chargenoteList!=null && chargenoteList.size()>0){
+			modelMap.put("chargenote", chargenoteList.get(0));
+		}else{
+			modelMap.put("chargenote", chargenote);
+		}
+		
 		return new ModelAndView("/view/property/chargenote/chargenotedetail",modelMap);
 	}
 }

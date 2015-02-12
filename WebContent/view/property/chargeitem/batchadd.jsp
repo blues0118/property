@@ -242,7 +242,7 @@ function loadData() {
 				},
 		        dataType : 'text',
 		        success : function(data) {
-					alert(data);
+		        	alert("添加成功");
 		        }
 		    });
 			reloadGrid();

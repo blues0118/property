@@ -16,7 +16,6 @@
 <script src="${pageContext.request.contextPath}/js/jqgrid/jquery-ui/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
 <!-- ztree的css和js引入 -->
 <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/zTree/css/zTreeStyle/zTreeStyle.css"/>
-<link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/js/zTree/css/demo.css"/>
 <script src="${pageContext.request.contextPath}/js/zTree/js/jquery.ztree.all-3.5.min.js" type="text/javascript"></script>
 
 
@@ -154,7 +153,7 @@
 							</tr>
 							<tr>
 								<td colspan="6" align="center">
-									<button type="button" onclick="save()">保存</button>
+									<button type="button" onclick="saveUnit()">保存</button>
 									<button type="button" onclick="closepage()">关闭</button>
 								</td>
 							</tr>
@@ -194,7 +193,7 @@
 							</tr>
 							<tr>
 								<td align="center" colspan="4">
-									<button type="button" onclick="save()">保存</button>
+									<button type="button" onclick="saveLease()">保存</button>
 									<button type="button" onclick="closepage()">关闭</button>
 								</td>
 							</tr>
@@ -218,10 +217,10 @@
 				<div id="meterchargeItemPager"></div>
 			</div>
 			 <div align="center" class="hide" id = "standingbook_div">
-			 	<div style="width:25%;float:left">
+			 	<div style="width:15%;float:left;width:20px">
 					<ul id="treeDemo" class="ztree"></ul>
 				</div>
-			 	<div style="width:75%;float:right">
+			 	<div style="width:85%;float:right">
 				 	<table id="standingbookDataGrid"></table>
 					<div id="standingbookPager"></div>
 				</div>

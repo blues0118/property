@@ -253,9 +253,9 @@ function loadData() {
 				},
 		        dataType : 'text',
 		        success : function(data) {
+		        	alert("添加成功");
 		        	parent.layer.close(loadi);
 					reloadGrid();
-					alert(data);
 		        }
 		    });
 		};

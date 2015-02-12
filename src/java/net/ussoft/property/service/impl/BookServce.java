@@ -79,12 +79,21 @@ public class BookServce implements IBookService {
 			String datatime = format.format(new Date());
 			StringBuffer str = new StringBuffer("update book set chargeovertime='"+datatime+"', chargestatus='1' where 1=1");
 			if(t.getId()!=null && !"".equals(t.getId())){
-				str.append(" and id='"+t.getId()+"'");
+				str.append(" and unitid='"+t.getId()+"'");
 			}
 			if(t.getUnittermid()!=null && !"".equals(t.getUnittermid())){
 				str.append(" and unittermid='"+t.getUnittermid()+"'");
 			}
+			StringBuffer str1 = new StringBuffer("update chargenote set chargedate='"+datatime+"', chargestatus='1' where 1=1");
+			if(t.getId()!=null && !"".equals(t.getId())){
+				str1.append(" and unitid='"+t.getId()+"'");
+			}
+			if(t.getUnittermid()!=null && !"".equals(t.getUnittermid())){
+				str1.append(" and unittermid='"+t.getUnittermid()+"'");
+			}
+			
 			bookDao.execute(str.toString());
+			bookDao.execute(str1.toString());
 			return true;
 		}catch(Exception e){
 			e.printStackTrace();

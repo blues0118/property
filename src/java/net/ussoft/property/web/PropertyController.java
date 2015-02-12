@@ -2,8 +2,11 @@ package net.ussoft.property.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,8 +34,12 @@ import net.ussoft.property.service.ILeaseService;
 import net.ussoft.property.service.IMeterItemService;
 import net.ussoft.property.service.IProjectService;
 import net.ussoft.property.service.IBookService;
+import net.ussoft.property.service.IPropertyService;
 import net.ussoft.property.service.IUnitService;
 import net.ussoft.property.service.IUnittermService;
+import net.ussoft.property.util.CommonUtils;
+import net.ussoft.property.util.Constants;
+import net.ussoft.property.util.DateUtil;
 import net.ussoft.property.util.MD5;
 
 import org.springframework.stereotype.Controller;
@@ -77,6 +84,9 @@ public class PropertyController extends BaseConstroller {
 	
 	@Resource
 	private IUnittermService unittermService;
+	
+	@Resource
+	private IPropertyService propertyService;
 	/**
 	 * 物业管理->单元管理
 	 * @param modelMap
@@ -85,8 +95,8 @@ public class PropertyController extends BaseConstroller {
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView index(ModelMap modelMap) {
 		modelMap = super.getModelMap("PROPERTY","");
-				
-		List<Project> list = projectService.list();
+		Sys_account account = super.getSessionAccount();
+		List<Project> list = projectService.list(account.getId());
 		String listString = JSON.toJSONString(list);
 		modelMap.put("projectList", listString);
 		
@@ -157,7 +167,7 @@ public class PropertyController extends BaseConstroller {
 		String result = "success";
 		List<Unit> list = unitService.search(unit);
 		if(list!=null && list.size()>0){
-			result = "db_exist";
+			unitService.update(list.get(0));//如果存在就自动更新单元信息
 			out.print(result);
 			return;
 		}
@@ -252,6 +262,197 @@ public class PropertyController extends BaseConstroller {
 		return new ModelAndView("/view/property/unit/edit",modelMap);
 		
 		
+	}
+	/**
+	 * 获取批量“收款单打印”数据。
+	 * @param modelMap
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/queryChargenote", method = RequestMethod.POST)
+	public void queryChargenote(String projectid,String unitids,HttpServletRequest request,HttpServletResponse response) throws Exception {
+		
+		response.setContentType("text/xml;charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		
+		Meteritem meteritem = new Meteritem();
+		meteritem.setUnitid(unitids);
+		
+		
+		//用来保存所有的收款单打印数据
+		Map<String,List<Map<String,Object>>> list = new HashMap<String,List<Map<String,Object>>>(); 
+		//用来存放所有的unitid值，返回到页面后用来解析list
+		Map<String,Object> list_unitids = null ;
+		List<Map<String,Object>> list_unitidsCopy = new ArrayList<Map<String,Object>>();
+		
+		//第一步：获取固定收费数据
+		List<Map<String,Object>>  chargeitemList = propertyService.queryChargeitemForMap(projectid, unitids);
+		//第二步：获取抄表收费数据
+		List<Map<String,Object>>  bookList = propertyService.queryBookForMap(projectid, unitids);
+		//第三步：获取公共数据（物业公司名称、单元编号、金额合计大小写、实收金额、制表人、打印日期、经办人）
+		List<Map<String,Object>>  commonList = propertyService.queryCommonForMap(projectid, unitids);
+		Object object = CommonUtils.getSessionAttribute(request, Constants.user_in_session);
+        Sys_account account = object == null ? null : (Sys_account) object;  
+        if(account!=null){
+	        list_unitids = new HashMap<String,Object>();
+	        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	        list_unitids.put("accountname", account.getAccountname());//制表人、经办人
+	        list_unitids.put("printdate", format.format(new Date()));//打印日期
+	        if(commonList!=null && commonList.size()>0){
+	        	list_unitids.put("propertyname", commonList.get(0).get("configvalue"));//物业公司名称
+	        }
+	        list_unitidsCopy.add(list_unitids);
+        }
+		//固定收费数据解析
+		Iterator iter_chargeitem = chargeitemList.iterator();
+		Map<String,Object> map = null;
+		Map<String,Object> mapCopy = null;
+		List<Map<String,Object>> mapListCopy = null;
+		int count=0;
+		double amount =0.0;
+		while(iter_chargeitem.hasNext()){
+			map = (Map<String,Object>)iter_chargeitem.next();
+			mapCopy = new HashMap<String,Object>();
+			//用单元的id来分类单元与单元的收款单打印数据
+			if(list.containsKey(map.get("unitid"))){//如果包含了单元的id
+				mapCopy.put("unitcode", map.get("unitcode"));//单元代码
+				mapCopy.put("name", map.get("itemcode"));//收费项目名称
+				mapCopy.put("start", map.get("begindate"));//计费起
+				mapCopy.put("end", map.get("nextdate"));//计费止
+				String begindate=String.valueOf(map.get("begindate"));
+				String enddate = String.valueOf(map.get("nextdate"));
+				SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd");
+				System.out.println("begindate="+begindate+"=enddate="+enddate);
+				if(begindate!=null && !"".equals(begindate)&& enddate!=null && !"".equals(enddate)){
+					if("日".equals(map.get("chargepriceunit"))||"1".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.daysBetween(sdf.parse(begindate),sdf.parse(enddate)));//数量
+					}else if("月".equals(map.get("chargepriceunit"))||"2".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.monthsBetween(sdf.parse(begindate),sdf.parse(enddate)));//数量
+					}else if("年".equals(map.get("chargepriceunit"))||"3".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.yearsBetween(sdf.parse(begindate), sdf.parse(enddate)));//数量
+					}
+				}else{
+					mapCopy.put("number","0");//数量
+				}
+				String chargepriceunit_="";
+				if(map.get("chargepriceunit")!=null && "1".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "日";
+				}else if(map.get("chargepriceunit")!=null && "2".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "月";
+				}else if(map.get("chargepriceunit")!=null && "3".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "年";
+				}
+				mapCopy.put("unit", map.get("chargeprice")+"/"+chargepriceunit_);//单价，例：500/月
+				double chargeprice_ = 0.0;
+				double number_ = 0;
+				if(map.get("chargeprice")!=null && !"".equals(map.get("chargeprice"))){
+					chargeprice_ = Double.valueOf(String.valueOf(map.get("chargeprice")));
+				}
+				if(map.get("number")!=null && !"".equals(map.get("number"))){
+					number_ = Double.valueOf(String.valueOf(map.get("number")));
+				}
+				mapCopy.put("bz", map.get("chargeremark"));//备注
+				list.get(map.get("unitid")).add(mapCopy);
+			}else{
+				list_unitids = new HashMap<String,Object>() ;
+				mapListCopy = new ArrayList<Map<String,Object>>();
+				mapCopy.put("unitcode", map.get("unitcode"));//单元代码
+				mapCopy.put("name", map.get("itemcode"));//收费项目名称
+				mapCopy.put("start", map.get("begindate"));//计费起
+				mapCopy.put("end", map.get("nextdate"));//计费止
+				String begindate=String.valueOf(map.get("begindate"));
+				String enddate = String.valueOf(map.get("nextdate"));
+				SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd");
+				System.out.println("begindate="+begindate+"=enddate="+enddate);
+				if(begindate!=null && !"".equals(begindate)&& enddate!=null && !"".equals(enddate)){
+					if("日".equals(map.get("chargepriceunit"))||"1".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.daysBetween(sdf.parse(begindate),sdf.parse(enddate)));//数量
+					}else if("月".equals(map.get("chargepriceunit"))||"2".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.monthsBetween(sdf.parse(begindate),sdf.parse(enddate)));//数量
+					}else if("年".equals(map.get("chargepriceunit"))||"3".equals(map.get("chargepriceunit"))){
+						mapCopy.put("number",DateUtil.yearsBetween(sdf.parse(begindate), sdf.parse(enddate)));//数量
+					}
+				}else{
+					mapCopy.put("number","0");//数量
+				}
+				String chargepriceunit_="";
+				if(map.get("chargepriceunit")!=null && "1".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "日";
+				}else if(map.get("chargepriceunit")!=null && "2".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "月";
+				}else if(map.get("chargepriceunit")!=null && "3".equals(map.get("chargepriceunit"))){
+					chargepriceunit_ = "年";
+				}
+				mapCopy.put("unit", map.get("chargeprice")+"/"+chargepriceunit_);//单价，例：500/月
+				double chargeprice_ = 0.0;
+				double number_ = 0;
+				if(map.get("chargeprice")!=null && !"".equals(map.get("chargeprice"))){
+					chargeprice_ = Double.valueOf(String.valueOf(map.get("chargeprice")));
+				}
+				if(map.get("number")!=null && !"".equals(map.get("number"))){
+					number_ = Double.valueOf(String.valueOf(map.get("number")));
+				}
+				mapCopy.put("amount", chargeprice_*number_);//金额
+				mapCopy.put("bz", map.get("chargeremark"));//备注
+				mapListCopy.add(mapCopy);
+				list.put(String.valueOf(map.get("unitid")), mapListCopy);
+				list_unitids.put(String.valueOf(count), map.get("unitid"));
+				list_unitidsCopy.add(list_unitids);
+				count++;
+			}
+		}
+		//抄表收费数据解析
+		Iterator iter = bookList.iterator();
+		while(iter.hasNext()){
+			map = (Map<String,Object>)iter.next();
+			mapCopy = new HashMap<String,Object>();
+			//用单元的id来分类单元与单元的收款单打印数据
+			
+			if(list.containsKey(map.get("unitid"))){//如果包含了单元的id
+				mapCopy.put("unitcode", map.get("unitcode"));//单元代码
+				mapCopy.put("name", map.get("itemcode"));//收费项目名称
+				mapCopy.put("start", map.get("lastnumber"));//计费起
+				mapCopy.put("end", map.get("newnumber"));//计费止
+				double number=0.0;
+				if(map.get("lastnumber")!=null && !"".equals(map.get("lastnumber"))
+						&&map.get("newnumber")!=null && !"".equals(map.get("newnumber"))){
+					number = Double.valueOf(String.valueOf(map.get("newnumber")))-Double.valueOf(String.valueOf(map.get("lastnumber")));
+				}
+				mapCopy.put("number", number);//数量
+				mapCopy.put("unit", map.get("watch_price"));//单价
+				mapCopy.put("amount", map.get("chargesum"));//金额
+				mapCopy.put("bz", map.get("bookmemo"));//备注
+				list.get(map.get("unitid")).add(mapCopy);
+			}else{
+				list_unitids = new HashMap<String,Object>() ;
+				mapListCopy = new ArrayList<Map<String,Object>>();
+				mapCopy.put("unitcode", map.get("unitcode"));//单元代码
+				mapCopy.put("name", map.get("itemcode"));//收费项目名称
+				mapCopy.put("start", map.get("lastnumber"));//计费起
+				mapCopy.put("end", map.get("newnumber"));//计费止
+				double number=0.0;
+				if(map.get("lastnumber")!=null && !"".equals(map.get("lastnumber"))
+						&&map.get("newnumber")!=null && !"".equals(map.get("newnumber"))){
+					number = Double.valueOf(String.valueOf(map.get("newnumber")))-Double.valueOf(String.valueOf(map.get("lastnumber")));
+				}
+				mapCopy.put("number", number);//数量 
+				mapCopy.put("unit", map.get("watch_price"));//单价
+				mapCopy.put("amount", map.get("chargesum"));//金额
+				mapCopy.put("bz", map.get("bookmemo"));//备注
+				mapListCopy.add(mapCopy);
+				list.put(String.valueOf(map.get("unitid")), mapListCopy);
+				list_unitids.put(String.valueOf(count), map.get("unitid"));
+				list_unitidsCopy.add(list_unitids);
+				count++;
+			}
+		}
+		//list_unitidsCopy.add(list_unitids);
+		list.put("info", list_unitidsCopy);
+		
+		String json = JSON.toJSONString(list);
+		System.out.println(json);
+		out.print(json);
 	}
 	
 }

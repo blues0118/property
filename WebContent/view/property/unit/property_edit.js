@@ -94,6 +94,7 @@ function initStyle(){
 
 function del(ids) {
 		if (confirm("确定要删除选择的合同吗？")) {
+			var loadi = parent.layer.load(0);
 			setTimeout(function () {
 				$.ajax({
 			        async : false,
@@ -106,8 +107,7 @@ function del(ids) {
 			        success : function(data) {
 			        	sessionOut(data);
 			            if (data == "success") {
-			            	alert("删除完毕。");
-			            	window.location.reload();
+			            	parent.layer.close(loadi);
 			            } else {
 			            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
 			            }
@@ -122,6 +122,7 @@ function delChargeitem(ids) {
 		//得到选中行的id
 		var gridObject;
 		gridObject = "chargeItemDataGrid";
+		/*
 		var str = "";
 		var rownumbers = "";
 		rownumbers = $("#"+gridObject).jqGrid('getGridParam','selarrrow');
@@ -132,6 +133,7 @@ function delChargeitem(ids) {
 			alert("请先选择要删除的数据。");
 			return;
 		}
+		*/
 		if (confirm("确定要删除选择的收费项目吗？")) {
 			var loadi = parent.layer.load(0);
 			setTimeout(function () {
@@ -140,21 +142,15 @@ function delChargeitem(ids) {
 			        url : '../charge/delete.do',
 			        type : 'post',
 			        data: {
-						ids:str.toString()
+						ids:ids.toString()
 					},
 			        dataType : 'text',
 			        success : function(data) {
-			        	sessionOut(data);
-			            if (data == "success") {
-			            	alert("删除完毕。");
-			            	window.location.reload();
-			            } else {
-			            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
-			            }
+			        	parent.layer.close(loadi);
 			        }
 			    });
 				reloadGrid();
-			},200);  
+			},200); 
 			
 		}
 		
@@ -163,6 +159,42 @@ function save() {
     $.ajax({
         async : true,
         url : "../property/save.do",
+        type : 'post',
+        data:$('#inputForm').serialize(),
+        dataType : 'text',
+        success : function(data) {
+        	sessionOut(data);
+            if (data == "success") {
+            	alert("更新完毕。");
+            } else {
+            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
+            }
+        }
+    });
+}
+function saveUnit() {
+	var projectid = $("#projeuctid").val();
+	var url = "../property/save.do";
+    $.ajax({
+        async : true,
+        url : url,
+        type : 'post',
+        data:$('#inputForm').serialize(),
+        dataType : 'text',
+        success : function(data) {
+        	sessionOut(data);
+            if (data == "success") {
+            	alert("更新完毕。");
+            } else {
+            	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
+            }
+        }
+    });
+}
+function saveLease() {
+    $.ajax({
+        async : true,
+        url : "../lease/save.do",
         type : 'post',
         data:$('#inputForm').serialize(),
         dataType : 'text',
@@ -491,13 +523,23 @@ jQuery.extend($.fn.fmatter, {
 	    return result;
     },
     standingbookFunFormatter: function (cellvalue, options, rowdata) {
-	    var result = '<button type="button" onclick="updateOneChargeitemforunit(\''+rowdata.id+'\')">修改</button>';
-	    result += '<button type="button" onclick="delOneChargeitemforunit(\''+rowdata.id+'\')">删除</button>';
+    	var result;
+    	if(rowdata.chargestatus=='0'){
+		    result = '<button type="button" onclick="updateOneChargeitemforunit(\''+rowdata.id+'\')">修改</button>';
+		    result += '<button type="button" onclick="delOneChargeitemforunit(\''+rowdata.id+'\')">删除</button>';
+    	}else if(rowdata.chargestatus=='1'){
+		   result="已结束";
+    	}
 	    return result;
     },
     chargenoteFunFormatter: function (cellvalue, options, rowdata) {
-	    var result = '<button type="button" onclick="chargenoteDetail(\''+rowdata.unittermid+'\')">详细</button>';
+    	var result;
+    	if(rowdata.chargestatus=='0'){
+    		result = '<button type="button" onclick="chargenoteDetail(\''+rowdata.unittermid+'\')">详细</button>';
 	    	result += '<button type="button" onclick="confirmReceived(\''+rowdata.unittermid+'\')">确认收款</button>';
+    	}else if(rowdata.chargestatus=='1'){
+		   result="已结束";
+    	}
 	    return result;
     },
     initDataFormatter: function (cellvalue, options, rowdata) {
@@ -508,6 +550,22 @@ jQuery.extend($.fn.fmatter, {
 	    }
 	    console.log("termid_ini="+termid_ini+"==unittermid=="+unittermid_ini);
 	    return cellvalue;
+    },
+    chargeStatusFormatter:function (cellvalue, options, rowdata) {
+	    if(cellvalue =='0'){
+	    	return "未结束";
+	    }else if(cellvalue =='1'){
+	    	return "已结束";
+	    }
+	    return "";
+    },
+    chargenotestatusFormatter:function (cellvalue, options, rowdata) {
+	    if(cellvalue =='0'){
+	    	return "未收款";
+	    }else if(cellvalue =='1'){
+	    	return "已收款";
+	    }
+	    return "";
     }
 });
 function confirmReceived(id){
@@ -516,13 +574,14 @@ function confirmReceived(id){
 	}
 	var url = "../book/confirmReceived.do";
 	data={
-		unittermid:id
+		unittermid:id,
+		id:$("#unitid").val()
 	}
 	console.log("requestData="+data);
 	var result = httpPostReqeust(url, data);
 	console.log(result);
 	if(result!=null && result.status == true){
-		alert("收款成功");
+		reloadGrid();
 	}else{
 		alert("收款失败");
 	}
@@ -828,7 +887,7 @@ function loadStandingbookData() {
 	           {name:'newnumber',index:'newnumber', width:100,align:"center"},
 	           {name:'chargeprice',index:'chargeprice', width:100,align:"center"},
 	           {name:'chargesum',index:'chargesum', width:100,align:"center"},
-	           {name:'chargestatus',index:'chargestatus', width:100,align:"center"},
+	           {name:'chargestatus',index:'chargestatus', width:100,align:"center", formatter:"chargeStatusFormatter"},
 	           {name:'bookmemo',index:'bookmemo', width:100,align:"center"},
 	           {name:'termid',index:'termid',hidden:true, width:100,align:"center", formatter:"initDataFormatter"},
 	           {name:'unittermid',index:'unittermid',hidden:true, width:100,align:"center", formatter:"initDataFormatter"},
@@ -900,7 +959,7 @@ function loadChargenoteData() {
 			   {name:'id',index:'id',hidden:true, align:"center"},
 			   {name:'unittermid',index:'unittermid',hidden:true, align:"center"},
 	           {name:'chargedate',index:'chargedate', align:"center"},
-	           {name:'chargestatus',index:'chargestatus',align:"center"},
+	           {name:'chargestatus',index:'chargestatus',align:"center",formatter:"chargenotestatusFormatter"},
 	           {name:'invoicenumber',index:'invoicenumber',align:"center"},
 	           {name:'jbr',index:'jbr', align:"center"},
 	           {name:'fun',index:'fun', align:"center",formatter:"chargenoteFunFormatter"}
@@ -1097,7 +1156,6 @@ function delChargeitemforunit(){
 		        dataType : 'text',
 		        success : function(data) {
 		        	parent.layer.close(loadi);
-					alert(data);
 		        }
 		    });
 			reloadGrid();
@@ -1120,7 +1178,6 @@ function delOneChargeitemforunit(id){
 		        dataType : 'text',
 		        success : function(data) {
 		        	parent.layer.close(loadi);
-					alert(data);
 		        }
 		    });
 			reloadGrid();
@@ -1157,7 +1214,6 @@ function delAgreement(){
 		        dataType : 'text',
 		        success : function(data) {
 		        	parent.layer.close(loadi);
-					alert(data);
 		        }
 		    });
 			reloadGrid();
