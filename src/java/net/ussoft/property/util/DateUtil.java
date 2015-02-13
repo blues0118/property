@@ -345,5 +345,32 @@ public class DateUtil {
 		  		 +(cal1.get(Calendar.DATE)-cal2.get(Calendar.DATE))/365;//计算两个日期之间的年数，如果天数有余数，则计算一个概要的年数
 		  return c;
 	}
-	
+	/**
+	 * function:日期加n年n月n日
+	 */
+	public static String add(String dateStr,Integer year,Integer month,Integer day){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar calender = Calendar.getInstance();
+		try {
+			
+			Date date = format.parse(dateStr);
+			calender.setTime(date);
+			if(year!=null && !"".equals(year)&& year != 0){
+				calender.add(Calendar.YEAR, year);
+			}else if(month!=null && !"".equals(month)&& month != 0){
+				calender.add(Calendar.MONTH, month);
+			}else if(day!=null && !"".equals(day)&& day != 0){
+				calender.add(Calendar.DAY_OF_MONTH, day);
+			}
+	        
+	        
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return format.format(calender.getTime());
+	}
+	public static void main(String args[]){
+		System.out.println(add("2014-03-30",0,1,0));
+	}
 }

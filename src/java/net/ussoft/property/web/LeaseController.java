@@ -2,7 +2,9 @@ package net.ussoft.property.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -20,6 +22,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.fastjson.JSON;
 
 @Controller
 @RequestMapping(value="lease")
@@ -57,7 +61,8 @@ public class LeaseController {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		String[] unitidSplit = unitid.split(",");
-		String result = "success";
+		String status = "success";
+		Map<String,Object> result = new HashMap<String,Object>();
 		for(int count=0;count<unitidSplit.length;count++){
 			Unit unit = unitService.getById(unitidSplit[count]);
 			
@@ -67,12 +72,19 @@ public class LeaseController {
 			unit.setLeaseid(lease.getId());
 			unitService.update(unit);
 			if (lease == null ) {
-				result = "failure";
+				status = "failure";
 				out.print(result);
 				return;
 			}
 		}
+		result.put("status", status);
+		if("success".equals(status)){
+			result.put("leaseid", lease.getId());
+		}else{
+			result.put("leaseid", "");
+		}
+		String json = JSON.toJSONString(result);
 		
-		out.print(result);
+		out.print(json);
 	}
 }

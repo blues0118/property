@@ -29,7 +29,11 @@ a{ text-decoration:none;  font-size:12px; color:#1874CD;}
 </style>
 
 <script>
-
+	function closepage() {
+		//获取当前窗口索引
+		var index = parent.layer.getFrameIndex(window.name);
+		parent.layer.close(index);
+	}
 	var roles = "";
 
 	function loadComplete() {
@@ -242,9 +246,8 @@ function loadData() {
 				},
 		        dataType : 'text',
 		        success : function(data) {
-		        	alert("添加成功");
 		        	parent.layer.close(loadi);
-					reloadGrid();
+		        	closepage();
 		        }
 		    });
 		};

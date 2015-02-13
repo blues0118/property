@@ -200,8 +200,10 @@ function saveLease() {
         dataType : 'text',
         success : function(data) {
         	sessionOut(data);
-            if (data == "success") {
-            	alert("更新完毕。");
+        	var result = $.parseJSON(data);
+            if (result.status == "success") {
+            	$("#leaseid").val(result.leaseid);
+            	alert("保存成功。");
             } else {
             	alert("可能因为您长时间没有操作，或读取数据时出错，请关闭浏览器，重新登录尝试或与管理员联系!！");
             }
@@ -643,7 +645,8 @@ function loadAgreementData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	
 	//创建grid
@@ -713,7 +716,8 @@ function loadMeterItemData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	//创建grid
 	$.loadGridData(_option);
@@ -760,7 +764,8 @@ function loadChargeItemData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	//创建grid
 	$.loadGridData(_option);
@@ -831,7 +836,8 @@ function loadMeterchargeItemData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	//创建grid
 	$.loadGridData(_option);
@@ -908,7 +914,8 @@ function loadStandingbookData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	//创建grid
 	$.loadGridData(_option);
@@ -979,7 +986,8 @@ function loadChargenoteData() {
 			pageer:pageer,
 			page:page,
 			title:title,
-			size:size
+			size:size,
+			autowidth:true
 	};
 	//创建grid
 	$.loadGridData(_option);
